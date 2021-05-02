@@ -71,7 +71,7 @@ public class Agg_Agent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         initQValues = new double[numOfObjectives];
 
-        Aggregator aggregator = new LogExpAggregator();
+        this.aggregator = new LogExpAggregator();
         // default to all thresholds set at 0
         //for (int i=0; i<numOfObjectives-1; i++)
         //	thresholds[i]=0.0;
