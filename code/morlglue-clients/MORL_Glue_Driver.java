@@ -30,7 +30,7 @@ public class MORL_Glue_Driver
 		            System.out.println("Started agent thread");
 		            
 		            //TLO_Agent.main(null);
-		            Agg_Agent.main(null);
+		            Agg_Agent.main(new String[]{"min"});
 		            //UserControlledAgent.main(null);
 		          }
 		        };
