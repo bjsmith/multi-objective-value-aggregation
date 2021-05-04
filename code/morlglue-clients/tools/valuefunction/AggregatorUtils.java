@@ -21,7 +21,7 @@ public abstract class AggregatorUtils {
 		} else if(aggregation[0] < aggregation[1])  {
 			return -1;
 		}
-
+		// TODO maybe throw a coin instead?
 		// if we get here the two arrays must be exactly equal so return 0
 		return 0;
 	}

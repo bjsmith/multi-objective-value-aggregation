@@ -15,7 +15,11 @@ import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionDiscrete;
 import tools.valuefunction.Agg_LookupTable;
 import tools.valuefunction.Aggregator;
-import tools.valuefunction.LogExpAggregator;
+import tools.valuefunction.ELA_Aggregator;
+import tools.valuefunction.LELA_Aggregator;
+import tools.valuefunction.SFLLA_Aggregator;
+import tools.valuefunction.SFMLA_Aggregator;
+import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.interfaces.ActionSelector;
 
 public class Agg_Agent implements AgentInterface {
@@ -59,7 +63,28 @@ public class Agg_Agent implements AgentInterface {
 
     StateConverter stateConverter = null;
 
-    @Override
+    public Agg_Agent(String[] args) {
+		String aggregator_type = args[0];
+		switch(aggregator_type) {
+		case "MIN":
+			this.aggregator = new MIN_Aggregator();
+			break;
+		case "SFLLA":
+			this.aggregator = new SFLLA_Aggregator();
+			break;
+		case "LELA":
+			this.aggregator = new LELA_Aggregator();
+			break;
+		case "SFMLA":
+			this.aggregator = new SFMLA_Aggregator();
+			break;
+		case "ELA":
+			this.aggregator = new ELA_Aggregator();
+			break;
+		}
+	}
+
+	@Override
     public void agent_init(String taskSpecification) 
     {
     	System.out.println("Agg Q-learning agent launched");
@@ -71,7 +96,7 @@ public class Agg_Agent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         initQValues = new double[numOfObjectives];
 
-        this.aggregator = new LogExpAggregator();
+        //this.aggregator = new LogExpAggregator();
         // default to all thresholds set at 0
         //for (int i=0; i<numOfObjectives-1; i++)
         //	thresholds[i]=0.0;
@@ -340,7 +365,7 @@ public class Agg_Agent implements AgentInterface {
     }
 
     public static void main(String[] args) {
-        AgentLoader theLoader = new AgentLoader( new Agg_Agent() );
+        AgentLoader theLoader = new AgentLoader( new Agg_Agent(args) );
         theLoader.run();
 
     }

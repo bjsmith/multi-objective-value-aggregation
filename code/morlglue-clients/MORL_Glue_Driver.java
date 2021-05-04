@@ -19,52 +19,78 @@ public class MORL_Glue_Driver
 			} 
 			catch (Exception e) 
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		   // launch agent in its own thread
 			Thread agent = 
 			new Thread(){
 		          public void run(){
 		            System.out.println("Started agent thread");
-		            
-		            //TLO_Agent.main(null);
-		            Agg_Agent.main(new String[]{"min"});
+		            //WSteeringTabularNonEpisodic.main(null);
+		            //QSteeringTabularNonEpisodic.main(null);
+		            //WSteeringTabularEpisodic.main(null);
+		            //QSteeringTabularEpisodic.main(null);
+		            //WSAgent.main(null);
+		            //WSNoveltyAgent.main(null);
+		            //QLearningAgentRichard.main(null);
 		            //UserControlledAgent.main(null);
+		            Agg_Agent.main(new String[] {"SFLLA"});
+		            //TLO_EOVF_Agent.main(null);
+		            //SideEffectSingleObjectiveAgent.main(null);
+		            //SideEffectLinearWeightedAgent.main(null);
+		            //SafetyFirstMOAgent.main(null);
+		            //SatisficingMOAgent.main(null);
+		            //LearningRelativeReachabilityAgent.main(null);
+		            //TLO_Agent_Conditioned_On_Actual_Rewards.main(null);
+		            //TLO_Agent_Conditioned_On_Expected_Rewards.main(null);
 		          }
 		        };
 			agent.start();
-
 	 	   // launch environment in its own thread
 			Thread envt = new Thread(){
 		          public void run(){
 		            System.out.println("Started envt thread");
-		            
+		            //DeepSeaTreasureEnv.main(null);
+		            //DeepSeaTreasureEnv_TimeFirst.main(null);
+		            //DeepSeaTreasureMixed.main(null);
 		            String[] gdstArgs = {"15","4","1","3","0.0","0.0",""+GeneralisedDeepSeaTreasureEnv.CONCAVE,"471"};
 		            GeneralisedDeepSeaTreasureEnv.main(gdstArgs);
-		            //BonusWorld.main(null); // -> error
-		            //DeepSeaTreasureEnv.main(null); // -> error
-		            //DeepSeaTreasureMixed.main(null); // -> error
-		            //LinkedRings.main(null); // -> error
-		            //MOMountainCarDiscretised.main(null); // -> error
-		            //SpaceExploration.main(null); // -> error
-		            //NonRecurrentRings.main(null); // -> unsupported error
-		            //ResourceGatheringEpisodic.main(null); // -> out of bounds error
+		            //LinkedRings.main(null);
+		            //NonRecurrentRings.main(null);
+		            //MOMountainCarDiscretised.main(null);
+		            //ResourceGatheringEpisodic.main(null);
+		            //BonusWorld.main(null);
+		            //SpaceExploration.main(null);
+		            //BreakableBottlesSideEffectsV2.main(null);
+		            //UnbreakableBottlesSideEffectsV2.main(null);
+		            //SokobanSideEffects.main(null);
+		            //Doors.main(null);
+		            //UnbreakableBottlesSideEffectsNoop.main(null);
+		            //BreakableBottlesSideEffectsNoop.main(null);
+		            //SokobanSideEffectsNoop.main(null);
+		            //DoorsNoop.main(null);
+		            //StochasticMOMDP.main(null);
+		            //SpaceTraders.main(null);
 		          }
 		        };
-		  envt.start();
-
+		     envt.start();
 	 	   // launch experiment in its own thread
 			Thread experiment = new Thread(){
 		          public void run(){
 		            System.out.println("Started experiment thread");
-		            
+		            //DebuggingExperiment.main(null);
 		            DemoExperiment.main(null);
-		            //SkeletonExperiment.main(null);
+		            //ExplorationExperiment.main(null);
+		            //HypervolumeExperiment.main(null);
+		            //SteeringExperiment.main(null);
+		            //SteeringExperimentWithTargetChange.main(null);
+		            //TLOExplorationExperiment.main(null);
+		            //SideEffectExperiment.main(null);
+		            //SideEffectExperimentWithExcelOutput.main(null);
+		            //TLOConditionedExperiment.main(null);
 		          }
 		        };
-		  experiment.start();
+		    experiment.start();
 		}
 	
 }

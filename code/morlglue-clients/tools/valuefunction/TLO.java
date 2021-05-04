@@ -12,8 +12,8 @@ public abstract class TLO {
 	
 	// Compare two sets of values based on TLO ordering
 	// Returns 1 if a is ranked higher, -1 if b is higher, 0 if they are equal
-	// a and b should be of the same length, and thresholds should be 1 element shorter
-	// (ie there is no threshold for the final element in a and b)
+	// a and b should be of the same length. Thresholds might be the same length or shorter, in which case 
+	// there is no threshold for the final elements in a and b
 	public static int compare(double a[], double b[], double thresholds[])
 	{
 		double thresholdedA, thresholdedB;
@@ -26,13 +26,16 @@ public abstract class TLO {
 				return 1;
 			else if (thresholdedA<thresholdedB)
 				return -1;
-		}		
-		// test based on the final, unthresholded value
-		if (a[thresholds.length]>b[thresholds.length])
-			return 1;
-		else if (a[thresholds.length]<b[thresholds.length])
-			return -1;			
-		// equal based on thresholding values, so now test again without applying thresholds
+		}	
+		// test based on any unthresholded values	
+		for (int i=thresholds.length; i<a.length; i++)
+		{
+			if (a[i]>b[i])
+				return 1;
+			else if (a[i]<b[i])
+				return -1;
+		}
+		// equal based on thresholded values, so now test again without applying thresholds
 		for (int i=0; i<thresholds.length; i++)
 		{
 			if (a[i]>b[i])

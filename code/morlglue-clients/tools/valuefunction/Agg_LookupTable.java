@@ -87,7 +87,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     public int chooseGreedyAction(int state) 
     {
     	getActionValues(state);
-    	return AggregatorUtils.greedyAction(thisStateValues, aggregator); 
+    	return AggregatorUtils.greedyAction(thisStateValues, this.aggregator); 
     }
     
     // returns true if action is amongst the greedy actions for the specified
@@ -95,9 +95,9 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     public boolean isGreedy(int state, int action)
     {  
     	getActionValues(state);
-    	int best = AggregatorUtils.greedyAction(thisStateValues, aggregator); 
+    	int best = AggregatorUtils.greedyAction(thisStateValues, this.aggregator); 
     	// this action is greedy if it is TLO-equal to the greedily selected action
-    	return (AggregatorUtils.compare(thisStateValues[action], thisStateValues[best], aggregator)==0);
+    	return (AggregatorUtils.compare(thisStateValues[action], thisStateValues[best], this.aggregator)==0);
     }
     
     // simple eGreedy selection
@@ -110,15 +110,15 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     }
     
     // softmax selection based on tournament score (i.e. the number of actions which each action TLO-dominates)
-    private int softmaxTournament(double temperature, int state)
+    protected int softmaxTournament(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
-    	double scores[] = AggregatorUtils.getDominanceScore(thisStateValues,aggregator);
+    	double scores[] = AggregatorUtils.getDominanceScore(thisStateValues,this.aggregator);
     	return Softmax.getAction(scores,temperature,best);
     }
     
     // softmax selection based on each action's additive epsilon score
-    private int softmaxAdditiveEpsilon(double temperature, int state)
+    protected int softmaxAdditiveEpsilon(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
     	double scores[] = AggregatorUtils.getInverseAdditiveEpsilonScore(thisStateValues,best);
@@ -144,7 +144,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     
 
     public Aggregator getAggregator() {
-        return aggregator;
+        return this.aggregator;
     }
 
     public void setAggregator(Aggregator agg) {

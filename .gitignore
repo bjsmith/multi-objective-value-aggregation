@@ -1,0 +1,8 @@
+# Historical .svn files
+.svn
+
+# Java generated files
+*.class
+
+# IDE generated files
+.vscode
