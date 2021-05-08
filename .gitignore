@@ -6,3 +6,6 @@
 
 # IDE generated files
 .vscode
+
+# MacOS Finder preview files
+.DS_Store
