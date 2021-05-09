@@ -46,7 +46,7 @@ public class TLOConditionedExperiment
     
     // Settings for the DST task
     private final String ENVIRONMENT_PREFIX = "DST";
-    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 10000;
+    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 100;//10000;
     private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
     private final int MAX_EPISODE_LENGTH = 200;
     private final double[][] TLO_PARAMS = {{-500, 0, 1, -16}};    // array of arrays to allow for multiple threshold objectives - min / max / num discretisations / threshold for each
@@ -73,7 +73,7 @@ public class TLOConditionedExperiment
     private final double ALPHA_DECAY = 0; //$\lambda$ALPHA / NUM_ONLINE_EPISODES_PER_TRIAL; // set to 0 for no decay
     private final double LAMBDA = 0.95;
     private final double GAMMA = 1.0;
-    private final int NUM_TRIALS = 20;
+    private final int NUM_TRIALS = 2;
 	    
 	private final String FILENAME_PREFIX = ENVIRONMENT_PREFIX + "-";
 	private ExcelWriter excel;
@@ -192,7 +192,7 @@ public class TLOConditionedExperiment
     public static void main(String[] args) {
     	TLOConditionedExperiment theExperiment = new TLOConditionedExperiment();
         theExperiment.runExperiment();
-        System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
+        //System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
     }
 }
 
