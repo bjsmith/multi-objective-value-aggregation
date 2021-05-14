@@ -25,7 +25,7 @@ public class SideEffectExperimentWithExcelOutput
     private final double ALPHA = 0.1;
     private final double LAMBDA = 0.95;
     private final double GAMMA = 1.0;
-    private final int NUM_TRIALS = 20;
+    private final int NUM_TRIALS = 1;//20;
 
     // enable this group of declarations for egreedy exploration
    	//private final int EXPLORATION = TLO_LookupTable.EGREEDY;
@@ -53,9 +53,9 @@ public class SideEffectExperimentWithExcelOutput
 	    //private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
 	    //private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the UnbreakableBottles task
-	    private final String ENVIRONMENT_PREFIX = "Unbreakable";
-	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
+	    private final String ENVIRONMENT_PREFIX = "Test";
+	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5;//5000;
+	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;//100;
 	    private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the Sokoban task
     	//private final String ENVIRONMENT_PREFIX = "Sokoban";
@@ -157,7 +157,8 @@ public class SideEffectExperimentWithExcelOutput
     public static void main(String[] args) {
     	SideEffectExperimentWithExcelOutput theExperiment = new SideEffectExperimentWithExcelOutput();
         theExperiment.runExperiment();
-        System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
+        //System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
+        return;
     }
 }
 
