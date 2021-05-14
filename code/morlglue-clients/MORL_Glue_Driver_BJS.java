@@ -30,10 +30,27 @@ public class MORL_Glue_Driver_BJS
 			new Thread(){
 		          public void run(){
 		            System.out.println("Started agent thread");
-		            //MAIN AGENTS OF INTEREST
-		            WSAgent.main(null);
-		            //Agg_Agent.main(new String[] {"SFLLA"});
 		            
+		            
+		            //MAIN AGENTS OF INTEREST
+		            //WSAgent.main(null);
+		            
+		            //AGENTS VAMPLEW SAYS ARE KEY FOR THE SAFETY PAPER
+		            //SideEffectSingleObjectiveAgent.main(null);
+		            //SideEffectLinearWeightedAgent.main(null);
+		            //SatisficingMOAgent.main(null);
+		            //LearningRelativeReachabilityAgent.main(null);
+		            
+		            //OTHERS THAT MAY BE OF INTEREST
+		            //TLO_EOVF_Agent.main(null);
+		            //Agg_Agent.main(new String[] {"SFLLA"});
+		            //TLO_Agent_Conditioned_On_Actual_Rewards.main(null);
+		            
+		            //TLO_Agent_Conditioned_On_Expected_Rewards.main(null);
+		            //TLO_Agent.main(null);
+		            
+		            //THIS ONE WORKS
+		            //SafetyFirstMOAgent.main(null);
 		            
 		            //OTHER STUFF
 		            //WSteeringTabularNonEpisodic.main(null);
@@ -46,16 +63,11 @@ public class MORL_Glue_Driver_BJS
 		            //UserControlledAgent.main(null);
 		           
 		            //TLO_EOVF_Agent.main(null);
-		            //SideEffectSingleObjectiveAgent.main(null);
-		            //SideEffectLinearWeightedAgent.main(null);
-		            //SafetyFirstMOAgent.main(null);
+
+
 		            //agent.agent_message("start-debugging");
-		            //SatisficingMOAgent.main(null);
-		            //LearningRelativeReachabilityAgent.main(null);
-		            //TLO_Agent_Conditioned_On_Actual_Rewards.main(null);
+
 		            
-		            //TLO_Agent_Conditioned_On_Expected_Rewards.main(null);
-		            //TLO_Agent.main(null);
 		          }
 		        };
 			agent.start();
@@ -65,18 +77,20 @@ public class MORL_Glue_Driver_BJS
 		            System.out.println("Started envt thread");
 		            
 		            //From Vamplew et al. (2021):
-		            //BreakableBottlesSideEffectsV2.main(null);
+		            BreakableBottlesSideEffectsV2.main(null);
 		            //UnbreakableBottlesSideEffectsV2.main(null);
 		            //SokobanSideEffects.main(null);
-		            Doors.main(null);
+		            //Doors.main(null);
 		            
-		            //OTHERS:
+		            //MAIN DEFAULT TEST ENV:
+//		            String[] gdstArgs = {"15","4","1","3","0.0","0.0",""+GeneralisedDeepSeaTreasureEnv.CONCAVE,"471"};
+//		            GeneralisedDeepSeaTreasureEnv.main(gdstArgs);
+//		            //OTHERS:
 		            
 		            //DeepSeaTreasureEnv.main(null);
 		            //DeepSeaTreasureEnv_TimeFirst.main(null);
 		            //DeepSeaTreasureMixed.main(null);
-		            //String[] gdstArgs = {"15","4","1","3","0.0","0.0",""+GeneralisedDeepSeaTreasureEnv.CONCAVE,"471"};
-		            //GeneralisedDeepSeaTreasureEnv.main(gdstArgs);
+		            
 		            //LinkedRings.main(null);
 		            //NonRecurrentRings.main(null);
 		            //MOMountainCarDiscretised.main(null);
@@ -99,11 +113,12 @@ public class MORL_Glue_Driver_BJS
 		            System.out.println("Started experiment thread");
 		            
 		            //default demo file
-		            //DemoExperiment.main(null);
+		            DemoExperiment.main(null);
 		            
 		            //main experiments of interest, I think:
 		            //TLOExplorationExperiment.main(null);
-		            TLOConditionedExperiment.main(null);
+		            //TLOConditionedExperiment.main(null);
+		            
 		            
 		            //others:
 		            //DebuggingExperiment.main(null);
@@ -118,27 +133,24 @@ public class MORL_Glue_Driver_BJS
 		        };
 		    experiment.start();
 		    
-		    for(int i=0;i<10000;i++)
-		    {
-		    	try {
-					Thread.sleep(1000);
-					
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    	System.out.println("testing...");
-		    	System.out.println(experiment.isAlive());
-		    	
-		    	
-		    	System.out.println(agent.isAlive());
-		    	System.out.println(envt.isAlive());
-		    	if(!experiment.isAlive())
-		    	{
-		    		agent.interrupt();
-		    		envt.interrupt();
-		    	}
-		    }
+//		    for(int i=0;i<10000;i++)
+//		    {
+//		    	try {
+//					Thread.sleep(1000);
+//					
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//		    	System.out.println("running...");
+//
+//		    	if(!experiment.isAlive())
+//		    	{
+//		    		agent.interrupt();
+//		    		envt.interrupt();
+//		    		break;
+//		    	}
+//		    }
 		    
 		    System.out.println("finished!");
 		    
