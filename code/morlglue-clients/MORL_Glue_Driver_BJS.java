@@ -36,7 +36,7 @@ public class MORL_Glue_Driver_BJS
 		            //WSAgent.main(null);
 		            
 		            //AGENTS VAMPLEW SAYS ARE KEY FOR THE SAFETY PAPER
-		            //SideEffectSingleObjectiveAgent.main(null);
+		            SideEffectSingleObjectiveAgent.main(null);
 		            //SideEffectLinearWeightedAgent.main(null);
 		            //SatisficingMOAgent.main(null);
 		            //LearningRelativeReachabilityAgent.main(null);
@@ -111,6 +111,8 @@ public class MORL_Glue_Driver_BJS
 			Thread experiment = new Thread(){
 		          public void run(){
 		            System.out.println("Started experiment thread");
+		            //EXPERIMENT PETER SAYS IS RELEVANT
+		            SideEffectExperimentWithExcelOutput.main(null);
 		            
 		            //default demo file
 		            DemoExperiment.main(null);
@@ -127,7 +129,7 @@ public class MORL_Glue_Driver_BJS
 		            //SteeringExperiment.main(null);
 		            //SteeringExperimentWithTargetChange.main(null);
 		            //SideEffectExperiment.main(null);
-		            //SideEffectExperimentWithExcelOutput.main(null);
+		            //
 		            
 		          }
 		        };
