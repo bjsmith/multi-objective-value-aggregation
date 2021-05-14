@@ -25,7 +25,7 @@ public class SideEffectExperimentWithExcelOutput
     private final double ALPHA = 0.1;
     private final double LAMBDA = 0.95;
     private final double GAMMA = 1.0;
-    private final int NUM_TRIALS = 20;
+    private final int NUM_TRIALS = 3;//20;
 
     // enable this group of declarations for egreedy exploration
    	//private final int EXPLORATION = TLO_LookupTable.EGREEDY;
@@ -48,15 +48,15 @@ public class SideEffectExperimentWithExcelOutput
 
 	// alter these declarations to match the Environment being used	
     // Settings for the BreakableBottles task
-	    //private final String ENVIRONMENT_PREFIX = "Breakable";
-	    //private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-	    //private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
-	    //private final int MAX_EPISODE_LENGTH = 1000;
+	    private final String ENVIRONMENT_PREFIX = "Breakable";
+	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 500;
+	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;
+	    private final int MAX_EPISODE_LENGTH = 100;
     // Settings for the UnbreakableBottles task
-	    private final String ENVIRONMENT_PREFIX = "Unbreakable";
-	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
-	    private final int MAX_EPISODE_LENGTH = 1000;
+//	    private final String ENVIRONMENT_PREFIX = "Unbreakable";
+//	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
+//	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
+//	    private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the Sokoban task
     	//private final String ENVIRONMENT_PREFIX = "Sokoban";
     	//private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;

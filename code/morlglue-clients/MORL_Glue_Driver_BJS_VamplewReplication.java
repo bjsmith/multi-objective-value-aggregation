@@ -3,7 +3,7 @@ import env.*;
 import experiments.*;
 //copied from MORL_Glue_Driver.java
 
-public class MORL_Glue_Driver_BJS
+public class MORL_Glue_Driver_BJS_VamplewReplication
 {
 
 	public static void main(String[] args) 
@@ -43,20 +43,20 @@ public class MORL_Glue_Driver_BJS
 		            
 		            
 		            //TLO-P
-		            double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
+		            //double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
 		            //TLO-PA
-		        	//double safetyThreshold = -0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
+		        	double safetyThreshold = -0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
 		            //lex-PA 
-		            double primaryRewardThreshold = 1000; // use high value here to get lex-pa (for tlo-p or tlo-pa use the per envt thresholds below)
+		            //double primaryRewardThreshold = 1000; // use high value here to get lex-pa (for tlo-p or tlo-pa use the per envt thresholds below)
 		            
 		        	// For UnbreakableBottles
 	            	//primaryRewardThreshold = -50; // sets threshold on the acceptable minimum level of performance on the primary reward
-	            	double minPrimaryReward = -1000; // the lowest reward obtainable
-	            	double maxPrimaryReward = 44;	// the highest reward obtainable
+//	            	double minPrimaryReward = -1000; // the lowest reward obtainable
+//	            	double maxPrimaryReward = 44;	// the highest reward obtainable
 	            // For BreakableBottles
-	            	//double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
-	            	//double minPrimaryReward = -1000; // the lowest reward obtainable
-	            	//double maxPrimaryReward = 44;	// the highest reward obtainable   
+	            	double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
+	            	double minPrimaryReward = -1000; // the lowest reward obtainable
+	            	double maxPrimaryReward = 44;	// the highest reward obtainable   
 	            // For Sokoban and Doors
 	            	//double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
 	            	//double minPrimaryReward = -1000; // the lowest reward obtainable
@@ -69,29 +69,8 @@ public class MORL_Glue_Driver_BJS
 		            
 		            
 		            //OTHERS THAT MAY BE OF INTEREST
-		            //TLO_EOVF_Agent.main(null);
-		            //Agg_Agent.main(new String[] {"SFLLA"});
-		            //TLO_Agent_Conditioned_On_Actual_Rewards.main(null);
-		            
-		            //TLO_Agent_Conditioned_On_Expected_Rewards.main(null);
 		            //TLO_Agent.main(null);
 		            
-		            //THIS ONE WORKS
-		            //
-		            
-		            //OTHER STUFF
-		            //WSteeringTabularNonEpisodic.main(null);
-		            //QSteeringTabularNonEpisodic.main(null);
-		            //WSteeringTabularEpisodic.main(null);
-		            //QSteeringTabularEpisodic.main(null);
-		            
-		            //WSNoveltyAgent.main(null);
-		            //QLearningAgentRichard.main(null);
-		            //UserControlledAgent.main(null);
-		           
-		            //TLO_EOVF_Agent.main(null);
-
-
 		            //agent.agent_message("start-debugging");
 
 		            
@@ -124,20 +103,6 @@ public class MORL_Glue_Driver_BJS
 		            //DeepSeaTreasureEnv.main(null);
 		            //DeepSeaTreasureEnv_TimeFirst.main(null);
 		            //DeepSeaTreasureMixed.main(null);
-		            
-		            //LinkedRings.main(null);
-		            //NonRecurrentRings.main(null);
-		            //MOMountainCarDiscretised.main(null);
-		            //ResourceGatheringEpisodic.main(null);
-		            //BonusWorld.main(null);
-		            //SpaceExploration.main(null);
-
-		            //UnbreakableBottlesSideEffectsNoop.main(null);
-		            //BreakableBottlesSideEffectsNoop.main(null);
-		            //SokobanSideEffectsNoop.main(null);
-		            //DoorsNoop.main(null);
-		            //StochasticMOMDP.main(null);
-		            //SpaceTraders.main(null);
 		          }
 		        };
 		     envt.start();
@@ -151,19 +116,7 @@ public class MORL_Glue_Driver_BJS
 		            //default demo file
 		            //DemoExperiment.main(null);
 		            
-		            //main experiments of interest, I think:
-		            //TLOExplorationExperiment.main(null);
-		            //TLOConditionedExperiment.main(null);
-		            
-		            
-		            //others:
-		            //DebuggingExperiment.main(null);
-		            //ExplorationExperiment.main(null);
-		            //HypervolumeExperiment.main(null);
-		            //SteeringExperiment.main(null);
-		            //SteeringExperimentWithTargetChange.main(null);
-		            //SideEffectExperiment.main(null);
-		            //
+
 		            
 		          }
 		        };

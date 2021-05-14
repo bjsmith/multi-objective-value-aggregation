@@ -57,7 +57,7 @@ public class SatisficingMOAgent implements AgentInterface {
     Stack<StateActionIndexPair> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private boolean debugging = false;
+    private boolean debugging = true;
     private Random random;
 
     private int numActions = 0;
@@ -460,9 +460,35 @@ public class SatisficingMOAgent implements AgentInterface {
     	}
         System.out.println();    	
     }
+    
+    public static void main(
+    		double primaryRewardThreshold, double safetyThreshold,
+    		double minPrimaryReward, double maxPrimaryReward,
+    		String[] args) {
+    	System.out.print("instantiating SatisficingMOAgent");
+    	SatisficingMOAgent agentInstance = new SatisficingMOAgent();
+    	System.out.print("...setting reward thresholds and bounds...");
+    	agentInstance.primaryRewardThreshold = primaryRewardThreshold;
+    	agentInstance.safetyThreshold = primaryRewardThreshold;
+    	agentInstance.minPrimaryReward = minPrimaryReward;
+    	agentInstance.maxPrimaryReward = maxPrimaryReward;
+    	System.out.print("...reward thresholds and bounds set.");
+    	System.out.print("...loading agent...");
+        AgentLoader theLoader = new AgentLoader(agentInstance);
+        System.out.println("...running agent...");
+
+        theLoader.run();
+        System.out.println("...finished run command.");
+
+    }
 
     public static void main(String[] args) {
-        AgentLoader theLoader = new AgentLoader( new SatisficingMOAgent() );
+    	System.out.print("instantiating SatisficingMOAgent...");
+    	SatisficingMOAgent agentInstance = new SatisficingMOAgent();
+    	System.out.print("...loading...");
+        AgentLoader theLoader = new AgentLoader(agentInstance);
+        System.out.println("...running...");
+
         theLoader.run();
 
     }
