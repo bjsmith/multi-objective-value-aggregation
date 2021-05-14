@@ -38,7 +38,7 @@ public class SafetyFirstMOAgent implements AgentInterface {
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private boolean debugging = false;
+    private boolean debugging = true;
     private Random random;
 
     private int numActions = 0;
@@ -377,9 +377,11 @@ public class SafetyFirstMOAgent implements AgentInterface {
     }
 
     public static void main(String[] args) {
-        AgentLoader theLoader = new AgentLoader( new SafetyFirstMOAgent() );
+    	//BJS Modified to return a handle on the agent.
+    	SafetyFirstMOAgent agent = new SafetyFirstMOAgent();
+        AgentLoader theLoader = new AgentLoader( agent  );
         theLoader.run();
-
+        //return (agent);
     }
 
 

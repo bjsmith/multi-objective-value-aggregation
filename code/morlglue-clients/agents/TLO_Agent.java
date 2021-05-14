@@ -71,6 +71,7 @@ public class TLO_Agent implements AgentInterface {
         numActions = theTaskSpec.getDiscreteActionRange(0).getMax() + 1;
         numStates = theTaskSpec.getDiscreteObservationRange(0).getMax()+1;
         numOfObjectives = theTaskSpec.getNumOfObjectives();
+        System.out.println("numOfObjectives:" + numOfObjectives);
         initQValues = new double[numOfObjectives];
 
         thresholds = new double[numOfObjectives-1];
