@@ -37,9 +37,11 @@ public class MORL_Glue_Driver_BJS
 		            
 		            //AGENTS VAMPLEW SAYS ARE KEY FOR THE SAFETY PAPER
 		            SideEffectSingleObjectiveAgent.main(null);
+		            SafetyFirstMOAgent.main(null);
 		            //SideEffectLinearWeightedAgent.main(null);
 		            //SatisficingMOAgent.main(null);
 		            //LearningRelativeReachabilityAgent.main(null);
+		            
 		            
 		            //OTHERS THAT MAY BE OF INTEREST
 		            //TLO_EOVF_Agent.main(null);
@@ -50,7 +52,7 @@ public class MORL_Glue_Driver_BJS
 		            //TLO_Agent.main(null);
 		            
 		            //THIS ONE WORKS
-		            //SafetyFirstMOAgent.main(null);
+		            //
 		            
 		            //OTHER STUFF
 		            //WSteeringTabularNonEpisodic.main(null);
