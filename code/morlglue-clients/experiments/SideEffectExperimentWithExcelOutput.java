@@ -3,6 +3,7 @@
 
 package experiments;
 
+import org.rlcommunity.rlglue.codec.LocalGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
@@ -25,7 +26,7 @@ public class SideEffectExperimentWithExcelOutput
     private final double ALPHA = 0.1;
     private final double LAMBDA = 0.95;
     private final double GAMMA = 1.0;
-    private final int NUM_TRIALS = 1;//20;
+    private final int NUM_TRIALS = 1;
 
     // enable this group of declarations for egreedy exploration
    	//private final int EXPLORATION = TLO_LookupTable.EGREEDY;
@@ -53,10 +54,12 @@ public class SideEffectExperimentWithExcelOutput
 	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;
 	    private final int MAX_EPISODE_LENGTH = 100;
     // Settings for the UnbreakableBottles task
+
 //	    private final String ENVIRONMENT_PREFIX = "Test";
 //	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5;//5000;
 //	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;//100;
 //	    private final int MAX_EPISODE_LENGTH = 1000;
+
     // Settings for the Sokoban task
 //    	private final String ENVIRONMENT_PREFIX = "Sokoban";
 //    	private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
@@ -85,18 +88,23 @@ public class SideEffectExperimentWithExcelOutput
         return totalReward;
     }
 
-    public void runExperiment() {
+    public void runExperiment(String[] args) {
+    	String outpath = args[0];
+    	//String environment = args[1];
     	// set up data structures to store reward history
         String taskSpec = RLGlue.RL_init();
+        
+        //System.out.println("Task: "+taskSpec);
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpec);
         numObjectives = theTaskSpec.getNumOfObjectives();
         // configure agent, set up files etc
         String agentMessageString = "set_learning_parameters" + " " + ALPHA + " " + LAMBDA + " " + GAMMA + " " + EXPLORATION;
         RLGlue.RL_agent_message(agentMessageString);
     	String agentName = RLGlue.RL_agent_message("get_agent_name");
-    	final String fileName = FILENAME_PREFIX+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA;
+    	String envName = RLGlue.RL_env_message("get env name");
+    	System.out.println("RUNNING " + " WITH "+agentName+" in  "+envName);
+    	final String fileName = outpath + "/" + envName+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA;
     	excel = new JxlExcelWriter(fileName);
-    	
     	
         RLGlue.RL_agent_message(PARAM_CHANGE_STRING + " " + EXPLORATION_PARAMETER + " " + NUM_ONLINE_EPISODES_PER_TRIAL);       
         // run the trials
@@ -150,13 +158,17 @@ public class SideEffectExperimentWithExcelOutput
         	excel.writeNextRowTextAndFormula(text, lookups);
         }
         excel.closeFile();
+        
         RLGlue.RL_cleanup();
+        //RLGlue.RL_agent_message("stop");
+        //RLGlue.RL_env_message("stop");
+
         System.out.println("********************************************** Experiment finished");
     }
 
     public static void main(String[] args) {
     	SideEffectExperimentWithExcelOutput theExperiment = new SideEffectExperimentWithExcelOutput();
-        theExperiment.runExperiment();
+        theExperiment.runExperiment(args);
         //System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
         return;
     }
