@@ -53,10 +53,10 @@ public class SideEffectExperimentWithExcelOutput
 	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;
 	    private final int MAX_EPISODE_LENGTH = 100;
     // Settings for the UnbreakableBottles task
-	    private final String ENVIRONMENT_PREFIX = "Test";
-	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5;//5000;
-	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;//100;
-	    private final int MAX_EPISODE_LENGTH = 1000;
+//	    private final String ENVIRONMENT_PREFIX = "Test";
+//	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5;//5000;
+//	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;//100;
+//	    private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the Sokoban task
     	//private final String ENVIRONMENT_PREFIX = "Sokoban";
     	//private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
