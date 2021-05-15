@@ -38,7 +38,7 @@ public class SafetyFirstMOAgent implements AgentInterface {
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private boolean debugging = true;
+    private boolean debugging = false;
     private Random random;
 
     private int numActions = 0;
