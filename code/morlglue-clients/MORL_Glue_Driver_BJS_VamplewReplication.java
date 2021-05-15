@@ -31,6 +31,10 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 		          public void run(){
 		            System.out.println("Started agent thread");
 		            
+		            String agent_to_run = "TLO^{PA}";
+		            
+		            
+		            
 		            
 		            //MAIN AGENTS OF INTEREST
 		            //WSAgent.main(null);
@@ -40,12 +44,6 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 		            //SafetyFirstMOAgent.main(null);
 		            //SideEffectLinearWeightedAgent.main(null);
 		            
-		            
-		            
-		            //TLO-P
-		            //double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
-		            //TLO-PA
-		        	double safetyThreshold = -0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
 		            //lex-PA 
 		            //double primaryRewardThreshold = 1000; // use high value here to get lex-pa (for tlo-p or tlo-pa use the per envt thresholds below)
 		            
@@ -62,8 +60,25 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 	            	//double minPrimaryReward = -1000; // the lowest reward obtainable
 	            	//double maxPrimaryReward = 50;	// the highest reward obtainable
 
-
-		            SatisficingMOAgent.main(primaryRewardThreshold,safetyThreshold,minPrimaryReward, maxPrimaryReward,null); //TLO-P
+		            
+		            if (agent_to_run=="TLO^P") {
+			            //TLO-P
+			            double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
+			            SatisficingMOAgent.main(primaryRewardThreshold,safetyThreshold,minPrimaryReward, maxPrimaryReward,null); //TLO-P
+		            }else if (agent_to_run=="TLO^A"){
+		            	//run a SafetyFirstMOAgent
+		            	SafetyFirstMOAgent.main(null);
+		            }else if(agent_to_run=="TLO^{PA}") {
+			            //TLO-PA
+			        	double safetyThreshold = -0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
+			        	SatisficingMOAgent.main(primaryRewardThreshold,safetyThreshold,minPrimaryReward, maxPrimaryReward,null); //TLO-P
+		            }else if (agent_to_run=="lex^P") {
+		            	throw new RuntimeException("not implemented");
+		            }else if (agent_to_run=="lex^A") {
+		            	throw new RuntimeException("not implemented");
+		            }
+		            
+		            
 		            //LearningRelativeReachabilityAgent.main(null);
 		            
 		            
