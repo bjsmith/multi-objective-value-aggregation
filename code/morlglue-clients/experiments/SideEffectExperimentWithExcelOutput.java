@@ -49,15 +49,17 @@ public class SideEffectExperimentWithExcelOutput
 
 	// alter these declarations to match the Environment being used	
     // Settings for the BreakableBottles task
-	    //private final String ENVIRONMENT_PREFIX = "Breakable";
-	    //private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-	    //private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
-	    //private final int MAX_EPISODE_LENGTH = 1000;
+	    private final String ENVIRONMENT_PREFIX = "Breakable";
+	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 500;
+	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;
+	    private final int MAX_EPISODE_LENGTH = 100;
     // Settings for the UnbreakableBottles task
-	    private final String ENVIRONMENT_PREFIX = "Test";
-	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 100;//5000;
-	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;//100;
-	    private final int MAX_EPISODE_LENGTH = 1000;
+
+//	    private final String ENVIRONMENT_PREFIX = "Test";
+//	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5;//5000;
+//	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;//100;
+//	    private final int MAX_EPISODE_LENGTH = 1000;
+
     // Settings for the Sokoban task
     	//private final String ENVIRONMENT_PREFIX = "Sokoban";
     	//private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
@@ -91,7 +93,7 @@ public class SideEffectExperimentWithExcelOutput
     	//String environment = args[1];
     	// set up data structures to store reward history
         String taskSpec = RLGlue.RL_init();
-
+        
         //System.out.println("Task: "+taskSpec);
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpec);
         numObjectives = theTaskSpec.getNumOfObjectives();
