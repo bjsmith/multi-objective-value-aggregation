@@ -1,13 +1,14 @@
-// A quick-and-dirty conversion of the WSAgent/TLOAgent code to implement multi-objective
-// Q-learning for the AI safety side-effects research project. The agent expects a
-// vector of 3 values - the (incorrectly specified) goal reward, our potential-based
-// impact reward, and the true performance reward. It ignores the latter (which it 
-// shouldn't have access to), and maximises the first, subject to achieving an acceptable
-// value for the impact. This is achieved by making action selection dependent on the 
-// combination of the accrued impact reward and the expected future impact reward.
+// A quick-and-dirty conversion of the WSAgent code to implement single-objective
+// Q-learning as a baseline for the AI safety side-effects research project. This
+// agent receives a vector valued reward, but only uses the first element which
+// corresponds to the reward function as defined in the side-effects environments.
+
+// Implemented via the simple expedient of setting the first objective weight to 1, and 
+// the others to zero. Ugly and inefficient, but time is pressing
 
 package agents;
 
+import java.math.BigDecimal;
 import java.util.Random;
 import java.util.Stack;
 
@@ -18,31 +19,28 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 
+import tools.hypervolume.Point;
 import tools.staterep.DummyStateConverter;
 import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionDiscrete;
-import tools.valuefunction.Agg_LookupTable;
 import tools.valuefunction.Aggregator;
 import tools.valuefunction.ELA_Aggregator;
 import tools.valuefunction.LELA_Aggregator;
 import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.SFMLA_Aggregator;
+import tools.valuefunction.TLO_LookupTable;
+import tools.valuefunction.WSLookupTable;
 import tools.valuefunction.interfaces.ActionSelector;
 import tools.valuefunction.interfaces.ValueFunction;
 
 
-public class Agg_Agent implements AgentInterface {
+public class Agg_SideEffectSingleObjectiveAgent implements AgentInterface {
 
-	public AgentLoader agentloader;
-	
-    double impactThreshold = -0.1; // sets threshold on the acceptable level of environmental disruption - use high value to 'switch off' thresholding
-	
-	Agg_LookupTable vf = null;
+    WSLookupTable vf = null;
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private boolean debugging = false;
     private Random random;
 
     private int numActions = 0;
@@ -50,6 +48,9 @@ public class Agg_Agent implements AgentInterface {
     int numOfObjectives;
 
     private final double initQValues[]={0,0,0};
+    double alpha;
+    double gamma;
+    double lambda;
     int explorationStrategy; // flag used to indicate which type of exploration strategy is being used
     //if using eGreedy exploration
     double startingEpsilon;
@@ -59,21 +60,17 @@ public class Agg_Agent implements AgentInterface {
     double startingTemperature;
     double temperatureDecayRatio;
     double temperature;
-    
-    double alpha;
-    double gamma;
-    double lambda;
     final int MAX_STACK_SIZE = 20;
 
     int numOfSteps;
     int numEpisodes;
-    double accumulatedImpact; // sum the impact reward received so far
 
     StateConverter stateConverter = null;
+    
     String aggregatorstring;
     Aggregator aggregator;
     
-    public Agg_Agent(String[] args) {
+    public Agg_SideEffectSingleObjectiveAgent(String[] args) {
 		String aggregator_type = args[0];
 		this.aggregatorstring = aggregator_type;
 		switch(aggregator_type) {
@@ -97,15 +94,21 @@ public class Agg_Agent implements AgentInterface {
 
     @Override
     public void agent_init(String taskSpecification) {
-    	System.out.println(this.aggregatorstring+" launched");
+    	System.out.println("SideEffectSingleObjectiveAgent launched");
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpecification);
 
         numActions = theTaskSpec.getDiscreteActionRange(0).getMax() + 1;
         numStates = theTaskSpec.getDiscreteObservationRange(0).getMax()+1;
         numOfObjectives = theTaskSpec.getNumOfObjectives();
-        vf = new Agg_LookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold, aggregator);
 
-        random = new Random(471);
+        double[] weights = new double[numOfObjectives];
+        // force all zero weights, except for the first objective
+        weights[0]=1;
+        for (int i=1; i<numOfObjectives; i++)
+        	weights[i]=0;
+        vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
+
+        random = new Random();
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation
@@ -123,57 +126,28 @@ public class Agg_Agent implements AgentInterface {
         epsilon = startingEpsilon;
         temperature = startingTemperature;
         // reset Q-values
-        vf.resetQValues(initQValues);
-        accumulatedImpact = 0.0;
-        vf.setAccumulatedImpact(accumulatedImpact);
-    }
-    
-    private void resetForNewEpisode()
-    {
-  	  	numEpisodes++;
-        numOfSteps = 0; 
-        accumulatedImpact = 0.0;
-        vf.setAccumulatedImpact(accumulatedImpact);    	
-        tracingStack.clear();
+        vf.resetQValues(initQValues);     
     }
 
     @Override
     public Action agent_start(Observation observation) {
-
-    	resetForNewEpisode();
+    	//System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon);
+        tracingStack.clear();
         int state = stateConverter.getStateNumber( observation );
         int action = getAction(state);
 
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = action;
         tracingStack.add(new StateActionDiscrete(observation, returnAction)); // put executed action on the stack
-    	if (debugging)
-    	{
-        	for (int i=0; i<numActions; i++)
-        	{
-        		System.out.print("(");
-        		double[] q = vf.getQValues(i, state);
-        		for (int j=0; j<numOfObjectives; j++)
-        		{
-        			System.out.print(q[j]+" ");
-        		}
-        		System.out.print(") ");
-        	}
-        	System.out.println();
-    		int greedyAction = ((ActionSelector)vf).chooseGreedyAction(state);
-    		System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon + " Alpha = " + alpha);
-    		System.out.println("Step: " + numOfSteps +"\tState: " + state + "\tGreedy action: " + greedyAction + "\tAction: " + action);
-    	}
-   		//System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon + " Alpha = " + alpha);
+
         return returnAction;
+
     }
 
     @Override
     public Action agent_step(Reward reward, Observation observation) 
     {
         numOfSteps++;
-        accumulatedImpact += reward.getDouble(1); // get the impact-measuring reward
-        vf.setAccumulatedImpact(accumulatedImpact);
 
         int state = stateConverter.getStateNumber( observation );
         int action;
@@ -223,23 +197,7 @@ public class Agg_Agent implements AgentInterface {
         }
         // in either case, can now add this state-action to the trace stack
         tracingStack.add( new StateActionDiscrete(observation, returnAction ) );
-        if (debugging)
-        {
-        	for (int i=0; i<numActions; i++)
-        	{
-        		System.out.print("(");
-        		double[] q = vf.getQValues(i, state);
-        		for (int j=0; j<numOfObjectives; j++)
-        		{
-        			System.out.print(q[j]+" ");
-        		}
-        		System.out.print(") ");
-        	}
-        	System.out.println();
-        	greedyAction = ((ActionSelector)vf).chooseGreedyAction(state);
-        	System.out.println("Step: " + numOfSteps +"\tState: " + state + "\tGreedy action: " + greedyAction + "\tAction: " + action + "\tImpact: " + reward.getDouble(1) + "\tReward: " + reward.getDouble(0));
-        	System.out.println();
-        }
+
         return returnAction;
     }
 
@@ -247,6 +205,7 @@ public class Agg_Agent implements AgentInterface {
     public void agent_end(Reward reward) 
     {
   	  	numOfSteps++;
+  	  	numEpisodes++;
   	  	epsilon -= epsilonLinearDecay;
   	  	temperature *= temperatureDecayRatio;
         if (!policyFrozen) {
@@ -274,11 +233,6 @@ public class Agg_Agent implements AgentInterface {
                 }
             }
         }
-        if (debugging)
-        {
-        	System.out.println("Step: " + numOfSteps + "\tImpact: " + reward.getDouble(1) + "\tReward: " + reward.getDouble(0));
-        	System.out.println("---------------------------------------------");
-        }
     }
 
     @Override
@@ -286,7 +240,8 @@ public class Agg_Agent implements AgentInterface {
         vf = null;
         policyFrozen = false;
     }
-    
+
+  
     private int getAction(int state) {
         ActionSelector valueFunction = (ActionSelector) vf;
         int action;
@@ -294,11 +249,12 @@ public class Agg_Agent implements AgentInterface {
         {
         	switch (explorationStrategy)
         	{
-	        	case Agg_LookupTable.EGREEDY: 
+	        	case TLO_LookupTable.EGREEDY: 
 	        		action = valueFunction.choosePossiblyExploratoryAction(epsilon, state); 
 	        		break;
-	        	case Agg_LookupTable.SOFTMAX_TOURNAMENT: 
-	        	case Agg_LookupTable.SOFTMAX_ADDITIVE_EPSILON : 
+	        	case TLO_LookupTable.SOFTMAX_TOURNAMENT: 
+	        		
+	        	case TLO_LookupTable.SOFTMAX_ADDITIVE_EPSILON : 
 	        		action = valueFunction.choosePossiblyExploratoryAction(temperature, state);
 	        		break;
 	        	default:
@@ -322,23 +278,18 @@ public class Agg_Agent implements AgentInterface {
 
     @Override
     public String agent_message(String message) {
-    	
-        if (message.equals("stop")) {
-    		this.agentloader.killProcess();
-    		return "stopped";
-    	}
     	if (message.equals("get_agent_name"))
     	{
-    		return aggregatorstring;
+    		return "SOSE";
     	}
         if (message.equals("freeze_learning")) {
             policyFrozen = true;
             System.out.println("Learning has been freezed");
             return "message understood, policy frozen";
         }
-        else if (message.startsWith("change_weights")){
-            System.out.print(this.aggregatorstring+": Weights can not be changed");
-            return this.aggregatorstring+": Weights can not be changed";
+        if (message.startsWith("change_weights")){
+            System.out.print("SideEffectSingleObjectiveAgent: Weights can not be changed");
+            return "SideEffectSingleObjectiveAgent: Weights can not be changed";
         }
         if (message.startsWith("set_learning_parameters")){
         	System.out.println(message);
@@ -348,7 +299,7 @@ public class Agg_Agent implements AgentInterface {
         	gamma = Double.valueOf(parts[3]).doubleValue();
         	explorationStrategy = Integer.valueOf(parts[4]).intValue();
         	vf.setExplorationStrategy(explorationStrategy);
-        	System.out.print("Alpha = " + alpha + " Lambda = " + lambda + " Gamma = " + gamma + " exploration = " + Agg_LookupTable.explorationStrategyToString(explorationStrategy));
+        	System.out.print("Alpha = " + alpha + " Lambda = " + lambda + " Gamma = " + gamma + " exploration = " + TLO_LookupTable.explorationStrategyToString(explorationStrategy));
             System.out.println();
             return "Learning parameters set";
         }
@@ -367,46 +318,22 @@ public class Agg_Agent implements AgentInterface {
             System.out.println("Starting temperature changed to " + startingTemperature + " Decay ratio = " + temperatureDecayRatio);
             return "softmax parameters changed";
         } 
-        else if (message.equals("start_new_trial")){
+        if (message.equals("start_new_trial")){
         	resetForNewTrial();
             System.out.println("New trial started: Q-values and other variables reset");
             return "New trial started: Q-values and other variables reset";
         }
-        else if (message.equals("start-debugging"))
-    	{
-    		debugging = true;
-    		return "Debugging enabled in agent";
-    	}
-        else if (message.equals("stop-debugging"))
-    	{
-    		debugging = false;
-    		return "Debugging disabled in agent";
-    	}
-        System.out.println(this.aggregatorstring+" - unknown message: " + message);
-        return this.aggregatorstring+" does not understand your message.";
-    }
-    
-    // used for debugging with the ComparisonAgentForDebugging
-    // dumps Q-values and feedback on action-selection for the current Observation
-    public void dumpInfo(Observation observation, Action thisAction, Action otherAgentAction)
-    {
-        int state = stateConverter.getStateNumber(observation);
-        int action = thisAction.getInt(0);
-        int otherAction = otherAgentAction.getInt(0);
-        System.out.println(this.aggregatorstring);
-		System.out.println("\tEpisode" + numEpisodes + "Step: " + numOfSteps +"\tState: " + "\tAction: " + action);
-		System.out.println("\tIs other agent's action greedy for me? " + ((ActionSelector)vf).isGreedy(state,otherAction));
-    	for (int i=0; i<numActions; i++)
-    	{
-    		System.out.print("\t(");
-    		double[] q = vf.getQValues(i, state);
-    		for (int j=0; j<numOfObjectives; j++)
-    		{
-    			System.out.print(q[j]+" ");
-    		}
-    		System.out.print(") ");
-    	}
-        System.out.println();    	
+        System.out.println("SOSideEffectsEgent - unknown message: " + message);
+        return "SideEffectSingleObjectiveAgent does not understand your message.";
     }
 
+    public static void main(String[] args) {
+    	String port = "4096";
+    	String host = "localhost";
+    	if(args.length > 0) {
+    		port = args[0];
+    	}
+        AgentLoader theLoader = new AgentLoader(host,port, new Agg_SideEffectSingleObjectiveAgent(args));
+        theLoader.run();
+    }
 }
