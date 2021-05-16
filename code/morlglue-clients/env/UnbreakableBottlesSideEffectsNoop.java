@@ -126,6 +126,10 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	
+    	if (message.equals("get env name")) {
+    		return "UnbreakableBottlesNoop";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;

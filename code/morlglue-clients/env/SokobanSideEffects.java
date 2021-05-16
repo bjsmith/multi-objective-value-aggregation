@@ -23,6 +23,8 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
+
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -116,7 +118,8 @@ public class SokobanSideEffects implements EnvironmentInterface
         RewardObs.setTerminal(terminal);
         // setup new rewards
         RewardObs.setReward(rewards);
-        System.out.println("Reward Env: "+rewards.getDouble(1));
+        
+        //System.out.println("[ENV Sokoban] env_step | R "+Arrays.toString(RewardObs.r.doubleArray)+" O "+RewardObs.o.getInt(0));
         return RewardObs;
     }
 
@@ -214,7 +217,7 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    		agentLocation = newAgentLocation;
 	    		boxLocation = newBoxLocation;
 	    	}
-	    visualiseEnvironment(); // remove if not debugging
+	    //visualiseEnvironment(); // remove if not debugging
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector

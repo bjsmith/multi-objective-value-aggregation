@@ -1,6 +1,7 @@
 package experiments;
+
 /*
-Copyright 2007 Brian Tanner
+Copyright 2007 Brian Tanner (modified 2021 by Robert Klassert)
 brian@tannerpages.com
 http://brian.tannerpages.com
 
@@ -19,6 +20,7 @@ limitations under the License.
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.RLGlueInterface;
+import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
@@ -39,7 +41,8 @@ public class LocalGlueNew implements RLGlueInterface {
     Action lastAction = null;
     boolean isTerminal = false;
     int numSteps = 0;
-    Reward totalReward = new Reward();
+    Reward totalReward = new Reward(); // changed to Reward class
+    Reward rewardBlueprint = null; // added
     int numEpisodes = 0;
 
     public LocalGlueNew(EnvironmentInterface E, AgentInterface A) {
@@ -76,6 +79,10 @@ public class LocalGlueNew implements RLGlueInterface {
         A.agent_init(taskSpec);
         numEpisodes = 0;
         numSteps = 0;
+        // added reward blueprint based on taskSpec
+        TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpec);
+        int numObjectives = theTaskSpec.getNumOfObjectives();
+        rewardBlueprint = new Reward(0, numObjectives, 0);
         return taskSpec;
     }
 
@@ -89,7 +96,7 @@ public class LocalGlueNew implements RLGlueInterface {
     public synchronized Observation RL_env_start() {
         numSteps = 1;
         isTerminal = false;
-        totalReward = new Reward();
+        totalReward = new Reward(rewardBlueprint); // initialize with blueprint reward
 
         Observation o = E.env_start();
         if (o == null) {
@@ -97,6 +104,7 @@ public class LocalGlueNew implements RLGlueInterface {
         }
         return o;
     }
+    
     public synchronized Action RL_agent_start(Observation theObservation) {
         Action theAction=A.agent_start(theObservation);
             if (theAction == null) {
@@ -113,9 +121,14 @@ public class LocalGlueNew implements RLGlueInterface {
         if (RO.getObservation() == null) {
             System.err.println("Ro.o came back as null from RL_step");
         }
+        
+        //System.out.println("[LOCALGLUE] RL_env_step | R "+Arrays.toString(RO.r.doubleArray)+" O "+RO.o.getInt(0));
 
         Reward newReward = RO.getReward();
-        totalReward.plusEquals(newReward);
+        //System.out.println("[LOCALGLUE] totalReward update | before "+Arrays.toString(this.totalReward.doubleArray));
+        totalReward.plusEquals(newReward); // add all internal reward arrays
+        //System.out.println("[LOCALGLUE] totalReward update | after "+Arrays.toString(this.totalReward.doubleArray));
+
         
         if (RO.isTerminal()) {
             numEpisodes++;
@@ -125,8 +138,9 @@ public class LocalGlueNew implements RLGlueInterface {
         return RO;
     }
 
-
     public synchronized Action RL_agent_step( Reward theReward, Observation theObservation) {
+        //System.out.println("[LOCALGLUE] RL_agent_step | R "+Arrays.toString(theReward.doubleArray)+" O "+theObservation.getInt(0));
+
         Action theAction=A.agent_step(theReward, theObservation);
             if (theAction == null) {
                 System.err.println("theAction came back as null from agent_step");
@@ -143,7 +157,8 @@ public class LocalGlueNew implements RLGlueInterface {
             System.err.println("lastAction came back as null from RL_step");
         }
         Reward_observation_terminal RO=RL_env_step(lastAction);
-       
+        //System.out.println("[LOCALGLUE] RL_step | R "+Arrays.toString(RO.r.doubleArray)+" O "+RO.o.getInt(0));
+
 
         if (RO.isTerminal()) {
             RL_agent_end(RO.getReward());
@@ -167,7 +182,9 @@ public class LocalGlueNew implements RLGlueInterface {
         RL_start();
         /* RL_start sets current step to 1, so we should start x at 1 */
         for (currentStep = 1; rlStepResult.terminal != 1 && (maxStepsThisEpisode == 0 ? true : currentStep < maxStepsThisEpisode); currentStep++) {
-            rlStepResult = RL_step();
+        	rlStepResult = RL_step();
+            //System.out.println("[LOCALGLUE] RL_episode loop | R "+Arrays.toString(rlStepResult.r.doubleArray)+" O "+rlStepResult.o.getInt(0));
+
         }
 
         /*Return the value of terminal to tell the caller whether the episode ended naturally or was cut off*/

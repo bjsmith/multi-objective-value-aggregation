@@ -1,25 +1,14 @@
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
-import org.rlcommunity.rlglue.codec.util.AgentLoader;
-import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import agents.*;
 import env.*;
 import experiments.*;
+import experiments.LocalExperiment.ExperimentSettings;
+import experiments.LocalExperiment.ExperimentBuilder;
 
 
 public class MORL_Glue_Local
@@ -36,32 +25,34 @@ public class MORL_Glue_Local
 	}
 	
 	// Runs all combinations of (agent, environment, experiment)
-	public static void runExperiments(String outpath) {
-		// comment out agents/environments/experiments that you don't want to run (at least one needed per list)
-		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{
-				//put("SFLLA", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {Agg_Agent2.main(new String[] {"SFLLA"});}};}});
-				//put("LELA", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {Agg_Agent.main(new String[] {"LELA"});}};}});
-				//put("SFMLA", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {Agg_Agent.main(new String[] {"SFMLA"});}};}});
-				//put("MIN", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {try {MIN_Agent a = new MIN_Agent();a.main();}catch(Exception e){}}};}});				
-				put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
-				//put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
-				//put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
-				//put("TLO_P", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SatisficingMOAgent();}});
+	@SuppressWarnings("serial")
+	public static void runExperiments() {
+		// comment out agents that you don't want to run (at least one needed per list)
+		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{	
+			// our agents
+			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA"});}});
+			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA"});}});
+			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA"});}});
+			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA"});}});
+			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});}});
+			// Peter's agents
+			//put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
+			//put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
+			//put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
+			//put("TLO_P", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SatisficingMOAgent();}});
 		}};
 
+		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
-				//put("BreakableBottles", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {BreakableBottlesSideEffectsV2.main(new String[] {"SFLLA"});}};}});
-			//put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
-			//put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
+			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
 			put("Sokoban", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new SokobanSideEffects();}});
-			//put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
-				//put("Sokoban", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {SokobanSideEffects.main(null);}};}});
-				//put("Doors", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {try {Doors.main(null);}catch(Exception e){}}};}});
+			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
 		}};
-
-		//Map<String, ThreadGenerator> experiments = new HashMap<String, ThreadGenerator>(){{
-		//		put("Standard", new ThreadGenerator(){public Thread getThread(String[] args) {return new Thread() {public void run() {SideEffectExperimentWithExcelOutput.main(args);}};}});
-		//}};
+		
+		// define experiment settings
+		String experiment_id = "Test";
+		String outpath = "data";
 		
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
@@ -69,24 +60,26 @@ public class MORL_Glue_Local
 
 	    for(String astring : agents.keySet()) {
 	    	for(String envstring : envs.keySet()) {
+	    		// generator agent and environment
 	    		AgentGenerator atg = agents.get(astring);
 	    		EnvGenerator etg = envs.get(envstring);
 	    		EnvironmentInterface env = etg.getEnv(new String[] {});
 	    		AgentInterface agent = atg.getAgent(new String[] {});
-	    		LocalExperiment.main(agent, env, new String[] {outpath});
+	    		
+	    		// build experiment settings and run experiment
+	    		ExperimentSettings settings = new ExperimentBuilder()
+						.name(experiment_id).outpath(outpath)
+						.agent(astring).env(envstring)
+						.buildExperiment();
+	    		LocalExperiment.main(agent, env, settings);
 	    	}
 	    }
+	    System.out.println("FINISHED ALL EXPERIMENTS.");
 	}
 	
-
 	public static void main(String[] args) 
 	{		
-		String outpath = "data";
-		File theDir = new File(outpath);
-		if (!theDir.exists()){
-		    theDir.mkdirs();
-		}
-		runExperiments(outpath);
+		runExperiments();
 	}
 	
 }

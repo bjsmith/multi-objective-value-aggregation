@@ -297,10 +297,12 @@ public class SideEffectSingleObjectiveAgent implements AgentInterface {
     }
 
     public static void main(String[] args) {
-        AgentLoader theLoader = new AgentLoader( new SideEffectSingleObjectiveAgent() );
+    	String port = "4096";
+    	String host = "localhost";
+    	if(args.length > 0) {
+    		port = args[0];
+    	}
+        AgentLoader theLoader = new AgentLoader(host,port, new SideEffectSingleObjectiveAgent());
         theLoader.run();
-
     }
-
-
 }

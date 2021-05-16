@@ -120,6 +120,10 @@ public class SokobanSideEffectsNoop implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	
+    	if (message.equals("get env name")) {
+    		return "SokobanNoop";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;

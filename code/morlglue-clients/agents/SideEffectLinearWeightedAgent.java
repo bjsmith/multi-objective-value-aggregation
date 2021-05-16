@@ -9,6 +9,7 @@
 package agents;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Stack;
 
@@ -64,7 +65,7 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
 
     @Override
     public void agent_init(String taskSpecification) {
-    	System.out.println("SideEffectSingleObjectiveAgent launched");
+    	System.out.println("SideEffectLinearWeightedAgent launched");
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpecification);
 
         numActions = theTaskSpec.getDiscreteActionRange(0).getMax() + 1;
@@ -103,7 +104,7 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
 
     @Override
     public Action agent_start(Observation observation) {
-    	//System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon);
+    	System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon);
         tracingStack.clear();
         int state = stateConverter.getStateNumber( observation );
         int action = getAction(state);
@@ -119,6 +120,7 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
     @Override
     public Action agent_step(Reward reward, Observation observation) 
     {
+        //System.out.println("[AGENT Linear] agent_step | R "+Arrays.toString(reward.doubleArray)+" O "+observation.getInt(0));
         numOfSteps++;
 
         int state = stateConverter.getStateNumber( observation );
@@ -213,7 +215,7 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
         policyFrozen = false;
     }
 
-  
+ 
     private int getAction(int state) {
         ActionSelector valueFunction = (ActionSelector) vf;
         int action;
@@ -300,7 +302,12 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
     }
 
     public static void main(String[] args) {
-        AgentLoader theLoader = new AgentLoader( new SideEffectLinearWeightedAgent() );
+    	String port = "4096";
+    	String host = "localhost";
+    	if(args.length > 0) {
+    		port = args[0];
+    	}
+        AgentLoader theLoader = new AgentLoader(host, port, new SideEffectLinearWeightedAgent() );
         theLoader.run();
 
     }

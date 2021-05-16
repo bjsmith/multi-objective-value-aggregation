@@ -1,3 +1,8 @@
+// A modified version of the TLO_LookupTable created to support our potential-based
+// side-effect impact minimisation agent
+// Designed specifically for the side-ffects problems, so it maximises the value of the first objective
+// subject to meeting the threshold value for the (second objective + accumulated
+// reward for the second objective) - i.e. maximise goal reward subject to minimising impact
 package tools.valuefunction;
 
 import java.io.DataInputStream;
@@ -7,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import tools.valuefunction.interfaces.ActionSelector;
@@ -14,43 +20,23 @@ import tools.valuefunction.interfaces.LookupTable;
 
 public class Agg_LookupTable extends LookupTable implements ActionSelector 
 {
-	// constants to label the different exploration strategies
-	public static final int EGREEDY = 0;
-	public static final int SOFTMAX_TOURNAMENT = 1;
-	public static final int SOFTMAX_ADDITIVE_EPSILON = 2;
-	
-    
-    Random r = null;
-    int explorationStrategy = 0; // default is egreedy
-    Aggregator aggregator;
     double thisStateValues[][];
+    double summedImpact;
+    double thresholds[];
+    Aggregator aggregator;
 
-    public Agg_LookupTable( int numberOfObjectives, int numberOfActions, int numberOfStates, int initValue, Aggregator agg) 
+    public Agg_LookupTable( int numberOfObjectives, int numberOfActions, int numberOfStates, int initValue, double threshold, Aggregator agg) 
     {
         super(numberOfObjectives, numberOfActions, numberOfStates, initValue);
-        r = new Random(499);    
+        if (numberOfObjectives!=3)
+        	System.out.println("ERROR!!! Don't use SafetyFirstLookupTable for problems other than side-effects ones."); 
+        thresholds = new double[1];
+        thresholds[0] = threshold; // only the impact measure should be thresholded
+        thisStateValues = new double[numberOfActions][2]; // leave out the performance objective to avoid any risk of accidentally using it in action selection
         this.aggregator = agg;
-        thisStateValues = new double[numberOfActions][numberOfObjectives];
     }
     
-    // set the exploration strategy
-    public void setExplorationStrategy(int ex)
-    {
-    	explorationStrategy = ex;
-    }
-    
-    // returns a String representing the exploration strategy
-    public static String explorationStrategyToString(int ex)
-    {
-    	switch (ex)
-    	{
-    		case EGREEDY: return "eGreedy";
-    		case SOFTMAX_TOURNAMENT: return "softmax_t";
-    		case SOFTMAX_ADDITIVE_EPSILON: return "softmax_+E";
-    		default: return "Unknown";
-    	}
-    }
-    
+       
     // for debugging purposes - print out Q- values for all actions for the current state
     public void printCurrentStateValues(int state)
     {
@@ -70,24 +56,30 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     
     // This is a bit of a hack to get around the fact that the structure of Rustam's lookup table doesn't map nicely
     // on to my TLO library functions. The whole Agent and ValueFunction structure of Rustam's code needs to be refactored at some point
-    // Copies the q-values for the current state into the 2 dimensional arraythisStateValues index by [action][objective]
+    // This also re-orders the objectives, adds the accumulated impact on, so as to
+    // meet the requirements of the side-effect minimising agent
     private void getActionValues(int state)
     {
-    	for (int obj=0; obj<numberOfObjectives; obj++)
-    	{
-    		double[][] thisObjQ = valueFunction.get(obj);
-    		for (int a=0; a<numberOfActions; a++)
-    		{
-    			thisStateValues[a][obj] = thisObjQ[a][state];
-    		}
-    	}    	
+		for (int a=0; a<numberOfActions; a++)
+		{
+			// copy the impact-reward values + accumulated impact into the first field
+			thisStateValues[a][0] = valueFunction.get(1)[a][state] + summedImpact;
+			// copy the goal-reward into the second field
+			thisStateValues[a][1] = valueFunction.get(0)[a][state];
+			// ignore the performance-reward values as we shouldn't have access to them anyway
+		}
+    }
+    
+    public void setAccumulatedImpact(double accumulatedImpact)
+    {
+    	summedImpact = accumulatedImpact;
     }
 
     @Override
     public int chooseGreedyAction(int state) 
     {
     	getActionValues(state);
-    	return AggregatorUtils.greedyAction(thisStateValues, this.aggregator); 
+    	return TLO.greedyAction(thisStateValues, thresholds); 
     }
     
     // returns true if action is amongst the greedy actions for the specified
@@ -95,25 +87,16 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     public boolean isGreedy(int state, int action)
     {  
     	getActionValues(state);
-    	int best = AggregatorUtils.greedyAction(thisStateValues, this.aggregator); 
+    	int best = AggregatorUtils.greedyAction(thisStateValues, aggregator); 
     	// this action is greedy if it is TLO-equal to the greedily selected action
-    	return (AggregatorUtils.compare(thisStateValues[action], thisStateValues[best], this.aggregator)==0);
+    	return (AggregatorUtils.compare(thisStateValues[action], thisStateValues[best], aggregator)==0);
     }
-    
-    // simple eGreedy selection
-    private int eGreedy(double epsilon, int state)
-    {
-    	if (r.nextDouble()<=epsilon)
-    		return r.nextInt(numberOfActions);
-    	else
-    		return chooseGreedyAction(state);
-    }
-    
+       
     // softmax selection based on tournament score (i.e. the number of actions which each action TLO-dominates)
     protected int softmaxTournament(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
-    	double scores[] = AggregatorUtils.getDominanceScore(thisStateValues,this.aggregator);
+    	double scores[] = TLO.getDominanceScore(thisStateValues,thresholds);
     	return Softmax.getAction(scores,temperature,best);
     }
     
@@ -121,34 +104,16 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     protected int softmaxAdditiveEpsilon(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
-    	double scores[] = AggregatorUtils.getInverseAdditiveEpsilonScore(thisStateValues,best);
+    	double scores[] = TLO.getInverseAdditiveEpsilonScore(thisStateValues,best);
     	return Softmax.getAction(scores,temperature,best);
-    }
-    
-    // This will call one of a variety of different exploration approaches
-    public int choosePossiblyExploratoryAction(double parameter, int state)
-    {
-    	if (explorationStrategy==EGREEDY)
-    		return eGreedy(parameter, state);
-    	else if (explorationStrategy==SOFTMAX_TOURNAMENT)
-    		return softmaxTournament(parameter, state);
-    	else if (explorationStrategy==SOFTMAX_ADDITIVE_EPSILON)
-    		return softmaxAdditiveEpsilon(parameter, state);
-    	else
-    	{
-    		System.out.println("Error - undefined exploration strategy" + explorationStrategy);
-    		return -1; // should cause a crash to halt proceedings
-    	}
-    	
-    }
-    
+    }    
 
-    public Aggregator getAggregator() {
-        return this.aggregator;
+    public double[] getThresholds() {
+        return thresholds;
     }
 
-    public void setAggregator(Aggregator agg) {
-        this.aggregator = agg;
+    public void setThresholds(double[] thresholds) {
+        this.thresholds = thresholds;
     }
     
      public void saveValueFunction(String theFileName) {
@@ -196,5 +161,5 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
             System.err.println("Problem reading value function from file:: " + ex);
         }
     }
-   
+      
 }
