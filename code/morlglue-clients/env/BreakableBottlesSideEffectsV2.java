@@ -148,6 +148,9 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	if (message.equals("get env name")) {
+    		return "BreakableBottles";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;

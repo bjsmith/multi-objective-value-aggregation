@@ -76,6 +76,8 @@ public class Doors implements EnvironmentInterface
     // debugging variables
     boolean debugging = false;
     
+    public EnvironmentLoader envloader;
+    
     // Implemented for use in debugging the TLO-PA agent. Lets me generate the state index for a given state so I can look it up
     // in the agent's Q-table
     private void printStateIndex(int agent, boolean door1, boolean door2)
@@ -163,6 +165,10 @@ public class Doors implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	
+    	if (message.equals("get env name")) {
+    		return "Doors";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;
@@ -173,6 +179,10 @@ public class Doors implements EnvironmentInterface
     	{
     		debugging = false;
     		return "Debugging disabled in envt";
+    	}
+    	if (message.equals("stop")) {
+    		this.envloader.killProcess();
+    		return "stopped";
     	}
         throw new UnsupportedOperationException(message + " is not supported by SokobanSideEffects environment.");
     }
@@ -274,8 +284,13 @@ public class Doors implements EnvironmentInterface
     
     public static void main(String[] args) 
     {
-        EnvironmentLoader theLoader = new EnvironmentLoader(new Doors());
+    	Doors doors = new Doors();
+        EnvironmentLoader theLoader = new EnvironmentLoader(doors);
+        doors.envloader = theLoader;
         theLoader.run();
+        if (Thread.currentThread().isInterrupted()) {
+      	  theLoader.killProcess();
+      }
     }
 
 

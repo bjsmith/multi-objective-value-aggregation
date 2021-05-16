@@ -8,8 +8,6 @@
 
 package agents;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
@@ -20,14 +18,12 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 
-import tools.hypervolume.Point;
 import tools.staterep.DummyStateConverter;
 import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionDiscrete;
 import tools.valuefunction.SafetyFirstLookupTable;
 import tools.valuefunction.TLO_LookupTable;
 import tools.valuefunction.interfaces.ActionSelector;
-import tools.valuefunction.interfaces.ValueFunction;
 
 
 public class SafetyFirstMOAgent implements AgentInterface {
@@ -38,7 +34,7 @@ public class SafetyFirstMOAgent implements AgentInterface {
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private boolean debugging = true;
+    private boolean debugging = false;
     private Random random;
 
     private int numActions = 0;

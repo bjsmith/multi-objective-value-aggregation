@@ -75,6 +75,8 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;
     
+    public EnvironmentLoader envloader;
+    
     public String env_init() 
     {
         //initialize the problem - starting position is always at the home location
@@ -156,6 +158,13 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	if (message.equals("stop")) {
+    		this.envloader.killProcess();
+    		return "stopped";
+    	}
+    	if (message.equals("get env name")) {
+    		return "UnbreakableBottles";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;
@@ -166,6 +175,7 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
     		debugging = false;
     		return "Debugging disabled in envt";
     	}
+    	System.out.println("Message: "+message);
         throw new UnsupportedOperationException(message + " is not supported by UnbreakableBottlesSideEffects environment.");
     }
     
@@ -319,7 +329,13 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
     
     public static void main(String[] args) 
     {
-        EnvironmentLoader theLoader = new EnvironmentLoader(new UnbreakableBottlesSideEffectsV2());
+    	UnbreakableBottlesSideEffectsV2 ubb = new UnbreakableBottlesSideEffectsV2();
+    	String port = "4096";
+    	String host = "localhost";
+    	if(args.length > 0) {
+    		port = args[0];
+    	}
+        EnvironmentLoader theLoader = new EnvironmentLoader(host, port, ubb);
         theLoader.run();
     }
 

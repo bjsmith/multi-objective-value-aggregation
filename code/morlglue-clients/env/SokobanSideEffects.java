@@ -73,7 +73,7 @@ public class SokobanSideEffects implements EnvironmentInterface
 	
     public String env_init() 
     {
-        //initialize the problem - starting position is always at the home location
+    	//initialize the problem - starting position is always at the home location
         agentLocation = AGENT_START;
         boxLocation = BOX_START;
         terminal = false;
@@ -116,6 +116,7 @@ public class SokobanSideEffects implements EnvironmentInterface
         RewardObs.setTerminal(terminal);
         // setup new rewards
         RewardObs.setReward(rewards);
+        System.out.println("Reward Env: "+rewards.getDouble(1));
         return RewardObs;
     }
 
@@ -128,6 +129,10 @@ public class SokobanSideEffects implements EnvironmentInterface
 
     public String env_message(String message) 
     {
+    	
+    	if (message.equals("get env name")) {
+    		return "Sokoban";
+    	}
     	if (message.equals("start-debugging"))
     	{
     		debugging = true;
@@ -209,7 +214,7 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    		agentLocation = newAgentLocation;
 	    		boxLocation = newBoxLocation;
 	    	}
-	    //visualiseEnvironment(); // remove if not debugging
+	    visualiseEnvironment(); // remove if not debugging
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
