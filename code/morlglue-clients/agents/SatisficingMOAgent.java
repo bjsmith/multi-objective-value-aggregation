@@ -244,7 +244,7 @@ public class SatisficingMOAgent implements AgentInterface {
     public Action agent_step(Reward reward, Observation observation) 
     {
         
-    	long set1_start = System.nanoTime(); 
+    	//long set1_start = System.nanoTime(); 
 
         
         numOfSteps++;
