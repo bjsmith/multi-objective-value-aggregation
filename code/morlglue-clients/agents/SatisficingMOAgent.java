@@ -12,6 +12,7 @@ package agents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.Stack;
 
@@ -90,6 +91,14 @@ public class SatisficingMOAgent implements AgentInterface {
     int saVisits[][];
 
     StateConverter stateConverter = null;
+    
+    //debugging time
+//    double duration1 = System.nanoTime() - System.nanoTime();
+//    double duration2 = System.nanoTime() - System.nanoTime();
+//    double duration3 = System.nanoTime() - System.nanoTime();
+//    double duration4 = System.nanoTime() - System.nanoTime();
+//    double duration5 = System.nanoTime() - System.nanoTime();
+//    double duration6 = System.nanoTime() - System.nanoTime();
 
     @Override
     public void agent_init(String taskSpecification) {
@@ -130,17 +139,32 @@ public class SatisficingMOAgent implements AgentInterface {
     
     private void resetForNewEpisode()
     {
+    	//double set5_start = System.nanoTime();
+    	//if (debugging) debugHelper();
+    	
   	  	numEpisodes++;
         numOfSteps = 0; 
         accumulatedPrimaryReward = 0.0; accumulatedImpact = 0.0;
         vf.setAccumulatedReward(accumulatedPrimaryReward);    
         vf.setAccumulatedImpact(accumulatedImpact);
-        tracingStack.clear();
+        
+//    	double set5_duration = System.nanoTime() - set5_start;
+//        duration5 = duration5 + set5_duration;
+//
+//        double set6_start = System.nanoTime();
+//        tracingStack.clear();
         
         //DEBUGGING STUFF
-        for (int s=0; s<numStates; s++)
-        	for (int a=0; a<numActions; a++)
-        		saVisits= new int[numStates][numActions];
+        if(debugging) {
+        	for (int s=0; s<numStates; s++)
+            	for (int a=0; a<numActions; a++)
+            		saVisits= new int[numStates][numActions];
+        }
+        
+        
+//    	double set6_duration = System.nanoTime() - set6_start;
+//        duration6 = duration6 + set6_duration;
+
     }
     
     // combines the observed state info with the discretised primary reward to get the augmented state index
@@ -178,10 +202,13 @@ public class SatisficingMOAgent implements AgentInterface {
 
     @Override
     public Action agent_start(Observation observation) {
+//    	double set3_start = System.nanoTime();
     	//if (debugging) debugHelper();
     	resetForNewEpisode();
+    	
         int state = getAugmentedStateIndex(observation);
         int action = getAction(state);
+        
 
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = action;
@@ -203,6 +230,12 @@ public class SatisficingMOAgent implements AgentInterface {
     		System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon + " Alpha = " + alpha);
     		System.out.println("Step: " + numOfSteps +"\tState: " + state + "\tGreedy action: " + greedyAction + "\tAction: " + action);
     	}
+
+//    	System.out.println("duration 1 + 2: " + (duration1 + duration2));
+//    	System.out.println("duration3: " + duration3);
+//    	System.out.println("duration4: " + duration4);
+//    	System.out.println("duration5: " + duration5);
+//    	System.out.println("duration6: " + duration6);
    		//System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon + " Alpha = " + alpha);
         return returnAction;
     }
@@ -210,6 +243,10 @@ public class SatisficingMOAgent implements AgentInterface {
     @Override
     public Action agent_step(Reward reward, Observation observation) 
     {
+        
+    	long set1_start = System.nanoTime(); 
+
+        
         numOfSteps++;
         accumulatedPrimaryReward += reward.getDouble(0); // get the primary reward
         vf.setAccumulatedReward(accumulatedPrimaryReward);
@@ -219,6 +256,12 @@ public class SatisficingMOAgent implements AgentInterface {
         int state = getAugmentedStateIndex(observation);
         int action;
         int greedyAction = ((ActionSelector)vf).chooseGreedyAction(state);
+        
+//        double set1_duration = System.nanoTime() - set1_start;
+//        duration1 = duration1 + set1_duration;
+        
+//        double set2_start = System.nanoTime(); 
+
 
         if (!policyFrozen) {
             double currentLambda = lambda;
@@ -281,6 +324,10 @@ public class SatisficingMOAgent implements AgentInterface {
         	System.out.println("Step: " + numOfSteps +"\tState: " + state + "\tGreedy action: " + greedyAction + "\tAction: " + action + "\tImpact: " + reward.getDouble(1) + "\tReward: " + reward.getDouble(0));
         	System.out.println();
         }
+        
+//        double set2_duration = System.nanoTime() - set2_start;
+//        duration2 = duration2 + set2_duration;
+        
         return returnAction;
     }
 
