@@ -34,7 +34,7 @@ public class LocalExperiment
 	    
 	    int EXPLORATION_PARAMETER = 10; 
     	int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-    	int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
+    	int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
     	int MAX_EPISODE_LENGTH = 1000;
     	
     	public ExperimentSettings(String name, String outpath, String agent, String env, double alpha, double lambda, double gamma,
@@ -170,7 +170,7 @@ public class LocalExperiment
     	String envName = RLGlue.RL_env_message("get env name");
     	
     	// create excel sheet
-    	final String fileName = settings.OUTPATH + "/" + envName+"-"+agentName+"-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA;
+    	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA;
     	excel = new JxlExcelWriter(fileName);
     	
     	System.out.println("**********************************************");

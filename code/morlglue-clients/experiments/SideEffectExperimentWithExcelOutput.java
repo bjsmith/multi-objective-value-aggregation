@@ -50,9 +50,9 @@ public class SideEffectExperimentWithExcelOutput
 	// alter these declarations to match the Environment being used	
     // Settings for the BreakableBottles task
 	    private final String ENVIRONMENT_PREFIX = "Breakable";
-	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 500;
+	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 3000;
 	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10;
-	    private final int MAX_EPISODE_LENGTH = 100;
+	    private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the UnbreakableBottles task
 
 //	    private final String ENVIRONMENT_PREFIX = "Test";

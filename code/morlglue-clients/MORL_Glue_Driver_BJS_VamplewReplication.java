@@ -31,7 +31,7 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 		          public void run(){
 		            System.out.println("Started agent thread");
 		            
-		            String agent_to_run = "TLO^{PA}";
+		            String agent_to_run = "TLO^A";
 		            
 		            
 		            
@@ -56,9 +56,9 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 	            	double minPrimaryReward = -1000; // the lowest reward obtainable
 	            	double maxPrimaryReward = 44;	// the highest reward obtainable   
 	            // For Sokoban and Doors
-	            	//double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
-	            	//double minPrimaryReward = -1000; // the lowest reward obtainable
-	            	//double maxPrimaryReward = 50;	// the highest reward obtainable
+//	            	double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
+//	            	double minPrimaryReward = -1000; // the lowest reward obtainable
+//	            	double maxPrimaryReward = 50;	// the highest reward obtainable
 
 		            
 		            if (agent_to_run=="TLO^P") {
