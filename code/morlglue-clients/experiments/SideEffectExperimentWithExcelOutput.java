@@ -15,6 +15,7 @@ import tools.spreadsheet.*;
 import agents.TLO_Agent;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class SideEffectExperimentWithExcelOutput 
 {
@@ -103,7 +104,10 @@ public class SideEffectExperimentWithExcelOutput
     	String agentName = RLGlue.RL_agent_message("get_agent_name");
     	String envName = RLGlue.RL_env_message("get env name");
     	System.out.println("RUNNING " + " WITH "+agentName+" in  "+envName);
-    	final String fileName = outpath + "/" + envName+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA;
+    	
+    	String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    	
+    	final String fileName = outpath + "/" + envName+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA + "-dt" + timeStamp;
     	excel = new JxlExcelWriter(fileName);
     	
         RLGlue.RL_agent_message(PARAM_CHANGE_STRING + " " + EXPLORATION_PARAMETER + " " + NUM_ONLINE_EPISODES_PER_TRIAL);       

@@ -1,0 +1,181 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+This notebook demos opening different Excel files and printing their output.
+```{r}
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(signal)
+library(stringr)
+library(directlabels)
+
+```
+
+
+Now--great--can we compare different sheets?
+
+
+
+
+```{r}
+#list files
+files <- list.files("../data/bjs_5000epi/")
+#regex read the main properties of each sheet
+file_list <- stringr::str_match(files,'^(\\w*)-(\\w*)\\((\\w*)\\)') %>% data.frame %>% cbind(files,.)
+colnames(file_list) <- c("filename","full_code","Environment","Agent","AgentClass")
+
+#now we want to iterate through each of those and output the data
+raw_activity_list <- apply(file_list,1,function(row){
+ print(row[["full_code"]]) 
+  #load the spreadsheet
+  TLO_A_page0 <- readxl::read_xls(
+    paste0("../data/bjs_5000epi/",row[["filename"]]),
+    sheet = "Trial0")
+  
+  #clean the data
+  colnames(TLO_A_page0)[1] <- "EpisodeType"
+  TLO_A_page0$`Episode number` <- as.numeric(TLO_A_page0$`Episode number`)
+  #label the data
+  TLO_A_page0$Agent <- row[["Agent"]]
+  TLO_A_page0$Environment <- row[["Environment"]]
+  return(TLO_A_page0)
+})
+
+raw_activity <- do.call(rbind,raw_activity_list)
+print(object.size(raw_activity))
+#get memory efficiencies
+raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
+raw_activity$Environment <- as.factor(raw_activity$Environment)
+raw_activity$Agent <- as.factor(raw_activity$Agent)
+print(object.size(raw_activity))
+
+
+```
+
+
+Now we apply some of the postprocessing we did before:
+
+
+```{r}
+activity_long <-melt.data.table(data.table(raw_activity),id.vars =c("EpisodeType","Episode number","Agent","Environment"),variable.name = "Measure",value.name="Score")
+blackman50_window <- signal::blackman(50)/sum(signal::blackman(50))
+
+blackman50_function<-function(steps){
+  return(sum(blackman50_window*steps))
+}
+blackman200_window <- signal::blackman(200)/sum(signal::blackman(200))
+blackman200_function<-function(steps){
+  return(sum(blackman200_window*steps))
+}
+activity_long <- activity_long %>% group_by(Measure,EpisodeType,Agent,Environment) %>% 
+  mutate(
+    ScoreRMean10 = frollmean(Score,20),
+    ScoreBlackman = frollapply(Score,50,blackman50_function),
+    ScoreBlackman200 = frollapply(Score,200,blackman200_function)
+    ) %>% ungroup %>% data.table
+
+print(object.size(activity_long))
+
+```
+
+```{r fig.width=14}
+
+
+ggplot(
+  activity_long[EpisodeType=="Online" & Environment=="BreakableBottles" ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  geom_dl(aes(label=Agent),method= "last.qp",alpha=1)+
+  labs(y="Score")+facet_grid(cols = vars(Measure),scales="free_y")
+
+
+```
+Eliminate the worst two to make this a bit easier to read....
+
+
+```{r fig.width=14}
+
+for (model_env in unique(activity_long$Environment)){
+  myplot <- ggplot(
+  activity_long[EpisodeType=="Online" & Environment==model_env & !(Agent %in% c("ELA","MIN","SingleObjective")) ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim=c(0,5500))+
+  geom_dl(aes(label=Agent),method= list("last.bumpup", cex = 0.5))+
+  labs(y="Score",title=model_env)+#facet_grid(cols = vars(Measure),scales="free")
+  facet_wrap(Measure~.,nrow=1,scales="free")
+
+print(myplot)
+}
+
+```
+
+
+```{r fig.width=14}
+
+for (model_env in unique(activity_long$Environment)){
+  myplot <- ggplot(
+  activity_long[EpisodeType=="Online" & Environment==model_env & !(Agent %in% c("ELA","MIN","SingleObjective")) 
+                &(`Episode number` >=4000)
+                ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim=c(4000,5500))+
+  geom_dl(aes(label=Agent),method= list("last.bumpup", cex = 0.5))+
+  labs(y="Score",title=model_env)+#facet_grid(cols = vars(Measure),scales="free")
+  facet_wrap(Measure~.,nrow=1,scales="free")
+
+print(myplot)
+}
+
+```
+
+
+I think the absolute best we can hope for is to reach performance equivalent to the Linear environment for the $R^P$ but equivalent to the overall level in $R^*$. The Sokoban environment most clearly shows those differences.
+
+
+## Let's look at 
+
+## Offline performance
+
+```{r}
+for(model_env in unique(raw_activity$Environment)){
+
+  table_env <- data.table(raw_activity)[EpisodeType=="Offline" & Environment==model_env,]
+  table_env$EpisodeType=NULL
+  table_env$Environment=NULL
+  table_env$`Episode number`=NULL
+  print(model_env)
+  print(knitr::kable(table_env,caption = model_env))
+  
+}
+
+
+```
+
+
+
+## Now what?
+
+ - We can write a function to equalize the variance of each objective's input. We were always planning to do this. But I don't have a particular reason to think that'll help.
+ - Come up with a better algorithm??? 
+    - Not sure any conservative function can get us primary reward faster, though. It is designed to avoid that.
+    - We might be able to come up with an algorithm that obtains the safety objective faster?
+ - Think about other contexts where our approach would be more advantageous and see if we can implement _that_ environment.
+ - 
+ 
+ 
+ 
+ 
+
+
+

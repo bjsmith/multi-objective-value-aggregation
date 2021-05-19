@@ -4,6 +4,7 @@
 package experiments;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -170,7 +171,8 @@ public class LocalExperiment
     	String envName = RLGlue.RL_env_message("get env name");
     	
     	// create excel sheet
-    	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA;
+    	String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
     	excel = new JxlExcelWriter(fileName);
     	
     	System.out.println("**********************************************");

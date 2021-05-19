@@ -60,7 +60,7 @@ public class MORL_Glue_Driver_BJS2
 	    }
 	    agent.interrupt();
 		envt.interrupt();
-		//process.destroy();
+		process.destroy();
 		
 	    System.out.println("finished!");
 	    

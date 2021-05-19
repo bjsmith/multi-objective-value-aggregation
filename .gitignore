@@ -9,3 +9,4 @@
 
 # MacOS Finder preview files
 .DS_Store
+.Rproj.user

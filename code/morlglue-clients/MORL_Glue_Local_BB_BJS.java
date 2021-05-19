@@ -27,6 +27,9 @@ public class MORL_Glue_Local_BB_BJS
 	// Runs all combinations of (agent, environment, experiment)
 	@SuppressWarnings("serial")
 	public static void runExperiments() {
+		//BreakableBottles
+		
+		
 		//double primaryRewardThreshold = 1000; // use high value here to get lex-pa (for tlo-p or tlo-pa use the per envt thresholds below)
 		// For UnbreakableBottles
 //	    	double primaryRewardThreshold = -50; // sets threshold on the acceptable minimum level of performance on the primary reward

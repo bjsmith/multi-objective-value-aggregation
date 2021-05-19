@@ -37,9 +37,11 @@ public class MORL_Glue_Driver_BJS
 		            
 		            //AGENTS VAMPLEW SAYS ARE KEY FOR THE SAFETY PAPER
 		            //SideEffectSingleObjectiveAgent.main(null);
-		            //SafetyFirstMOAgent.main(null);
+		            SafetyFirstMOAgent.main(null);
 		            //SideEffectLinearWeightedAgent.main(null);
 		            
+		            //default settings
+		            //SatisficingMOAgent.main(null); //TLO-P
 		            
 		            
 		            //TLO-P
@@ -63,7 +65,7 @@ public class MORL_Glue_Driver_BJS
 	            	//double maxPrimaryReward = 50;	// the highest reward obtainable
 
 
-		            SatisficingMOAgent.main(primaryRewardThreshold,safetyThreshold,minPrimaryReward, maxPrimaryReward,null); //TLO-P
+		            //SatisficingMOAgent.main(primaryRewardThreshold,safetyThreshold,minPrimaryReward, maxPrimaryReward,null); //TLO-P
 		            //LearningRelativeReachabilityAgent.main(null);
 		            
 		            
@@ -144,9 +146,11 @@ public class MORL_Glue_Driver_BJS
 	 	   // launch experiment in its own thread
 			Thread experiment = new Thread(){
 		          public void run(){
+		        	  String outpath = "data";
 		            System.out.println("Started experiment thread");
+		            String[] experimentArgs = {outpath};
 		            //EXPERIMENT PETER SAYS IS RELEVANT
-		            SideEffectExperimentWithExcelOutput.main(null);
+		            SideEffectExperimentWithExcelOutput.main(experimentArgs);
 		            
 		            //default demo file
 		            //DemoExperiment.main(null);
