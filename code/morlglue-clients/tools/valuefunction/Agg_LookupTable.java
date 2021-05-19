@@ -79,7 +79,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     public int chooseGreedyAction(int state) 
     {
     	getActionValues(state);
-    	return TLO.greedyAction(thisStateValues, thresholds); 
+    	return AggregatorUtils.greedyAction(thisStateValues, aggregator); 
     }
     
     // returns true if action is amongst the greedy actions for the specified
@@ -96,7 +96,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     protected int softmaxTournament(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
-    	double scores[] = TLO.getDominanceScore(thisStateValues,thresholds);
+    	double scores[] = AggregatorUtils.getDominanceScore(thisStateValues,aggregator);
     	return Softmax.getAction(scores,temperature,best);
     }
     
@@ -104,7 +104,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     protected int softmaxAdditiveEpsilon(double temperature, int state)
     {
     	int best = chooseGreedyAction(state); // as a side-effect this will also set up the Q-values array
-    	double scores[] = TLO.getInverseAdditiveEpsilonScore(thisStateValues,best);
+    	double scores[] = AggregatorUtils.getInverseAdditiveEpsilonScore(thisStateValues,best);
     	return Softmax.getAction(scores,temperature,best);
     }    
 
