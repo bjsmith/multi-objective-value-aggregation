@@ -29,8 +29,6 @@ import tools.valuefunction.LELA_Aggregator;
 import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.SFMLA_Aggregator;
-import tools.valuefunction.FDP_Aggregator;
-import tools.valuefunction.SEBA_Aggregator;
 import tools.valuefunction.TLO_LookupTable;
 import tools.valuefunction.WSLookupTable;
 import tools.valuefunction.interfaces.ActionSelector;

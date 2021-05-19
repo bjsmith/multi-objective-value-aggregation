@@ -32,6 +32,8 @@ import tools.valuefunction.LELA_Aggregator;
 import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.SFMLA_Aggregator;
+import tools.valuefunction.FDP_Aggregator;
+import tools.valuefunction.SEBA_Aggregator;
 import tools.valuefunction.SatisficingLookupTable;
 import tools.valuefunction.TLO_LookupTable;
 import tools.valuefunction.interfaces.ActionSelector;
@@ -118,6 +120,12 @@ public class Agg_SatisficingMOAgent implements AgentInterface {
 			break;
 		case "ELA":
 			this.aggregator = new ELA_Aggregator();
+			break;
+		case "FDP":
+			this.aggregator = new FDP_Aggregator();
+			break;
+		case "SEBA":
+			this.aggregator = new SEBA_Aggregator();
 			break;
 		}
 	}
