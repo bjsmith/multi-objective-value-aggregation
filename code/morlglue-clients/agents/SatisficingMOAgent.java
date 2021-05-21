@@ -36,12 +36,12 @@ import tools.valuefunction.interfaces.ValueFunction;
 public class SatisficingMOAgent implements AgentInterface {
 
 	// Problem-specific parameters - at some point I need to refactor the code in such a way that these can be set externally
-	double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
+	public double safetyThreshold = 1000; //-0.1; //use high value if you want to 'switch off' thresholding (ie to get TLO-P rather than TLO-PA)
 	//double primaryRewardThreshold = 1000; // use high value here to get lex-pa (for tlo-p or tlo-pa use the per envt thresholds below)
 	// For UnbreakableBottles
-    	double primaryRewardThreshold = -50; // sets threshold on the acceptable minimum level of performance on the primary reward
-    	double minPrimaryReward = -1000; // the lowest reward obtainable
-    	double maxPrimaryReward = 44;	// the highest reward obtainable
+		public double primaryRewardThreshold = -50; // sets threshold on the acceptable minimum level of performance on the primary reward
+		public double minPrimaryReward = -1000; // the lowest reward obtainable
+    	public double maxPrimaryReward = 44;	// the highest reward obtainable
     // For BreakableBottles
     	//double primaryRewardThreshold = -500; // sets threshold on the acceptable minimum level of performance on the primary reward
     	//double minPrimaryReward = -1000; // the lowest reward obtainable
