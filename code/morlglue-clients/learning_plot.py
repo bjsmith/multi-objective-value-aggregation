@@ -1,62 +1,66 @@
+print("program runs")
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
+import datetime
+import time
+import os
+from pathlib import Path
 
-ELA_data = pd.read_excel("Sokoban-ELA(ELA)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220402.xls")
-LELA_data = pd.read_excel("Sokoban-LELA(LELA)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220408.xls")
-MIN_data = pd.read_excel("Sokoban-MIN(MIN)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220359.xls")
-SFLLA_data = pd.read_excel("Sokoban-SFLLA(SFLLA)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220404.xls")
-SFMLA_data = pd.read_excel("Sokoban-SFMLA(SFMLA)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220407.xls")
-Linear_data = pd.read_excel("Sokoban-SFMLA(SFMLA)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519220407.xls")
-SO_data = pd.read_excel("Sokoban-SingleObjective(SOSE)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519224627.xls")
-TLOA_data = pd.read_excel("Sokoban-TLO_A(SafetyFirstMO)-SOFTMAY_T10-alpha0.1-lambda0.95-dt20210519224622.xls")
+# define command line arguments
+parser = argparse.ArgumentParser()
 
-num_online = 5000
-num_offline = 1
-objectives = ["R^P", "R^A", "R^*"]
-agents = {
-        "ELA": ELA_data,
-        #"LELA": LELA_data,
-        "MIN": MIN_data,
-        #"SFLLA": SFLLA_data,
-        #"SFMLA": SFMLA_data, 
-        #"Linear": Linear_data,
-        #"SO": SO_data,
-        "TLO_A": TLOA_data
-        }
+parser.add_argument('--name', type=str, default='test')
+parser.add_argument('--path', type=str, default='data')
+parser.add_argument('--files', default=["invalidfile"], nargs="+")
+parser.add_argument('--objectives', default=["R^P", "R^A", "R^*"], nargs="+")
+parser.add_argument('--timestamp', action='store_true')
+parser.add_argument('--num_offline', type=int, default=1)
+parser.add_argument('--num_online', type=int, default=5000)
+parser.add_argument('--kernelwidth', type=int, default=10)
 
-#data = [ELA_data, LELA_data, MIN_data, SFLLA_data, SFMLA_data, Linear_data, SO_data, TLOA_data]
+args = parser.parse_args() 
+
+agents = {} # store agents with corresponding data (assumes same environment for all)
+
+# parse given file names
+for f in args.files:
+    splitlist = f.split("-")
+    envname = splitlist[0]
+    agentname = splitlist[1]
+    data = pd.read_excel(f+".xls")
+    agents[agentname] = data
+    print("added ",agentname)
+
+# get relevant objectives from data
 dataframes = []
-
 for dat in agents.values():
-    dataframes.append(pd.DataFrame(dat, columns=objectives))
+    print("creating dataa frame")
+    dataframes.append(pd.DataFrame(dat, columns=args.objectives))
 
-fig, ax = plt.subplots(3, 1, figsize=(10, 15))
-lines_RP = []
-lines_RA = []
-lines_RS = []
-kernelwidth = 10
-for ai, ag_data in enumerate(dataframes):
-    runmean_RP = np.convolve(ag_data.iloc[:num_online, [0]].to_numpy()[:,0], np.ones(kernelwidth)/kernelwidth, mode="valid")
-    print(runmean_RP)
-    line_RP = ax[0].plot(runmean_RP)
-    lines_RP.append(*line_RP)
-    runmean_RA = np.convolve(ag_data.iloc[:num_online, [1]].to_numpy()[:,0], np.ones(kernelwidth)/kernelwidth, mode="valid")
-    line_RA = ax[1].plot(runmean_RA)
-    lines_RA.append(*line_RA)
-    runmean_RS = np.convolve(ag_data.iloc[:num_online, [2]].to_numpy()[:,0], np.ones(kernelwidth)/kernelwidth, mode="valid")
-    line_RS = ax[2].plot(runmean_RS)
-    lines_RS.append(*line_RS)
+# plot learning curves
+fig, ax = plt.subplots(len(args.objectives), 1, figsize=(10, 15))
+lines = [[]]*len(args.objectives)
 
-ax[0].set_ylabel("R^P")
-ax[0].legend(lines_RP, agents.keys())
-ax[1].set_ylabel("R^A")
-ax[1].legend(lines_RA, agents.keys())
-ax[2].set_ylabel("R^*")
-ax[2].legend(lines_RS, agents.keys())
-ax[0].grid()
-ax[1].grid()
-ax[2].grid()
-ax[2].set_xlabel("episode")
-plt.savefig("Sokoban_bestR*_learningcurves.pdf", bbox_inches="tight")
+for io, o in enumerate(args.objectives):
+    for ai, ag_data in enumerate(dataframes):
+        runmean = np.convolve(ag_data.iloc[:args.num_online, [io]].to_numpy()[:,0], np.ones(args.kernelwidth)/args.kernelwidth, mode="valid")
+        line = ax[io].plot(runmean, label=list(agents.keys())[ai])
+        lines[io].append(line[0])
+    
+for io, o in enumerate(args.objectives):
+    ax[io].set_ylabel(o)
+    ax[io].legend(lines[io], agents.keys())
+    ax[io].grid()
+    if io == len(args.objectives) - 1:
+        ax[io].set_xlabel("episode")
+
+# save and show plot
+if args.timestamp:
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H:%M:%S')
+    plt.savefig("{}/{}_learningcurves_{}.pdf".format(args.path, args.name, st), bbox_inches="tight")
+else:
+    plt.savefig("{}/{}_learningcurves.pdf".format(args.path, args.name), bbox_inches="tight")
 plt.show()
