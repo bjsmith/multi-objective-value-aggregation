@@ -135,8 +135,8 @@ public class SideEffectExperimentWithExcelOutput
             	}
     			saveReward("Offline&"+(1+episodeNum),runEpisode(MAX_EPISODE_LENGTH));
     		}
-        	RLGlue.RL_env_message("stop-debugging");
-			RLGlue.RL_agent_message("stop-debugging");           
+        	//RLGlue.RL_env_message("stop-debugging");
+			//RLGlue.RL_agent_message("stop-debugging");           
             // add two rows at the end of the worksheet to summarise the means over all online and offline episodes
             String formulas = "AVERAGE(" + excel.getAddress(2,1) + ":" + excel.getAddress(2,NUM_ONLINE_EPISODES_PER_TRIAL) + ")"
             					+ "&AVERAGE(" + excel.getAddress(3,1) + ":" + excel.getAddress(3,NUM_ONLINE_EPISODES_PER_TRIAL) + ")"

@@ -13,6 +13,7 @@ import tools.valuefunction.TLO_LookupTable;
 import agents.TLO_Agent;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class SideEffectExperiment 
 {
@@ -29,16 +30,23 @@ public class SideEffectExperiment
     private final double ALPHA = 0.1;
     private final double LAMBDA = 0.95;
     private final double GAMMA = 1.0;
-    private final int NUM_TRIALS = 20;
+    private final int NUM_TRIALS = 1; //20;
 
     // enable this group of declarations for egreedy exploration
    	//private final int EXPLORATION = TLO_LookupTable.EGREEDY;
     //private final String METHOD_PREFIX = "EGREEDY";
     //private final String PARAM_CHANGE_STRING = "set_egreedy_parameters";
     //private double EXPLORATION_PARAMETER = 0.9;
+    
     // enable this group of declarations for softmax-epsilon exploration		    
-    private int EXPLORATION = TLO_LookupTable.SOFTMAX_ADDITIVE_EPSILON;
-    private final String METHOD_PREFIX = "SOFTMAX_E";
+    //private int EXPLORATION = TLO_LookupTable.SOFTMAX_ADDITIVE_EPSILON;
+    //private final String METHOD_PREFIX = "SOFTMAX_E";
+    //private final String PARAM_CHANGE_STRING = "set_softmax_parameters";
+    //private double EXPLORATION_PARAMETER = 10;
+    
+    // enable this group of declarations for softmax-epsilon exploration		    
+    private int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
+    private final String METHOD_PREFIX = "SOFTMAX_T";
     private final String PARAM_CHANGE_STRING = "set_softmax_parameters";
     private double EXPLORATION_PARAMETER = 10;
     
@@ -50,15 +58,15 @@ public class SideEffectExperiment
 	    //private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
 	    //private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the DamageableBoxes task
-    	private final String ENVIRONMENT_PREFIX = "DamageableBoxes";
-    	private final int NUM_ONLINE_EPISODES_PER_TRIAL = 20000;
-    	private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
-    	private final int MAX_EPISODE_LENGTH = 1000;
+    	//private final String ENVIRONMENT_PREFIX = "DamageableBoxes";
+    	//private final int NUM_ONLINE_EPISODES_PER_TRIAL = 20000;
+    	//private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
+    	//private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the BreakableBottles task
-	    //private final String ENVIRONMENT_PREFIX = "Breakable";
-	    //private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-	    //private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
-	    //private final int MAX_EPISODE_LENGTH = 1000;
+	    private final String ENVIRONMENT_PREFIX = "Breakable";
+	    private final int NUM_ONLINE_EPISODES_PER_TRIAL = 3000; //5000;
+	    private final int NUM_OFFLINE_EPISODES_PER_TRIAL = 10; //100;
+	    private final int MAX_EPISODE_LENGTH = 1000;
     // Settings for the UnbreakableBottles task
 	    //private final String ENVIRONMENT_PREFIX = "Unbreakable";
 	    //private final int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
@@ -81,9 +89,13 @@ public class SideEffectExperiment
         return totalReward;
     }
 
-    public void runExperiment() {
+    public void runExperiment(String[] args) {
+    	String outpath = args[0];
+    	//String environment = args[1];
     	// set up data structures to store reward history
         String taskSpec = RLGlue.RL_init();
+        
+        //System.out.println("Task: "+taskSpec);
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpec);
         numObjectives = theTaskSpec.getNumOfObjectives();
         thisTrial = new ExperimentDataHolder(numObjectives, NUM_ONLINE_EPISODES_PER_TRIAL, NUM_OFFLINE_EPISODES_PER_TRIAL, METRIC);
@@ -96,7 +108,13 @@ public class SideEffectExperiment
         try
         {
         	String agentName = RLGlue.RL_agent_message("get_agent_name");
-        	final String MAIN_DIRECTORY = FILENAME_PREFIX+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA;
+    		String envName = RLGlue.RL_env_message("get env name");
+    		System.out.println("RUNNING " + " WITH "+agentName+" in  "+envName);
+    	
+    		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    	
+        	//final String MAIN_DIRECTORY = FILENAME_PREFIX+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA;
+    		final String MAIN_DIRECTORY = outpath + "/" + envName+"-"+agentName+"-"+METHOD_PREFIX+EXPLORATION_PARAMETER+"-alpha"+ALPHA+"-lambda"+LAMBDA + "-dt" + timeStamp;
         	new File(MAIN_DIRECTORY).mkdirs();
 	        RLGlue.RL_agent_message(PARAM_CHANGE_STRING + " " + EXPLORATION_PARAMETER + " " + NUM_ONLINE_EPISODES_PER_TRIAL);       
 	        // run the trials
@@ -122,6 +140,8 @@ public class SideEffectExperiment
 	    		thisTrial.saveData(trialFile);
 	    		trialFile.close();	    		
 	        }
+        	//RLGlue.RL_env_message("stop-debugging");
+			//RLGlue.RL_agent_message("stop-debugging");           
 	        // save the stats summarising results over all trials
         	// save mean results
         	BufferedWriter summaryFile = new BufferedWriter(new FileWriter(MAIN_DIRECTORY + "/ALL_TRIALS_MEAN.CSV"));
@@ -147,8 +167,9 @@ public class SideEffectExperiment
 
     public static void main(String[] args) {
     	SideEffectExperiment theExperiment = new SideEffectExperiment();
-        theExperiment.runExperiment();
-        System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
+        theExperiment.runExperiment(args);
+        //System.exit(0); // shut down the experiment + hopefully everything else launched by the Driver program (server, agent, environment)
+        return;
     }
 }
 

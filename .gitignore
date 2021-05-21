@@ -10,3 +10,6 @@
 # MacOS Finder preview files
 .DS_Store
 .Rproj.user
+
+# Beyond Compare backup files
+*.*~
