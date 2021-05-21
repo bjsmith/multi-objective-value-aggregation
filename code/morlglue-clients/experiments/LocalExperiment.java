@@ -23,20 +23,20 @@ public class LocalExperiment
     
     // helper class that stores experimental settings
     public static class ExperimentSettings {
-    	String NAME = "Test";
-    	String OUTPATH = "data";
-    	String AGENT = "";
-    	String ENV = "";
-    	double ALPHA = 0.1;
-	    double LAMBDA = 0.95;
-	    double GAMMA = 1.0;
-	    int NUM_TRIALS = 1;
-	    int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
+    	public String NAME = "Test";
+    	public String OUTPATH = "data";
+    	public String AGENT = "";
+    	public String ENV = "";
+    	public double ALPHA = 0.1;
+	    public double LAMBDA = 0.95;
+	    public double GAMMA = 1.0;
+	    public int NUM_TRIALS = 1;
+	    public int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
 	    
-	    int EXPLORATION_PARAMETER = 10; 
-    	int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
-    	int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
-    	int MAX_EPISODE_LENGTH = 1000;
+	    public int EXPLORATION_PARAMETER = 10; 
+    	public int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
+    	public int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
+    	public int MAX_EPISODE_LENGTH = 1000;
     	
     	public ExperimentSettings(String name, String outpath, String agent, String env, double alpha, double lambda, double gamma,
     			int num_trials, int exploration, int exploration_param,
@@ -82,7 +82,7 @@ public class LocalExperiment
     	}
     	
     	public ExperimentBuilder name(String name) { this.NAME = name; return this;}
-    	public ExperimentBuilder outpath(String outpath) { this.NAME = outpath; return this;}
+    	public ExperimentBuilder outpath(String outpath) { this.OUTPATH = outpath; return this;}
     	public ExperimentBuilder agent(String agent) { this.AGENT = agent; return this;}
     	public ExperimentBuilder env(String env) { this.ENV = env; return this;}
     	public ExperimentBuilder alpha(double alpha) { this.ALPHA = alpha; return this;}
@@ -152,7 +152,7 @@ public class LocalExperiment
         return totalReward;
     }
 
-    public void runExperiment() {
+    public String runExperiment() {
     	
     	// set up data structures to store reward history
         String taskSpec = RLGlue.RL_init();
@@ -171,7 +171,7 @@ public class LocalExperiment
     	String envName = RLGlue.RL_env_message("get env name");
     	
     	// create excel sheet
-    	String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    	String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(new java.util.Date());
     	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
     	excel = new JxlExcelWriter(fileName);
     	
@@ -237,11 +237,13 @@ public class LocalExperiment
         RLGlue.RL_cleanup();
 
         System.out.println("********************************************** Experiment finished");
+        return fileName;
     }
 
-	public static void main(AgentInterface agent, EnvironmentInterface env, ExperimentSettings settings) {
+	public static String main(AgentInterface agent, EnvironmentInterface env, ExperimentSettings settings) {
 		LocalExperiment locExp = new LocalExperiment(agent, env, settings);
-		locExp.runExperiment();
+		String outputfile = locExp.runExperiment();
+		return outputfile;
 	}
 }
 
