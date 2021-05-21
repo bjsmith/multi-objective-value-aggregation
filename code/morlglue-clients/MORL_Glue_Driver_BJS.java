@@ -150,7 +150,8 @@ public class MORL_Glue_Driver_BJS
 		            System.out.println("Started experiment thread");
 		            String[] experimentArgs = {outpath};
 		            //EXPERIMENT PETER SAYS IS RELEVANT
-		            SideEffectExperimentWithExcelOutput.main(experimentArgs);
+		            SideEffectExperimentWithExcelOutput.main(experimentArgs);   //excel
+		            //SideEffectExperiment.main(experimentArgs);                //csv
 		            
 		            //default demo file
 		            //DemoExperiment.main(null);

@@ -126,7 +126,8 @@ public class MORL_Glue_Driver_BJS_VamplewReplication
 		          public void run(){
 		            System.out.println("Started experiment thread");
 		            //EXPERIMENT PETER SAYS IS RELEVANT
-		            SideEffectExperimentWithExcelOutput.main(null);
+		            SideEffectExperimentWithExcelOutput.main(null);     //excel
+		            //SideEffectExperiment.main(experimentArgs);        //csv
 		            
 		            //default demo file
 		            //DemoExperiment.main(null);

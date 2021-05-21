@@ -45,7 +45,10 @@ public class MORL_Glue_Driver_RK
 		};
 
 		ThreadGenerator[] experiments = new ThreadGenerator[]{
-				new ThreadGenerator(){public Thread getThread() {return new Thread() {public void run() {SideEffectExperimentWithExcelOutput.main(new String[] {"SFLLA"});}};}}
+				new ThreadGenerator(){public Thread getThread() {return new Thread() {public void run() {
+                    SideEffectExperimentWithExcelOutput.main(new String[] {"SFLLA"});   //excel
+                    //SideEffectExperiment.main(new String[] {"SFLLA"});                //csv
+                } };}}
 		};
 		int combo = 0;
 		System.out.println("NUMBER OF AGENTS "+agents.length);
