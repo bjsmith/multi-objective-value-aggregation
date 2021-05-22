@@ -11,18 +11,8 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_TLO_A_BJS
+public class MORL_Glue_Local_TLO_A_BJS extends MORL_Glue_Local_Base
 {
-	
-	public static interface AgentGenerator
-	{
-		public AgentInterface getAgent(String[] args);
-	}
-	
-	public static interface EnvGenerator
-	{
-		public EnvironmentInterface getEnv(String[] args);
-	}
 	
 	// Runs all combinations of (agent, environment, experiment)
 	@SuppressWarnings("serial")
@@ -37,9 +27,9 @@ public class MORL_Glue_Local_TLO_A_BJS
 			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
 			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
 			// Peter's agents
-			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
-			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
-			
+//			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
+//			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
+//			
 			put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
 			
 			
@@ -50,22 +40,32 @@ public class MORL_Glue_Local_TLO_A_BJS
 
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
-			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
-			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+			//put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
+			//put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
 			put("Sokoban", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new SokobanSideEffects();}});
-			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
+			//put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
 		}};
 		
 		// define experiment settings
 		String experiment_id = "Test";
 		String outpath = "data";
+		int num_online = 5000;
+		int num_offline = 1;
+		int max_episode_length = 1000;
 		
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
 		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
 
-	    for(String astring : agents.keySet()) {
-	    	for(String envstring : envs.keySet()) {
+
+		System.out.println("SAVING TO PATH: "+outpath);
+		System.out.println("NUMBER OF AGENTS: "+agents.size());
+		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
+		
+    	for(String envstring : envs.keySet()) {
+    		String[] outputfiles = new String[agents.size()];
+    		int runid = 0;
+    		for(String astring : agents.keySet()) {
 	    		// generator agent and environment
 	    		AgentGenerator atg = agents.get(astring);
 	    		EnvGenerator etg = envs.get(envstring);
@@ -76,10 +76,19 @@ public class MORL_Glue_Local_TLO_A_BJS
 	    		ExperimentSettings settings = new ExperimentBuilder()
 						.name(experiment_id).outpath(outpath)
 						.agent(astring).env(envstring)
+						.episodes(num_online, num_offline, max_episode_length)
 						.buildExperiment();
-	    		LocalExperiment.main(agent, env, settings);
+	    		String outputfile = LocalExperiment.main(agent, env, settings);
+	    		outputfiles[runid] = outputfile;
+	    		runid ++;
 	    	}
+    		ExperimentSettings plot_settings = new ExperimentBuilder()
+					.name(experiment_id).outpath(outpath).env(envstring)
+					.episodes(num_online, num_offline, max_episode_length)
+					.buildExperiment();
+    		plotting(plot_settings, outputfiles);
 	    }
+		
 	    System.out.println("FINISHED ALL EXPERIMENTS.");
 	}
 	
