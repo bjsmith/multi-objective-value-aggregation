@@ -1,6 +1,11 @@
 package tools.valuefunction;
 
 public class SFLLA_Aggregator implements Aggregator {
+	// at scale ~ 0.5-0.8 behaves like TLO_A; transition at around 0.9 to being better at R^P but failing in safety
+	// offset at 0.9 (scale = 0.8) learning becomes spikey; with (0.1, 0.3) interesting fail have way through learning happens
+	// (scale, offset): (0.5, 0) (0,17, 0.05) work as well as TLO_A in all environments!
+	public double scale = 0.5;
+	public double offset = 0.;
 
 	public double[] apply(double a[], double b[]) {
 		double[] out = new double[2];
@@ -11,15 +16,15 @@ public class SFLLA_Aggregator implements Aggregator {
 		
 		for(int i=0;i<a.length;i++) {
 			if(a[i] < 0) {
-				f_a[i] = -Math.exp(-a[i]) + 1;
+				f_a[i] = -Math.exp(-(a[i] - offset)/scale) + 1;
 			} else {
-				f_a[i] = Math.log(a[i] + 1);
+				f_a[i] = Math.log((a[i] - offset)/scale + 1);
 			}
 			
 			if(b[i] < 0) {
-				f_b[i] = -Math.exp(-b[i]) + 1;
+				f_b[i] = -Math.exp(-(b[i] - offset)/scale) + 1;
 			} else {
-				f_b[i] = Math.log(b[i] + 1);
+				f_b[i] = Math.log((b[i] - offset)/scale + 1);
 			}
 			
 			f_a_tot += f_a[i];

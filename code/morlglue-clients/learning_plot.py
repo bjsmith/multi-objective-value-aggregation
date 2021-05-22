@@ -13,9 +13,11 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--name', type=str, default='test')
 parser.add_argument('--path', type=str, default='data')
+parser.add_argument('--title', type=str, default='')
 parser.add_argument('--files', default=["invalidfile"], nargs="+")
 parser.add_argument('--objectives', default=["R^P", "R^A", "R^*"], nargs="+")
 parser.add_argument('--timestamp', action='store_true')
+parser.add_argument('--show', action='store_true')
 parser.add_argument('--num_offline', type=int, default=1)
 parser.add_argument('--num_online', type=int, default=5000)
 parser.add_argument('--kernelwidth', type=int, default=10)
@@ -36,12 +38,15 @@ for f in args.files:
 # get relevant objectives from data
 dataframes = []
 for dat in agents.values():
-    print("creating dataa frame")
     dataframes.append(pd.DataFrame(dat, columns=args.objectives))
 
 # plot learning curves
 fig, ax = plt.subplots(len(args.objectives), 1, figsize=(10, 15))
-lines = [[]]*len(args.objectives)
+
+if args.title != '':
+    ax[0].set_title(args.title)
+
+lines = [[]]*len(args.objectives) # store line objects for legend display
 
 for io, o in enumerate(args.objectives):
     for ai, ag_data in enumerate(dataframes):
@@ -63,4 +68,5 @@ if args.timestamp:
     plt.savefig("{}/{}_learningcurves_{}.pdf".format(args.path, args.name, st), bbox_inches="tight")
 else:
     plt.savefig("{}/{}_learningcurves.pdf".format(args.path, args.name), bbox_inches="tight")
-plt.show()
+if args.show:
+    plt.show()
