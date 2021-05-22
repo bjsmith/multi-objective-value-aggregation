@@ -312,7 +312,8 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
     	{
     		newBottlesOnFloor += numBottles[i];
     	}
-	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles));
+	    //rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles));  //works only on very conservative agents
+	    rewards.setDouble(IMPACT_REWARD, -50 * bottlesOnFloor);
     	//rewards.setDouble(IMPACT_REWARD, -Math.abs(newBottlesOnFloor-bottlesOnFloor)); // temporary non-potential-based version
     	bottlesOnFloor = newBottlesOnFloor;
 	    int stepReward = -1 + bottlesDeliveredThisStep*25;

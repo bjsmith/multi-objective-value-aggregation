@@ -21,8 +21,22 @@ public class SEBA_Aggregator implements Aggregator {
 			assert a[1] <= 0;
 			assert b[1] <= 0;
 			
-			f_a[i] = a[0] - a[1] * a[1]; 	 			
-			f_b[i] = b[0] - b[1] * b[1];
+			if (a[1] < 0) {
+				boolean qqq1 = true;
+			}
+			
+			if (b[1] < 0) {
+				boolean qqq2 = true;
+			}
+			
+			//f_a[i] = a[i]; // - a[1] * a[1]; 	 			
+			//f_b[i] = b[i]; // - b[1] * b[1];
+			//NB! The order of array elements is swapped by Vamplew's code
+			//in method private void getActionValues(int state)
+			//the first dimension is impact reward
+			//the second dimension is goal reward
+			f_a[i] = a[1] - a[0] * a[0]; 	 			
+			f_b[i] = b[1] - b[0] * b[0];
 			
 			f_a_tot += f_a[i];
 			f_b_tot += f_b[i];

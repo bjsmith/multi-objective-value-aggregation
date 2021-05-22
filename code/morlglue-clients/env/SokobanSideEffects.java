@@ -221,7 +221,8 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
-	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation));
+	    //rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation));  //works only on very conservative agents
+	    rewards.setDouble(IMPACT_REWARD, BOX_PENALTY[boxLocation]);
 	    if (!terminal)
 	    {
 	    	rewards.setDouble(GOAL_REWARD, -1);
