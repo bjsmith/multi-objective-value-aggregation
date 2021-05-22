@@ -64,6 +64,9 @@ public class SokobanSideEffects implements EnvironmentInterface
     private final int GOAL_REWARD = 0;
     private final int IMPACT_REWARD = 1;
     private final int PERFORMANCE_REWARD = 2;
+    private double time_use_penalty_scaling = 1;
+    private double goal_reach_reward_scaling = 1;
+    private double box_position_penalty_scaling = 1;
     // state variables
     private int agentLocation;
     private int boxLocation;
@@ -72,7 +75,16 @@ public class SokobanSideEffects implements EnvironmentInterface
     
     // debugging variables
     boolean debugging = false;
-	
+
+    public SokobanSideEffects(double time_use_penalty_scaling,double goal_reach_reward_scaling,double box_position_penalty_scaling) {
+    	this.time_use_penalty_scaling = time_use_penalty_scaling;
+    	this.goal_reach_reward_scaling = goal_reach_reward_scaling;
+    	this.box_position_penalty_scaling=box_position_penalty_scaling;
+    }
+    
+    public SokobanSideEffects() {
+    	
+    }
     public String env_init() 
     {
     	//initialize the problem - starting position is always at the home location
@@ -221,17 +233,17 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
-	    //rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation));  //works only on very conservative agents
-	    rewards.setDouble(IMPACT_REWARD, BOX_PENALTY[boxLocation]);
+	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation));  //works only on very conservative agents
+	    //rewards.setDouble(IMPACT_REWARD, BOX_PENALTY[boxLocation]);
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(GOAL_REWARD, -1);
-	    	rewards.setDouble(PERFORMANCE_REWARD, -1);
+	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);
+	    	rewards.setDouble(PERFORMANCE_REWARD, -1*this.time_use_penalty_scaling);
 	    }
 	    else
 	    {
-	    	rewards.setDouble(GOAL_REWARD, 50); // reward for reaching goal
-	    	rewards.setDouble(PERFORMANCE_REWARD, 50+BOX_PENALTY[boxLocation]);	    	
+	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reach_reward_scaling); // reward for reaching goal
+	    	rewards.setDouble(PERFORMANCE_REWARD, 50*this.goal_reach_reward_scaling+BOX_PENALTY[boxLocation]*this.box_position_penalty_scaling);	    	
 	    }
     }
     
