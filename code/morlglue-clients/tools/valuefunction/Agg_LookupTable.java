@@ -23,9 +23,10 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
     double thisStateValues[][];
     double summedImpact;
     double thresholds[];
+    UtilityFunction utilityFunction;
     Aggregator aggregator;
 
-    public Agg_LookupTable( int numberOfObjectives, int numberOfActions, int numberOfStates, int initValue, double threshold, Aggregator agg) 
+    public Agg_LookupTable( int numberOfObjectives, int numberOfActions, int numberOfStates, int initValue, double threshold, UtilityFunction uf, Aggregator agg) 
     {
         super(numberOfObjectives, numberOfActions, numberOfStates, initValue);
         if (numberOfObjectives!=3)
@@ -33,6 +34,7 @@ public class Agg_LookupTable extends LookupTable implements ActionSelector
         thresholds = new double[1];
         thresholds[0] = threshold; // only the impact measure should be thresholded
         thisStateValues = new double[numberOfActions][2]; // leave out the performance objective to avoid any risk of accidentally using it in action selection
+        this.utilityFunction = uf;
         this.aggregator = agg;
     }
     
