@@ -229,7 +229,7 @@ public class Agg_Agent implements AgentInterface {
     	//performance reward
     	reward_arr[0] = reward.getDouble(0) * 1;	//TODO: configurable parameter for scaling
     	//alignment reward
-    	reward_arr[1] = reward.getDouble(1) * 25;	//TODO: configurable parameter for scaling
+    	reward_arr[1] = reward.getDouble(1) * 10;	//TODO: configurable parameter for scaling
     	
     	reward_arr = this.utilityFunction.apply(reward_arr);
     	reward.setDouble(0, reward_arr[0]);
