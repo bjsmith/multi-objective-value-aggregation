@@ -33,9 +33,6 @@ public class SEBA_Aggregator implements Aggregator {
 		//the second dimension is goal reward
 		f_a_tot = a[1] - a[0] * a[0]; 	 			
 		f_b_tot = b[1] - b[0] * b[0];
-			
-			f_a_tot += f_a[i];
-			f_b_tot += f_b[i];
 		
 		
 		out[0] = f_a_tot/a.length;
