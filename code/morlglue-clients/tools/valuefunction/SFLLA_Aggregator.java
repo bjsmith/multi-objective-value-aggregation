@@ -8,6 +8,7 @@ public class SFLLA_Aggregator implements Aggregator {
 	public double offset = 0.;
 
 	public double[] apply(double a[], double b[]) {
+		//System.out.println("applying SFLLA");
 		double[] out = new double[2];
 		double[] f_a = new double[a.length];
 		double[] f_b = new double[b.length];

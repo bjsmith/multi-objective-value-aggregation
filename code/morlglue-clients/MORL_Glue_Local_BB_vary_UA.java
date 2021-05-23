@@ -11,7 +11,7 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_TLO_A_BJS extends MORL_Glue_Local_Base
+public class MORL_Glue_Local_BB_vary_UA extends MORL_Glue_Local_Base
 {
 	
 	// Runs all combinations of (agent, environment, experiment)
@@ -20,29 +20,54 @@ public class MORL_Glue_Local_TLO_A_BJS extends MORL_Glue_Local_Base
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{	
 			// our agents
-			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA"});}});
-			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA"});}});
-			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA"});}});
-			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA"});}});
-			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
-			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
+			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"});}});
+			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFMLA"});}});
+			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","ELA"});}});
+			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
+//			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
+//			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
 			// Peter's agents
 //			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
 			put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
-			
-			
-			
-
-			
 		}};
 
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
-			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
-			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
-			put("Sokoban", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new SokobanSideEffects();}});
-			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
+//			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+			put("BreakableBottlesPenalty_0_01", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,0.01);
+				
+				}});
+			
+			put("BreakableBottlesPenalty_0_05", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,0.05);
+				
+				}});
+			
+			put("BreakableBottlesPenalty_0_2", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,0.2);
+				
+				}});
+			
+			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,1);
+				
+				}});
+			
+			put("BreakableBottlesPenalty5", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,5);
+				}});
+			
+			put("BreakableBottlesPenalty20", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,20);
+				}});
+			
+			put("BreakableBottlesPenalty100", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1,100);
+				}});
+
+//			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
 		}};
 		
 		// define experiment settings
@@ -57,6 +82,7 @@ public class MORL_Glue_Local_TLO_A_BJS extends MORL_Glue_Local_Base
 		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
 		
     	for(String envstring : envs.keySet()) {
+    		experiment_id = "Test " + envstring;
     		String[] outputfiles = new String[agents.size()];
     		int runid = 0;
     		for(String astring : agents.keySet()) {

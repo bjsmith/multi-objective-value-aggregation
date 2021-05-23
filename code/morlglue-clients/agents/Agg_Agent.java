@@ -80,6 +80,9 @@ public class Agg_Agent implements AgentInterface {
     int numOfSteps;
     int numEpisodes;
     double accumulatedImpact; // sum the impact reward received so far
+    double[] accumulatedSquaredImpact; // sum the impact reward received so far
+    
+
 
     StateConverter stateConverter = null;
     String utilityFunctionstring;
@@ -243,6 +246,10 @@ public class Agg_Agent implements AgentInterface {
     	
         numOfSteps++;
         accumulatedImpact += reward.getDouble(1); // get the impact-measuring reward
+        //accumulatedSquaredImpact[0] += Math.pow(reward.getDouble(1),2);
+        //how do we get the two rewards here? it's unclear.
+        //also how do we feed this back into the aggregator? needs to scale values actually used by the aggregator.
+        
         vf.setAccumulatedImpact(accumulatedImpact);
   	
     	

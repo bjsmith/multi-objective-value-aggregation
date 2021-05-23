@@ -65,8 +65,12 @@ for io, o in enumerate(args.objectives):
 if args.timestamp:
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H:%M:%S')
-    plt.savefig("{}/{}_learningcurves_{}.pdf".format(args.path, args.name, st), bbox_inches="tight")
+    save_path = "{}/{}_learningcurves_{}.pdf".format(args.path, args.name, st)
+    print(save_path)
+    plt.savefig(save_path, bbox_inches="tight")
 else:
-    plt.savefig("{}/{}_learningcurves.pdf".format(args.path, args.name), bbox_inches="tight")
+    save_path = "{}/{}_learningcurves.pdf".format(args.path, args.name)
+    print(save_path)
+    plt.savefig(save_path, bbox_inches="tight")
 if args.show:
     plt.show()

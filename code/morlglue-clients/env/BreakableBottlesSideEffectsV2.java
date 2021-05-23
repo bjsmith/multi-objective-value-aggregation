@@ -73,6 +73,23 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     // debugging variables
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;
+    
+
+    private double time_use_penalty_scaling = 1;
+    private double goal_reward_scaling = 1;
+    private double impact_penalty_scaling = 1;
+    
+    
+    
+    public BreakableBottlesSideEffectsV2(double time_use_penalty_scaling,double goal_reward_scaling,double impact_penalty_scaling) {
+    	this.time_use_penalty_scaling = time_use_penalty_scaling;
+    	this.goal_reward_scaling = goal_reward_scaling;
+    	this.impact_penalty_scaling=impact_penalty_scaling;
+    }
+    
+    public BreakableBottlesSideEffectsV2() {
+    	
+    }
 	
     public String env_init() 
     {
@@ -296,12 +313,12 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     	{
     		newBottlesOnFloor += numBottles[i];
     	}
-	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles));  //works only on very conservative agents
+	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles)* this.impact_penalty_scaling)  ;  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, -50 * bottlesOnFloor); 
     	//rewards.setDouble(IMPACT_REWARD, -Math.abs(newBottlesOnFloor-bottlesOnFloor)); // temporary non-potential-based version
     	bottlesOnFloor = newBottlesOnFloor;
 	    int stepReward = -1 + bottlesDeliveredThisStep*25;
-	    rewards.setDouble(GOAL_REWARD, stepReward);
+	    rewards.setDouble(GOAL_REWARD, stepReward*this.goal_reward_scaling);
 	    if (!terminal)
 	    {
 	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward);

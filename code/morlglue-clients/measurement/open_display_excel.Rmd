@@ -26,7 +26,8 @@ Now--great--can we compare different sheets?
 
 ```{r}
 #list files
-files <- list.files("../data/bjs_5000epi/")
+source_path <- "../data/test_with_rolands_new_code/"
+files <- list.files(source_path)
 #regex read the main properties of each sheet
 file_list <- stringr::str_match(files,'^(\\w*)-(\\w*)\\((\\w*)\\)') %>% data.frame %>% cbind(files,.)
 colnames(file_list) <- c("filename","full_code","Environment","Agent","AgentClass")
@@ -36,7 +37,7 @@ raw_activity_list <- apply(file_list,1,function(row){
  print(row[["full_code"]]) 
   #load the spreadsheet
   TLO_A_page0 <- readxl::read_xls(
-    paste0("../data/bjs_5000epi/",row[["filename"]]),
+    paste0(source_path,row[["filename"]]),
     sheet = "Trial0")
   
   #clean the data
@@ -94,7 +95,7 @@ ggplot(
   )+geom_line(alpha=0.5,size=1)+
   theme(legend.position="bottom")+
   geom_dl(aes(label=Agent),method= "last.qp",alpha=1)+
-  labs(y="Score")+facet_grid(cols = vars(Measure),scales="free_y")
+  labs(y="Score")+facet_wrap(~Measure,scales="free")
 
 
 ```

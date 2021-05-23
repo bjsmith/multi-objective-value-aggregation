@@ -22,7 +22,7 @@ public abstract class MORL_Glue_Local_Base {
 	
 	public static void plotting(ExperimentSettings settings, String[] files) {
 		Runtime rt = Runtime.getRuntime();
-		String pythonPath = "/home/robert/miniconda3/envs/nnq/bin/python"; // replace with your Python path that has numpy, pandas and matplotlib
+		String pythonPath = "/Users/benjaminsmith/anaconda/envs/morl_env/bin/python"; // replace with your Python path that has numpy, pandas and matplotlib
 		try {
 			ArrayList<String> command = new ArrayList<String>(Arrays.asList(pythonPath,"learning_plot.py", "--name",
 					settings.NAME, "--path", settings.OUTPATH,

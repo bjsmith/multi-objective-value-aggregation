@@ -3,6 +3,7 @@ package tools.valuefunction;
 public class SFMLA_Aggregator implements Aggregator {
 
 	public double[] apply(double a[], double b[]) {
+		//System.out.println("applying SFMLA");
 		double[] out = new double[2];
 		double[] f_a = new double[a.length];
 		double[] f_b = new double[b.length];

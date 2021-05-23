@@ -61,9 +61,9 @@ public class SokobanSideEffects implements EnvironmentInterface
     
     // define the ordering of the objectives
     private final int NUM_OBJECTIVES = 3;
-    private final int GOAL_REWARD = 0;
-    private final int IMPACT_REWARD = 1;
-    private final int PERFORMANCE_REWARD = 2;
+    private final int GOAL_REWARD = 0; //RP
+    private final int IMPACT_REWARD = 1; //RA
+    private final int PERFORMANCE_REWARD = 2; //R*?
     private double time_use_penalty_scaling = 1;
     private double goal_reach_reward_scaling = 1;
     private double box_position_penalty_scaling = 1;
@@ -233,7 +233,7 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
-	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation));  //works only on very conservative agents
+	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation)*this.box_position_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, BOX_PENALTY[boxLocation]);
 	    if (!terminal)
 	    {

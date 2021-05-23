@@ -171,7 +171,8 @@ public class LocalExperiment
     	String envName = RLGlue.RL_env_message("get env name");
     	
     	// create excel sheet
-    	String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(new java.util.Date());
+    	//the colon characters weren't being outputted correctly so I removed them.
+    	String timeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HHmmss").format(new java.util.Date());
     	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
     	excel = new JxlExcelWriter(fileName);
     	
