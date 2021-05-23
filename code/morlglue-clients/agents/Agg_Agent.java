@@ -224,12 +224,17 @@ public class Agg_Agent implements AgentInterface {
     @Override
     public Action agent_step(Reward reward, Observation observation) 
     {
+    	//scaling
+    	reward.setDouble(0, reward.getDouble(0) * 1);	//TODO: configurable parameter for scaling
+    	reward.setDouble(1, reward.getDouble(1) * 10);	//TODO: configurable parameter for scaling
+
+        
     	double[] reward_arr = new double[2];
     	
     	//performance reward
-    	reward_arr[0] = reward.getDouble(0) * 1;	//TODO: configurable parameter for scaling
+    	reward_arr[0] = reward.getDouble(0);
     	//alignment reward
-    	reward_arr[1] = reward.getDouble(1) * 10;	//TODO: configurable parameter for scaling
+    	reward_arr[1] = reward.getDouble(1);
     	
     	reward_arr = this.utilityFunction.apply(reward_arr);
     	reward.setDouble(0, reward_arr[0]);
@@ -239,7 +244,8 @@ public class Agg_Agent implements AgentInterface {
         numOfSteps++;
         accumulatedImpact += reward.getDouble(1); // get the impact-measuring reward
         vf.setAccumulatedImpact(accumulatedImpact);
-
+  	
+    	
         int state = stateConverter.getStateNumber( observation );
         int action;
         int greedyAction = ((ActionSelector)vf).chooseGreedyAction(state);

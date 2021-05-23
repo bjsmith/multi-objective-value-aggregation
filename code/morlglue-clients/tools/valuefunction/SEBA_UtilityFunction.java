@@ -5,7 +5,7 @@ public class SEBA_UtilityFunction implements UtilityFunction {
 	public double[] apply(double a[]) {
 		double[] out = new double[a.length];
 			
-		//NB! The order of array elements is LATER swapped by Vamplew's code
+		//NB! The order of array elements will be LATER swapped by Vamplew's code
 		//in method private void getActionValues(int state)
 		//but at the current stage the array elements are still in the original order of reward dimensions
 		// - The first dimension (at index 0) is the goal reward.
