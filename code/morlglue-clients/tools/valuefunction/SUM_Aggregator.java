@@ -18,8 +18,8 @@ public class SUM_Aggregator implements Aggregator {
 			sum_b += b[i];
 		}
 		
-		out[0] = sum_a;
-		out[1] = sum_b;
+		out[0] = sum_a / a.length;
+		out[1] = sum_b / b.length;
 		
 		return out;
 	}
