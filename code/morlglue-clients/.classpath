@@ -7,7 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="JavaRLGlueCodec.jar"/>
-	<classpathentry kind="lib" path="/home/robert/AISC/jxl/jexcelapi/jxl.jar"/>
-	<classpathentry kind="lib" path="/home/robert/AISC/MORL/morlglue-clients/JavaRLGlueCodec.jar"/>
+	<classpathentry kind="lib" path="jxl.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

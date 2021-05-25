@@ -30,11 +30,6 @@ public class MORL_Glue_Local_TLO_A_BJS extends MORL_Glue_Local_Base
 //			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
 			put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
-			
-			
-			
-
-			
 		}};
 
 		// comment out agents that you don't want to run (at least one needed per list)
