@@ -1,0 +1,12 @@
+
+#see:
+#https://www.overleaf.com/learn/how-to/Using_Git_and_GitHub
+
+git checkout master
+git pull overleaf master --allow-unrelated-histories
+#Username for 'https://git.overleaf.com': benjsmith@gmail.com
+#git revert --mainline 1 HEAD #not sure why this is here. It fucked everything up!
+git push overleaf master
+git add .
+git commit -m "merge with overleaf"
+git push
