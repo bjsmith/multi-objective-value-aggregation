@@ -1,0 +1,96 @@
+We compared performance of several algorithms against performance of algorithms in \cite{vamplew_potential-based_2021}. These were compared using the same environments and benchmarks as in \cite{vamplew_potential-based_2021}. Specifically, the environments were the UnbreakableBottles environment, the BreakableBottles environment, the Sokoban Environment, and the Doors environment.
+\subsection{Testing environment}
+
+We used a modified version of the testing environment from \cite{vamplew_potential-based_2021}, obtained with permission from the authors. There were several key changes for our implementation. Technical changes are not described here. Changes affecting modeling results themselves are described below.
+
+
+
+\subsection{Aggregation functions}
+
+All of the multi-objective utility functions we compared first follow the following basic steps:
+\begin{enumerate}
+
+    \item Apply an objective specific scaling factor $c$ which is multiplied with the value of the reward. The scaling factor is always same per objective, but different objectives likely have different scaling factors.
+    \item Transform the scaled output using a non-linear transform. %For SFMLA, SFLLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
+    \item Combine the transformed output using MEU.
+\end{enumerate}
+
+ New non-linear transforms compared were:
+
+\begin{itemize}
+    %\item Split-function multiplicative loss aversion (SFMLA)
+    \item Split-function log loss aversion (SFLLA)
+    \item Exponential loss aversion (ELA)
+    \item Linear-exponential loss aversion (LELA)
+    \item Squared error based alignment (SEBA)
+\end{itemize}
+
+Each non-linear transform is a transform of the value obtained along a specific objective $O$ at a specific state $s$ with a specific action $a$.
+
+For each transform, where $x=0$, $f(x)=0$, and $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ declines as $x$ gets larger. Conceptually this also provides a sort of fairness or equality, since worse objective values get disproportionately higher priority.
+
+%SFMLA might be the function that most intuitively expresses loss aversion, the idea that losses loom larger than gains:
+
+%\begin{align}
+%U^P(s, a)'= & cU^P(s, a) & \mathrm{ where \: U^P(s, a)>0} \\ \nonumber
+%  &  2c U^P(s, a) &  \mathrm{otherwise} \\ \nonumber
+%\end{align}
+
+%(or we can write the following; which is better?)
+
+%\begin{align}
+%f(x)= & cx & \mathrm{ where \: x>0} \\ \nonumber
+%  & 2c x &  \mathrm{otherwise} \\ \nonumber
+%\end{align}
+
+In SFLLA, there is a split in the function at $x=0$. It expresses a loss-averse function where losses will be stronger than gains:
+
+\begin{align}
+f(x)= & \ln(cx+1) & \mathrm{ where \: x>0} \\ \nonumber
+  &  -\exp(-cx)+1 &  \mathrm{otherwise} \\ \nonumber
+\end{align}
+
+With this function, where $x=0$, $f(x)=0$ and $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ but continually declines from greater than 1 to less than 1. Adding 1 to the equation helps us to ensure this outcome.
+
+The ELA greatly simplifies this approach, avoiding any split function at the cost of giving very little weight to any increase in values over 1:
+
+\begin{align}
+f(x)= &  -\exp(-cx)+1 \\ \nonumber
+\end{align}
+
+With LELA we add an $x$ term so that value continues to increase at least linearly at any point along the scale:
+
+
+\begin{align}
+f(x)= &  -\exp(-cx)+cx+1 \\ \nonumber
+\end{align}
+
+This still yields loss aversion at points less than zero but always provides that an increase in $x$ increases at least linearly in $f(x)$.
+
+
+Finally, SEBA works using a different set of princples. Instead of branching depending on the value of $x$ the function treats the dimensions differently depending on their type: Depending on whether a dimension is part of the performance objective or part of the alignment objective.
+
+For performance objectives the SEBA formula is linear:
+\begin{align}
+f(x)= &  cx \\ \nonumber
+\end{align}
+There is no differentiation between negative and positive areas of the measures of the performance objectives. This avoids the need for establishing a zero-point. Proper scaling is still needed.
+
+For alignment objectives the SEBA formula is a square power function in order to express loss aversion. It is assumed that the values in the alignment objective can only be negative or zero.
+\begin{align}
+f(x)= &  -(cx)^2 \\ \nonumber
+  &  \mathrm{ where \: x \leq 0}
+\end{align}
+The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no constraint violations are occurring. Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
+\begin{itemize}
+    \item The desired target value is zero (for example, zero harm, etc).
+    \item Alternatively it might be a homeostatic setpoint (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of deviation.
+\end{itemize}
+
+\subsection{Weight changes}
+
+\subsection{Environment}
+
+As previously described, we started with four environments reported in \cite{vamplew_potential-based_2021}. We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's primary utility feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment utility feedback.
+
+
