@@ -18,7 +18,7 @@ library(stringr)
 library(directlabels)
 
 source("utils.R")
-
+output_dir <- "../../../output/"
 ```
 
 Now--great--can we compare different sheets?
@@ -216,7 +216,10 @@ for (env_dim in c("pen","rew")){
         labs(
           x=paste0(env_dim, " Scale"),
           title=paste0("Average Offline Performance across different ", env_dim, " scale levels"),subtitle="Across 5000 trials")
-      
+    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".eps"),plot=envplot,device="eps")
+    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".tex"),plot=envplot,device="tex")
+    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".pdf"),plot=envplot,device="pdf")
+    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".png"),plot=envplot,device="png")
     print(envplot)
 }
 
