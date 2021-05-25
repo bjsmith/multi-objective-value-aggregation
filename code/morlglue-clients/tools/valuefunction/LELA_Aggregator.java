@@ -3,9 +3,9 @@ package tools.valuefunction;
 public class LELA_Aggregator implements Aggregator{//extends ScaledAggregator {
 
 	public double[] apply(double a[], double b[]) {
-		System.out.println("applying LELA");
-		System.out.println("a:" + a[0]  + ", "+ a[1]);
-		System.out.println("b:" + b[0]  + ", "+ b[1]);
+//		System.out.println("applying LELA");
+//		System.out.println("a:" + a[0]  + ", "+ a[1]);
+//		System.out.println("b:" + b[0]  + ", "+ b[1]);
 		//System.out.println(a);
 		//System.out.println(b);
 		double[] out = new double[2];

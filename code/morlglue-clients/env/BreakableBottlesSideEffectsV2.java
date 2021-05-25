@@ -75,14 +75,12 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private boolean debugging;
     
 
-    private double time_use_penalty_scaling = 1;
     private double goal_reward_scaling = 1;
     private double impact_penalty_scaling = 1;
     
     
     
-    public BreakableBottlesSideEffectsV2(double time_use_penalty_scaling,double goal_reward_scaling,double impact_penalty_scaling) {
-    	this.time_use_penalty_scaling = time_use_penalty_scaling;
+    public BreakableBottlesSideEffectsV2(double goal_reward_scaling,double impact_penalty_scaling) {
     	this.goal_reward_scaling = goal_reward_scaling;
     	this.impact_penalty_scaling=impact_penalty_scaling;
     }

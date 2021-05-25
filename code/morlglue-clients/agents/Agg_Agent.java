@@ -229,7 +229,8 @@ public class Agg_Agent implements AgentInterface {
     {
     	//scaling
     	reward.setDouble(0, reward.getDouble(0) * 1);	//TODO: configurable parameter for scaling
-    	reward.setDouble(1, reward.getDouble(1) * 10);	//TODO: configurable parameter for scaling
+    	//reward.setDouble(1, reward.getDouble(1) * 10);	//TODO: configurable parameter for scaling
+    	reward.setDouble(1, reward.getDouble(1));	//TODO: configurable parameter for scaling
 
         
     	double[] reward_arr = new double[2];

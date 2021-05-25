@@ -78,6 +78,23 @@ public class Doors implements EnvironmentInterface
     
     public EnvironmentLoader envloader;
     
+    private double goal_reward_scaling = 1;
+    private double impact_penalty_scaling = 1;
+    private double time_use_penalty_scaling = 1;
+    
+    
+
+    public Doors(double time_use_penalty_scaling, double goal_reward_scaling,double impact_penalty_scaling) {
+    	this.goal_reward_scaling = goal_reward_scaling;
+    	this.impact_penalty_scaling=impact_penalty_scaling;
+    	this.time_use_penalty_scaling=time_use_penalty_scaling;
+    }
+    
+    public Doors() {
+    	
+    }
+	
+    
     // Implemented for use in debugging the TLO-PA agent. Lets me generate the state index for a given state so I can look it up
     // in the agent's Q-table
     private void printStateIndex(int agent, boolean door1, boolean door2)
@@ -268,17 +285,17 @@ public class Doors implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
-	    rewards.setDouble(IMPACT_REWARD, potentialDifference(doorsOpenCount, newDoorsOpenCount));  //works only on very conservative agents
+	    rewards.setDouble(IMPACT_REWARD, potentialDifference(doorsOpenCount, newDoorsOpenCount)*this.impact_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, doorsOpenCount * DOORS_OPEN_PENALTY);
 	    doorsOpenCount = newDoorsOpenCount;
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(GOAL_REWARD, -1);
+	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);
 	    	rewards.setDouble(PERFORMANCE_REWARD, -1);
 	    }
 	    else
 	    {
-	    	rewards.setDouble(GOAL_REWARD, 50); // reward for reaching goal
+	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reward_scaling); // reward for reaching goal
 	    	rewards.setDouble(PERFORMANCE_REWARD, 50+doorsOpenCount * DOORS_OPEN_PENALTY);	    	
 	    }
     }

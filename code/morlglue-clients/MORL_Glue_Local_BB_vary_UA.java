@@ -25,7 +25,7 @@ public class MORL_Glue_Local_BB_vary_UA extends MORL_Glue_Local_Base
 			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","ELA"});}});
 			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
 //			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
-//			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
+			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA" }); } });
 			// Peter's agents
 //			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
@@ -35,36 +35,69 @@ public class MORL_Glue_Local_BB_vary_UA extends MORL_Glue_Local_Base
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
 //			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+			//original
+			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(1,1);
+				
+				}});
+			
+			//perturb penalty scaling
 			put("BreakableBottlesPenalty_0_01", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,0.01);
+				return new BreakableBottlesSideEffectsV2(1,0.01);
 				
 				}});
 			
 			put("BreakableBottlesPenalty_0_05", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,0.05);
+				return new BreakableBottlesSideEffectsV2(1,0.05);
 				
 				}});
 			
 			put("BreakableBottlesPenalty_0_2", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,0.2);
+				return new BreakableBottlesSideEffectsV2(1,0.2);
 				
 				}});
 			
-			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,1);
-				
-				}});
+			
 			
 			put("BreakableBottlesPenalty5", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,5);
+				return new BreakableBottlesSideEffectsV2(1,5);
 				}});
 			
 			put("BreakableBottlesPenalty20", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,20);
+				return new BreakableBottlesSideEffectsV2(1,20);
 				}});
 			
 			put("BreakableBottlesPenalty100", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-				return new BreakableBottlesSideEffectsV2(1,1,100);
+				return new BreakableBottlesSideEffectsV2(1,100);
+				}});
+			
+			//perturb reward scaling
+			put("BreakableBottlesReward_0_01", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(0.01,1);
+				
+				}});
+			
+			put("BreakableBottlesReward_0_05", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(0.05,1);
+				
+				}});
+			
+			put("BreakableBottlesReward_0_2", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(0.2,1);
+				
+				}});
+			
+			
+			put("BreakableBottlesReward5", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(5,1);
+				}});
+			
+			put("BreakableBottlesReward20", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(20,1);
+				}});
+			
+			put("BreakableBottlesReward100", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+				return new BreakableBottlesSideEffectsV2(100,1);
 				}});
 
 //			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
@@ -98,6 +131,7 @@ public class MORL_Glue_Local_BB_vary_UA extends MORL_Glue_Local_Base
 						.agent(astring).env(envstring)
 						.episodes(num_online, num_offline, max_episode_length)
 						.buildExperiment();
+	    		//settings.additional_settings.put("PenaltyScale",env.)
 	    		String outputfile = LocalExperiment.main(agent, env, settings);
 	    		outputfiles[runid] = outputfile;
 	    		runid ++;

@@ -238,12 +238,12 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    if (!terminal)
 	    {
 	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);
-	    	rewards.setDouble(PERFORMANCE_REWARD, -1*this.time_use_penalty_scaling);
+	    	rewards.setDouble(PERFORMANCE_REWARD, -1);
 	    }
 	    else
 	    {
 	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reach_reward_scaling); // reward for reaching goal
-	    	rewards.setDouble(PERFORMANCE_REWARD, 50*this.goal_reach_reward_scaling+BOX_PENALTY[boxLocation]*this.box_position_penalty_scaling);	    	
+	    	rewards.setDouble(PERFORMANCE_REWARD, 50+BOX_PENALTY[boxLocation]);	    	
 	    }
     }
     

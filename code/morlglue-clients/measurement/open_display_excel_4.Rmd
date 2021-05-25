@@ -1,0 +1,247 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+This notebook demos opening different Excel files and printing their output.
+```{r}
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(signal)
+
+library(dplyr)
+library(stringr)
+library(directlabels)
+
+source("utils.R")
+
+```
+
+Now--great--can we compare different sheets?
+
+```{r message=FALSE}
+source_path <- "../data/comparison_4envs//"
+
+file_list <- get_file_list(source_path)
+
+raw_activity <- get_raw_activity(file_list,source_path)
+
+print(object.size(raw_activity))
+#get memory efficiencies
+raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
+raw_activity$Environment <- as.factor(raw_activity$Environment)
+raw_activity$Agent <- as.factor(raw_activity$Agent)
+print(object.size(raw_activity))
+
+
+```
+
+
+Filter out SFMLA because it hasn't performed well and there's no point including it.
+
+```{r}
+raw_activity <- raw_activity[raw_activity$Agent!="SFMLA",]
+```
+
+
+
+Now we apply some of the postprocessing we did before:
+
+
+```{r}
+activity_long <-melt.data.table(data.table(raw_activity),id.vars =c("EpisodeType","Episode number","Agent","Environment","EnvironmentClass"),variable.name = "Measure",value.name="Score")
+
+
+activity_long <- append_blackman_averaging(activity_long)
+
+print(object.size(activity_long))
+
+```
+
+## Offline performance
+
+
+
+
+
+```{r}
+table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
+table_env$EpisodeType=NULL
+#table_env$Environment=NULL
+table_env$`Episode number`=NULL
+
+```
+
+Maybe we want a table with just R*. Then we can put agent along one axis and environment along the other.
+
+
+
+```{r}
+table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
+table_env$EpisodeType=NULL
+#table_env$Environment=NULL
+table_env$`Episode number`=NULL
+table_env$`R^P`=NULL
+table_env$`R^A`=NULL
+
+table_env_long <- table_env %>% dcast.data.table(Environment~Agent,value.var="R^*",fun.aggregate = mean)
+print(knitr::kable(table_env_long))
+
+
+```
+
+## Additional data labelling
+
+```{r}
+
+environment_labels <- str_match(raw_activity$Environment,"(pen|rew)(\\d+.?\\d*)")
+raw_activity$EnvironmentVariant <- environment_labels[,1]
+raw_activity$EnvironmentDimChange <- environment_labels[,2]
+raw_activity$EnvironmentValueChange <- as.numeric(environment_labels[,3])
+raw_activity[is.na(raw_activity$EnvironmentVariant),]$EnvironmentVariant <- "Base"
+raw_activity[is.na(raw_activity$EnvironmentDimChange),]$EnvironmentDimChange <- ""
+raw_activity[is.na(raw_activity$EnvironmentValueChange),]$EnvironmentValueChange <- 1
+```
+
+
+## Offline performance
+
+```{r}
+
+activity_means <- data.table(raw_activity)[EpisodeType=="Offline"] %>% 
+  select(`R^*`,Agent,Environment,EnvironmentClass) %>%
+  group_by(EnvironmentClass, Environment, Agent) %>% summarise_all(mean) %>% data.table
+
+#table_env_long <- activity_means %>% data.table %>% dcast.data.table(Environment~Agent,value.var="R^*")
+#print(knitr::kable(table_env_long))
+
+#now do 
+
+for(envclass in unique(activity_means$EnvironmentClass)){
+  envplot <- ggplot(activity_means[EnvironmentClass==envclass,],aes(x=Environment,y=`R^*`,fill=Agent))+geom_bar(stat="identity",position="dodge")+
+  #geom_line(data=activity_means[activity_means$Agent=='TLO_A',],mapping = aes(x=Environment,y=`R^*`,group=Agent),linetype="dashed")+
+  theme(axis.text.x = element_text(angle=30))+
+    labs(title=envclass)
+  
+  print(envplot)
+}
+
+
+```
+
+
+## Average online performance
+
+```{r}
+
+activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
+  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant) %>%
+  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant) %>% summarise_all(mean) %>% data.table
+
+#table_env_long <- activity_means %>% data.table %>% dcast.data.table(Environment~Agent,value.var="R^*")
+#print(knitr::kable(table_env_long))
+
+#now do 
+
+for(envclass in unique(activity_means$EnvironmentClass)){
+  envplot <- ggplot(activity_means[EnvironmentClass==envclass,],aes(x=EnvironmentVariant,y=`R^*`,fill=Agent))+geom_bar(stat="identity",position="dodge")+
+  #geom_line(data=activity_means[activity_means$Agent=='TLO_A',],mapping = aes(x=Environment,y=`R^*`,group=Agent),linetype="dashed")+
+  theme(axis.text.x = element_text(angle=30))+
+    labs(title=paste0(envclass, ": Average Online Performance"),subtitle="Across 5000 trials")
+  
+  print(envplot)
+}
+
+
+```
+
+
+## Average online performance as line graphs
+
+```{r fig.width=12}
+
+activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
+  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>%
+  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+
+
+#now do 
+for (env_dim in c("pen","rew")){
+  relevant_activity <- activity_means %>% dplyr::filter(EnvironmentDimChange %in% c("",env_dim))
+    envplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
+      geom_point(size=6,alpha=0.4,shape=21,color="black")+
+      scale_x_continuous(trans="log10",
+                         limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
+                         breaks = c(0.01,0.1,1,10,100))+
+      geom_line(linetype="dashed")+
+      geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1)+
+      facet_wrap(~EnvironmentClass,scales = "free_y")+
+      theme(axis.text.x = element_text(angle=30))+
+        labs(
+          x=paste0(env_dim, " Scale"),
+          title=paste0("Average Online Performance across different ", env_dim, " scale levels"),subtitle="Across 5000 trials")
+      
+    print(envplot)
+}
+
+
+```
+
+
+## Average offline performance as line graphs
+
+```{r fig.width=12}
+
+activity_means <- data.table(raw_activity)[EpisodeType=="Offline"] %>% 
+  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>%
+  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+
+
+#now do 
+for (env_dim in c("pen","rew")){
+  relevant_activity <- activity_means %>% dplyr::filter(EnvironmentDimChange %in% c("",env_dim))
+    envplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
+      geom_point(size=6,alpha=0.4,shape=21,color="black")+
+      scale_x_continuous(trans="log10",
+                         limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
+                         breaks = c(0.01,0.1,1,10,100))+
+      geom_line(linetype="dashed")+
+      geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1)+
+      facet_wrap(~EnvironmentClass,scales = "free_y")+
+      theme(axis.text.x = element_text(angle=30))+
+        labs(
+          x=paste0(env_dim, " Scale"),
+          title=paste0("Average Offline Performance across different ", env_dim, " scale levels"),subtitle="Across 5000 trials")
+      
+    print(envplot)
+}
+
+
+```
+
+### Individual graphs
+
+
+
+```{r fig.width=14}
+
+for (select_env in unique(activity_long$Environment)){
+  to_plot <- ggplot(
+  activity_long[EpisodeType=="Online" & Environment==select_env ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim = c(0,max(activity_long$`Episode number`,na.rm = TRUE)*1.2))+
+  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+  labs(y="Score",title=select_env)+facet_wrap(~Measure,scales="free")
+  print(to_plot)
+}
+
+
+
+```
+

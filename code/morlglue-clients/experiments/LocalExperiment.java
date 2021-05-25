@@ -4,6 +4,8 @@
 package experiments;
 
 import java.io.File;
+
+import java.util.Hashtable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +39,9 @@ public class LocalExperiment
     	public int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
     	public int NUM_OFFLINE_EPISODES_PER_TRIAL = 100;
     	public int MAX_EPISODE_LENGTH = 1000;
+    	
+    	public Hashtable<String, String> additional_settings = new Hashtable<String, String>();
+
     	
     	public ExperimentSettings(String name, String outpath, String agent, String env, double alpha, double lambda, double gamma,
     			int num_trials, int exploration, int exploration_param,
@@ -173,7 +178,7 @@ public class LocalExperiment
     	// create excel sheet
     	//the colon characters weren't being outputted correctly so I removed them.
     	String timeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HHmmss").format(new java.util.Date());
-    	final String fileName = settings.OUTPATH + "/" + envName+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
+    	final String fileName = settings.OUTPATH + "/" + settings.ENV + "("+ envName + ")"+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
     	excel = new JxlExcelWriter(fileName);
     	
     	System.out.println("**********************************************");
@@ -232,7 +237,9 @@ public class LocalExperiment
         					+ excel.getAddress(i,2,OFFLINE_ROW) + "&" + excel.getAddress(i,3,OFFLINE_ROW) + "&" + excel.getAddress(i,4,OFFLINE_ROW);
         	excel.writeNextRowTextAndFormula(text, lookups);
         }
+        
         //TODO write experiment settings into excel file
+        
         excel.closeFile();
         
         RLGlue.RL_cleanup();

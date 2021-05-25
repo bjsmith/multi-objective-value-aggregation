@@ -13,3 +13,6 @@
 
 # Beyond Compare backup files
 *.*~
+
+#R
+.Rhistory
