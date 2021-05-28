@@ -17,6 +17,9 @@ library(dplyr)
 library(stringr)
 library(directlabels)
 
+library(knitr)
+library(kableExtra)
+
 source("utils.R")
 output_dir <- "../../../output/"
 ```
@@ -80,20 +83,6 @@ Maybe we want a table with just R*. Then we can put agent along one axis and env
 
 
 
-```{r}
-table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
-table_env$EpisodeType=NULL
-#table_env$Environment=NULL
-table_env$`Episode number`=NULL
-table_env$`R^P`=NULL
-table_env$`R^A`=NULL
-
-table_env_long <- table_env %>% dcast.data.table(Environment~Agent,value.var="R^*",fun.aggregate = mean)
-print(knitr::kable(table_env_long))
-
-
-```
-
 ## Additional data labelling
 
 ```{r}
@@ -134,6 +123,22 @@ for(envclass in unique(activity_means$EnvironmentClass)){
 ```
 
 
+
+
+```{r}
+table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
+table_env$EpisodeType=NULL
+#table_env$Environment=NULL
+table_env$`Episode number`=NULL
+table_env$`R^P`=NULL
+table_env$`R^A`=NULL
+
+table_env_long <- table_env %>% dcast.data.table(Environment~Agent,value.var="R^*",fun.aggregate = mean)
+print(knitr::kable(table_env_long))
+
+
+```
+
 ## Average online performance
 
 ```{r}
@@ -158,6 +163,59 @@ for(envclass in unique(activity_means$EnvironmentClass)){
 
 
 ```
+
+
+
+```{r}
+table_env <- data.table(raw_activity)[EpisodeType=="Online",]
+table_env$EpisodeType=NULL
+#table_env$Environment=NULL
+table_env$`Episode number`=NULL
+table_env$`R^P`=NULL
+table_env$`R^A`=NULL
+
+table_env_long <- table_env %>% dcast.data.table(
+  EnvironmentClass+EnvironmentDimChange+EnvironmentValueChange~Agent
+  ,value.var="R^*",fun.aggregate = mean)
+```
+
+```{r}
+library(pander)
+#change this column name.
+colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","$TLO^A$")
+setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
+setnames(table_env_long,"EnvironmentValueChange","Scale",skip_absent=TRUE)
+setnames(table_env_long,"EnvironmentDimChange","Scale Change",skip_absent=TRUE)
+#colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"Envir","$TLO^A$")
+table_env_long <- 
+  table_env_long %>% mutate(Environment=str_replace(Environment,"BreakableBottles","Breakable\\nBottles"))
+  
+row_max <- apply(table_env_long[,4:ncol(table_env_long)],1,max)*0.9<table_env_long[,4:ncol(table_env_long)]
+table_env_long %>%
+  
+  
+  mutate(Scale=format(Scale,scientific = FALSE,drop0trailing = TRUE)) %>%
+  mutate_if(is.numeric,~format(.x,digits=2),"latex") %>%
+  #mutate_if(is.numeric,~cell_spec(format(.x,digits=2),"latex",color="red")) %>%
+  mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
+  mutate(SFLLA=cell_spec(SFLLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
+  mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
+  mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
+  mutate(`$TLO^A$`=cell_spec(`$TLO^A$`,"latex",color=ifelse(row_max[,'$TLO^A$'],"blue","black"))) %>%
+  mutate(Environment=linebreak(Environment)) %>%
+  kable(
+      #%>% order_by(c(EnvironmentClass,EnvironmentDimChange,EnvironmentValueChange))
+      booktabs=T,format="latex"
+      #,digits=2
+      ,format.args=list(scientific=FALSE)
+      ,escape=F
+      ) %>%
+   collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
+  
+  #pander(split.cell=10) %>%
+  writeLines("mytextout.tex")
+```
+
 
 
 ## Average online performance as line graphs
@@ -185,6 +243,9 @@ for (env_dim in c("pen","rew")){
           x=paste0(env_dim, " Scale"),
           title=paste0("Average Online Performance across different ", env_dim, " scale levels"),subtitle="Across 5000 trials")
       
+    ggsave(filename=paste0(output_dir, "online performance_",env_dim,".pdf"),plot=envplot,device="pdf")
+    ggsave(filename=paste0(output_dir, "online performance_",env_dim,".png"),plot=envplot,device="png")
+    
     print(envplot)
 }
 
@@ -194,7 +255,7 @@ for (env_dim in c("pen","rew")){
 
 ## Average offline performance as line graphs
 
-```{r fig.width=12}
+```{r fig.width=10}
 
 activity_means <- data.table(raw_activity)[EpisodeType=="Offline"] %>% 
   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>%
@@ -210,16 +271,16 @@ for (env_dim in c("pen","rew")){
                          limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
                          breaks = c(0.01,0.1,1,10,100))+
       geom_line(linetype="dashed")+
-      geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1)+
+      geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
       facet_wrap(~EnvironmentClass,scales = "free_y")+
-      theme(axis.text.x = element_text(angle=30))+
+      theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
           x=paste0(env_dim, " Scale"),
           title=paste0("Average Offline Performance across different ", env_dim, " scale levels"),subtitle="Across 5000 trials")
-    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".eps"),plot=envplot,device="eps")
-    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".tex"),plot=envplot,device="tex")
+    #ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".eps"),plot=envplot,device="eps")
+    #ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".tex"),plot=envplot,device="tex")
     ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".pdf"),plot=envplot,device="pdf")
-    ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".png"),plot=envplot,device="png")
+    #ggsave(filename=paste0(output_dir, "offline performance_",env_dim,".png"),plot=envplot,device="png")
     print(envplot)
 }
 
