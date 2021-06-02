@@ -24,12 +24,22 @@ import tools.traces.StateActionDiscrete;
 import tools.valuefunction.Agg_LookupTable;
 import tools.valuefunction.Aggregator;
 import tools.valuefunction.ELA_Aggregator;
-import tools.valuefunction.LELA_Aggregator;
-import tools.valuefunction.MIN_Aggregator;
-import tools.valuefunction.SFLLA_Aggregator;
-import tools.valuefunction.SFMLA_Aggregator;
+import tools.valuefunction.UtilityFunction;
+import tools.valuefunction.ELA_UtilityFunction;
 import tools.valuefunction.FDP_Aggregator;
+import tools.valuefunction.LELA_UtilityFunction;
+//import tools.valuefunction.MIN_UtilityFunction;
+import tools.valuefunction.SFLLA_UtilityFunction;
+import tools.valuefunction.SFMLA_Aggregator;
+import tools.valuefunction.SFMLA_UtilityFunction;
+import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.SEBA_Aggregator;
+import tools.valuefunction.SUM_Aggregator;
+import tools.valuefunction.FDP_UtilityFunction;
+import tools.valuefunction.Identity_UtilityFunction;
+import tools.valuefunction.LELA_Aggregator;
+import tools.valuefunction.SEBA_UtilityFunction;
+import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.interfaces.ActionSelector;
 import tools.valuefunction.interfaces.ValueFunction;
 
@@ -70,17 +80,55 @@ public class Agg_Agent implements AgentInterface {
     int numOfSteps;
     int numEpisodes;
     double accumulatedImpact; // sum the impact reward received so far
+    double[] accumulatedSquaredImpact; // sum the impact reward received so far
+    
+
 
     StateConverter stateConverter = null;
+    String utilityFunctionstring;
     String aggregatorstring;
+    
+    UtilityFunction utilityFunction;
     Aggregator aggregator;
     
     public Agg_Agent(String[] args) {
-		String aggregator_type = args[0];
+    	
+		String utilityFunction_type = args[0];
+		String aggregator_type = args[1];
+		
+		this.utilityFunctionstring = utilityFunction_type;
 		this.aggregatorstring = aggregator_type;
+		
+		switch(utilityFunction_type) {
+		case "IDENT":
+			this.utilityFunction = new Identity_UtilityFunction();
+			break;
+		case "SFLLA":
+			this.utilityFunction = new SFLLA_UtilityFunction();
+			break;
+		case "LELA":
+			this.utilityFunction = new LELA_UtilityFunction();
+			break;
+		case "SFMLA":
+			this.utilityFunction = new SFMLA_UtilityFunction();
+			break;
+		case "ELA":
+			this.utilityFunction = new ELA_UtilityFunction();
+			break;
+		case "FDP":
+			this.utilityFunction = new FDP_UtilityFunction();
+			break;
+		case "SEBA":
+			this.utilityFunction = new SEBA_UtilityFunction();
+			break;
+		}
+		
 		switch(aggregator_type) {
 		case "MIN":
 			this.aggregator = new MIN_Aggregator();
+			break;
+		case "SUM":
+			this.aggregator = new SUM_Aggregator();
 			break;
 		case "SFLLA":
 			this.aggregator = new SFLLA_Aggregator();
@@ -105,13 +153,13 @@ public class Agg_Agent implements AgentInterface {
 
     @Override
     public void agent_init(String taskSpecification) {
-    	System.out.println(this.aggregatorstring+" launched");
+    	System.out.println(this.utilityFunctionstring+","+this.aggregatorstring+" launched");
         TaskSpecVRLGLUE3 theTaskSpec = new TaskSpecVRLGLUE3(taskSpecification);
 
         numActions = theTaskSpec.getDiscreteActionRange(0).getMax() + 1;
         numStates = theTaskSpec.getDiscreteObservationRange(0).getMax()+1;
         numOfObjectives = theTaskSpec.getNumOfObjectives();
-        vf = new Agg_LookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold, aggregator);
+        vf = new Agg_LookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold, utilityFunction, aggregator);
 
         random = new Random(471);
         tracingStack = new Stack<>();
@@ -179,10 +227,33 @@ public class Agg_Agent implements AgentInterface {
     @Override
     public Action agent_step(Reward reward, Observation observation) 
     {
+    	//scaling
+    	reward.setDouble(0, reward.getDouble(0) * 1);	//TODO: configurable parameter for scaling
+    	//reward.setDouble(1, reward.getDouble(1) * 10);	//TODO: configurable parameter for scaling
+    	reward.setDouble(1, reward.getDouble(1));	//TODO: configurable parameter for scaling
+
+        
+    	double[] reward_arr = new double[2];
+    	
+    	//performance reward
+    	reward_arr[0] = reward.getDouble(0);
+    	//alignment reward
+    	reward_arr[1] = reward.getDouble(1);
+    	
+    	reward_arr = this.utilityFunction.apply(reward_arr);
+    	reward.setDouble(0, reward_arr[0]);
+    	reward.setDouble(1, reward_arr[1]);
+    	
+    	
         numOfSteps++;
         accumulatedImpact += reward.getDouble(1); // get the impact-measuring reward
+        //accumulatedSquaredImpact[0] += Math.pow(reward.getDouble(1),2);
+        //how do we get the two rewards here? it's unclear.
+        //also how do we feed this back into the aggregator? needs to scale values actually used by the aggregator.
+        
         vf.setAccumulatedImpact(accumulatedImpact);
-
+  	
+    	
         int state = stateConverter.getStateNumber( observation );
         int action;
         int greedyAction = ((ActionSelector)vf).chooseGreedyAction(state);
@@ -337,7 +408,7 @@ public class Agg_Agent implements AgentInterface {
     	}
     	if (message.equals("get_agent_name"))
     	{
-    		return aggregatorstring;
+    		return utilityFunctionstring+","+aggregatorstring;
     	}
         if (message.equals("freeze_learning")) {
             policyFrozen = true;
@@ -345,8 +416,8 @@ public class Agg_Agent implements AgentInterface {
             return "message understood, policy frozen";
         }
         else if (message.startsWith("change_weights")){
-            System.out.print(this.aggregatorstring+": Weights can not be changed");
-            return this.aggregatorstring+": Weights can not be changed";
+            System.out.print(this.utilityFunctionstring+","+this.aggregatorstring+": Weights can not be changed");
+            return this.utilityFunctionstring+","+this.aggregatorstring+": Weights can not be changed";
         }
         if (message.startsWith("set_learning_parameters")){
         	System.out.println(message);
@@ -390,8 +461,8 @@ public class Agg_Agent implements AgentInterface {
     		debugging = false;
     		return "Debugging disabled in agent";
     	}
-        System.out.println(this.aggregatorstring+" - unknown message: " + message);
-        return this.aggregatorstring+" does not understand your message.";
+        System.out.println(this.utilityFunctionstring+","+this.aggregatorstring+" - unknown message: " + message);
+        return this.utilityFunctionstring+","+this.aggregatorstring+" does not understand your message.";
     }
     
     // used for debugging with the ComparisonAgentForDebugging
@@ -401,7 +472,7 @@ public class Agg_Agent implements AgentInterface {
         int state = stateConverter.getStateNumber(observation);
         int action = thisAction.getInt(0);
         int otherAction = otherAgentAction.getInt(0);
-        System.out.println(this.aggregatorstring);
+        System.out.println(this.utilityFunctionstring+","+this.aggregatorstring);
 		System.out.println("\tEpisode" + numEpisodes + "Step: " + numOfSteps +"\tState: " + "\tAction: " + action);
 		System.out.println("\tIs other agent's action greedy for me? " + ((ActionSelector)vf).isGreedy(state,otherAction));
     	for (int i=0; i<numActions; i++)

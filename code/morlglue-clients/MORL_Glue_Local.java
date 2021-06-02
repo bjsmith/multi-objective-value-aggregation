@@ -16,51 +16,8 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local
+public class MORL_Glue_Local extends MORL_Glue_Local_Base
 {
-	
-	public static interface AgentGenerator
-	{
-		public AgentInterface getAgent(String[] args);
-	}
-	
-	public static interface EnvGenerator
-	{
-		public EnvironmentInterface getEnv(String[] args);
-	}
-	
-	public static void plotting(ExperimentSettings settings, String[] files) {
-		Runtime rt = Runtime.getRuntime();
-		String pythonPath = "/home/robert/miniconda3/envs/nnq/bin/python"; // replace with your Python path that has numpy, pandas and matplotlib
-		try {
-			ArrayList<String> command = new ArrayList<String>(Arrays.asList(pythonPath,"learning_plot.py", "--name",
-					settings.NAME, "--path", settings.OUTPATH,
-					"--num_online", Integer.toString(settings.NUM_ONLINE_EPISODES_PER_TRIAL),"--num_offline",
-					Integer.toString(settings.NUM_OFFLINE_EPISODES_PER_TRIAL), "--timestamp", "--files"));
-			command.addAll(new ArrayList<String>(Arrays.asList(files)));
-			String[] cmd_ar = new String[command.size()];
-	        cmd_ar = command.toArray(cmd_ar);
-			System.out.println("Running ");
-			for(String part : cmd_ar) {
-				System.out.print(part+" ");
-			}
-			
-			Process p = rt.exec(cmd_ar);
-	        String cmdOutput = null;
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            BufferedReader errorInput = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            // read the output from the command
-            while ((cmdOutput = stdInput.readLine()) != null) {
-                System.out.println(cmdOutput);
-            }
-            while ((cmdOutput = errorInput.readLine()) != null) {
-                System.out.println(cmdOutput);
-            }
-			System.out.println("FINISHED PLOTTING");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	// Runs all combinations of (agent, environment, experiment)
 	@SuppressWarnings("serial")
@@ -68,16 +25,28 @@ public class MORL_Glue_Local
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{	
 			// our agents
-			//put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA"});}});
-			//put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA"});}});
-			//put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA"});}});
-			//put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA"});}});
-			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});}});
-			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
+						
+			//Q value transformation function during aggregation
+			put("ELA1", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "ELA"});}});
+			put("SFMLA1", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "SFMLA"});}});
+			put("LELA1", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"});}});
+			put("SFLLA1", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "SFLLA"});}});
+			put("MIN1", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "MIN"});}});
+			put("SEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA"}); } });
+			
+			//reward to utility transformation function near agent entry point
+			put("ELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA", "SUM"});}});
+			put("SFMLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA", "SUM"});}});
+			put("LELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA", "SUM"});}});
+			put("SFLLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA", "SUM"});}});
+			put("SEBA2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"SEBA", "SUM"}); } });
+			
 			// Peter's agents
 			//put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 			//put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
-			//put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
+			put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
+			
+			//do not use this, it is slow
 			//put("TLO_P", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SatisficingMOAgent();}});
 		}};
 
