@@ -10,6 +10,7 @@ Here, we present overall results for Online and Offline testing.
 \include{output/tables/testex}
 %\end{adjustbox}
 \end{table}
+
 \begin{figure*}[h]
  
   \includegraphics[width=\columnwidth]{output/onlinerew.pdf}
@@ -28,4 +29,4 @@ Here, we present overall results for Online and Offline testing.
 
 Overall, there was no clear best performer, but SFLLA had the best performance across a wider range of enviornments and enviornment variants than any other agent, including  $\text{TLO}^\text{A}$. Table~\ref{tab:mean_r_star_performance} describes relative $\text{R}^*$ scores for each function, compared to the $\text{TLO}^\text{A}$ function, at different scales.  Within the Breakable Bottles environment, $\text{TLO}^\text{A}$ performed worse than all other environments at all scales, and SFLLA performed within 10\% of the best within five of nine enviornmental variants. In the Unbreakable Bottles Environment, performance between all agents except ELA was roughly equal. In the Doors environment, SFLLA was overall the best performer, but the result was equivocal: it performed within 10\% of the best in just 3 of 9 variants Finally, in the Sokoban environment, $\text{TLO}^\text{A}$ performed slightly better than SFLLA.
 
-SFLLA tended to performed poorly when either primary or impact objectives were scaled down to extremely low values, as did $\text{TLO}^\text{A}$ (Figure~\ref{fig:offline_pen_performance2})
+SFLLA tended to performed at best level when perturbing the reward scaling (Figure~\ref{fig:offline_pen_performance}), but less well when impact scaling was perturbed. (Figure~\ref{fig:offline_pen_performance2}).
