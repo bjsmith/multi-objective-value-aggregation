@@ -254,7 +254,7 @@ for (env_dim in c("pen","rew")){
     presentation_plot <- baseplot
             
     
-    ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=7)
+    ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
     
     print(envplot)
 }
