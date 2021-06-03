@@ -10,7 +10,10 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 \begin{align}
 U=\text{min}({x_i}) \\
 U=\sum_{i}^n{x_i} \\
-U=\sum_{i}^n{f(x_i)} \\
+U=\sum_{i}^n{f(x_i)}
+\end{align}
+\begin{align}
+\label{eq:meu}
 U=\sum_{i}^n{f_i(x_i)}
 \end{align}
 
@@ -36,6 +39,15 @@ Each non-linear transform is a transform of the value obtained along a specific 
 
 For each transform, where $x=0$, $f(x)=0$, and $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ declines as $x$ gets larger. Conceptually this also provides a sort of fairness or equality, since worse objective values get disproportionately higher priority.
 
+SFLLA, ELA, and LELA are illustrated in Figure~\ref{fig:transform_functions}.
+
+\begin{figure*}[h]
+ 
+  \includegraphics[width=\columnwidth]{output/transform_graph_2d.png}
+  \caption{Transform functions. Each transform function is applied to the utility received from the environment for each objective. The output of each of these transform functions are summed together in a Maximize Expected Utility Model. (\ref{eq:meu})}
+  \label{fig:transform_functions}
+  \Description{Transform functions. Each transform function is applied to the utility received from the environment for each objective. The output of each of these transform functions are summed together in a Maximize Expected Utility Model (Equation~\ref{eq:meu}).}
+\end{figure*}
 %SFMLA might be the function that most intuitively expresses loss aversion, the idea that losses loom larger than gains:
 
 %\begin{align}
