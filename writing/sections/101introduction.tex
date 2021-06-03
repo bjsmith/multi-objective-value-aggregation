@@ -1,11 +1,13 @@
 
 
-A key aim of AGI Safety research is to align AGI systems to the fulfillment of human preferences \cite{Bostrom2014, russell2019human} or values. There are at least three reasons why this a multi-objective problem. First, there are a variety of ethical, legal, and safety-based frameworks \cite{vamplew_human-aligned_2018}, and alignment to any one of these systems is insufficient. Second, even within a specific category--for instance, moral systems--there exist competing accounts of moral outcomes, including amongst philosophers of ethics and morality \cite{bogosian_implementation_2017}. Third, according to at least one major currently-accepted account of human moral cognition, moral cognition is a plural set of social intuitions that contradict and cannot be reduced to a single outcome or value function \cite{haidt2001emotional,sotala2016defining}.
+A key aim of AGI Safety research is to align AGI systems to the fulfillment of human preferences \cite{Bostrom2014, russell2019human} or values. There are at least three reasons why this is a multi-objective problem. First, there are a variety of ethical, legal, and safety-based frameworks \cite{vamplew_human-aligned_2018}, and alignment to any one of these systems is insufficient. Second, even within a specific category--for instance, moral systems--there exist competing accounts of moral outcomes, including amongst philosophers of ethics and morality \cite{bogosian_implementation_2017}. Third, according to at least one major currently-accepted account of human moral cognition, moral cognition is a plural set of social intuitions that contradict and cannot be reduced to a single outcome or value function \cite{haidt2001emotional,sotala2016defining}.
+%Having more objectives also helps to mitigate against Goodhart’s law.
+%TODO: reference.
 
 \subsection{Current empirical approaches}
 
 \subsubsection{Multi-objective decision-making}
-Multi-objectives have been previously explored \cite{vamplew_human-aligned_2018,vamplew_potential-based_2021} functions for reinforcement learning tasks when combining multiple objectives. 
+Multi-objectives have been previously explored \cite{vamplew_human-aligned_2018,vamplew_potential-based_2021} as functions for reinforcement learning tasks when combining multiple objectives. 
 %A particularly interesting context for this is low-impact AI \cite{vamplew_potential-based_2021}, where a \textit{primary objective} must be balanced against a \textit{secondary objective].
 %not sure if the above is a necessary part of this narrative or not?
 These have included \textit{maximin} approaches and \textit{leximin} approaches. A maximin approach aims to maximize the value of the lowest member of a set--for instance, the outcomes for the least-well-off person in a group of people \cite{rawls2001justice}. A maximin approach may also maximize the value of the least-optimized value--for instance, balancing across a safety objective and a primary objective, assuming they can be placed on a single scale. A leximin approach orders the objectives in a set of objectives, and then optimizes for the first value in the set, followed by the second value, and so on.
@@ -42,11 +44,16 @@ Sotala argued that the standard account of aligning to human preference as a sin
 (what about the scaling problem? something to discuss in limitations?--have now addressed this in method but may need to discuss theory too)
 
 Go back and discuss core ideas and motivations--do we mention using a min function with decision paralysis? My progress has been something like a realization that decision-paralysis will happen very quickly; what do we do then? This paper tries to address that question.
+- Roland: I propose to leave decision paralysis out of this paper. Decision paralysis seems to be a quite interesting and deep topic for me. Maybe it is easier to start illustrating it with a paralysis between two performance objectives. Paralysis between a safety objective and a performance objective may not be so clear cut case since doing nothing might be the safest thing, and therefore needs more complex analysis than the paralysis between two performance objectives. 
 
 (subagent solution for wireheading: In order to prevent wireheading, I propose a multi-objective agent with objective functions determined by subagents run on observation-utility maximization \cite{dewey_learning_2011}. Each subagent is somehow primed to respond to a particular moral objective, perhaps with an objective function that maximizes for a particular value.)
 
 
 (make sure we discuss applications in terms of Victoria Krakovna's of problems and/or DeepMind's scenarios and how MORL is important for resolving these, making sure that no objectives get ignored in the context of AI, distinct from AGI--Roland to add this?)
+Roland: This too seems to be appropriate for the next paper since we did not cover stronger multi-objective cases there, where there are two or more safety objectives or two or more performance objectives.
+
+https://www.lesswrong.com/posts/c92YC89tznC7579Ej/conservatism-in-neocortex-like-agis
+
 
 \subsubsection{}
 Preferences are often, but not exclusively, expressed in negative terms--limits on behavior that produces undesirable outcomes rather than prescriptive desirable outcomes. 
@@ -58,6 +65,7 @@ Preferences are often, but not exclusively, expressed in negative terms--limits 
 Non-linear multi-objective RL by Matthias Rolf\cite{rolf_need_2020} sounds similar to what we're trying to do here-- need to look into it.
 
 `Conservative agency' has been previously described as a unification of side effect avoidance, state change minimization, and reachability preservation \cite{armstrong_low_2017, turner_conservative_2020}. Its goal is to optimize `the primary reward function while preserving the ability to optimize others', or `Attainable Utility Preservation'.
+Roland: This low-impact AI approach can also be technically implemented as a form of multi-objective AI.
 
 
 %\subsection{Motivation}
@@ -77,20 +85,22 @@ Furthermore, a utility function based on human preferences themselves has been a
     \item utility functions are poor models of conflicts between lower- and higher-order preferences,
     \item it fails to draw distinctions between `wanting' and `liking', and
     \item a utility function of unitary value could not adequately generalize from existing values to new ones
+Roland: It is also important question of how to combine the utility functions that are based on human preferences and as it turns out the proper way might not even be a trivial sum of the individual preferences.    
 \end{enumerate*}.\footnote{I have to say, now that I have looked at this argument, I think it is fairy weak. I think a stronger challenge to the unitary preference learning approach, as advocated by Stuart Russell, is Kyle Bogosian's approach above; however I am not entirely convinced by that either. Something to add to the `limitations' section perhaps}
 
 
 \subsection{Conflicting individual preferences}
 
 \subsection{Design principles}\footnote{look at Roland's desiridata file and make sure stuff is covered}
+Roland: TODO: The desiderata file is still missing some core ideas or clarity, need to fix that ASAP.
 
 The following principles guided us in selecting an aggregate function different to the maximin or leximin approaches:
 \begin{itemize}
-    \item \textit{loss aversion}, \textit{conservativism}, or \textit{soft maximin}. This might be considered a form of `soft maximin', where we don't strictly look to improve the position of the lowest member of the set of values, but we do give it much stronger weight than other set members.
+    \item \textit{Loss aversion}, \textit{conservatism}, or \textit{soft maximin}. This might be considered a form of `soft maximin', where we don't strictly look to improve the position of the lowest member of the set of values, but we do give it much stronger weight than other set members.
     \item Balancing outcomes across objectives. When each objective represents a different moral system, one philosophical interpretation is that each moral system bears some probability of being correct, and to be conservative and ensure a low probability of any bad outcome, we must avoid strongly negative outcomes in any system. When each objective represents a particular subject's preferences then this represents a kind of fairness.
 \end{itemize}
 
-Previous work \cite{vamplew_potential-based_2021} has described a thresholded leximin approaches in order to trade-off objectives. a thresholded leximin function aims to maximize the thresholded value of thresholded objectives. Subject to achieving this, it may then also maximize the unthresholded value of one or more objectives. One case includes a \textit{complete thresholded leximin}, in which a threshold is set for all objectives. The comparison aims to maximize the thresholded value of all objectives, i.e., reach the threshold on each objective; then, subject to this, aims to maximize the unthresholded value of each objective.
+Previous work \cite{vamplew_potential-based_2021} has described a thresholded leximin approaches in order to trade-off objectives. A thresholded leximin function aims to maximize the thresholded value of thresholded objectives. Subject to achieving this, it may then also maximize the unthresholded value of one or more objectives. One case includes a \textit{complete thresholded leximin}, in which a threshold is set for all objectives. The comparison aims to maximize the thresholded value of all objectives, i.e., reach the threshold on each objective; then, subject to this, aims to maximize the unthresholded value of each objective.
 
 This complete thresholded leximin represents a discrete or stepped maximin\footnote{`discrete maximin' or `stepped maximin' or `discrete stepped maximin'--what do we think?}. Reaching a specified minimum threshold value on each objective takes precedence over maximizing already-high values. Yet it is not a strict maximin, because the function doesn't only care about maximizing the minimum value; in fact, beyond a specified threshold, no value is given at all. In this way a thresholded leximin can be seen as a compromise between a maximin function and a MEU function.
 
@@ -106,4 +116,5 @@ In this paper we explore slightly more flexible ways to find a conservative comp
 We can start with a strict min function that defaults to no action any time there is not a Pareto-optimal action to take, as described in \cite{vamplew_human-aligned_2018}. One implementation of this approach could include  deference to a human agent whenever there's no Pareto-optimal action to take. A human agent might choose to indicate a path forward, either through a training process that adjusts the agent's perception of payoffs or its evaluation of the payoffs, adjusting the fundamental values of the system, or simply ordering an override.
 
 It might be possible rather than deferring to come up with sensible rules that trade between values.
+TODO: This last paragraph/sentence seems to be incomplete.
 
