@@ -7,15 +7,7 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 
 \subsection{Aggregation functions}
 
-\begin{align}
-U=\text{min}({x_i}) \\
-U=\sum_{i}^n{x_i} \\
-U=\sum_{i}^n{f(x_i)}
-\end{align}
-\begin{align}
-\label{eq:meu}
-U=\sum_{i}^n{f_i(x_i)}
-\end{align}
+
 
 All of the multi-objective utility functions we compared first follow the following basic steps:
 \begin{enumerate}
@@ -24,6 +16,16 @@ All of the multi-objective utility functions we compared first follow the follow
     \item Transform the scaled output using a non-linear transform. %For SFMLA, SFLLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
     \item Combine the transformed output using MEU.
 \end{enumerate}
+
+Each transform function is applied in the context of an aggregation function of the form
+
+\begin{align}
+\label{eq:meu}
+U=\sum_{i}^n{f_i(x_i)}
+\end{align}
+
+\noindent where ${f_i(x_i)}$ describes a specific transform function for the $i$th objective. The SEBA transform function envisages differing functions for two categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
+
 
  New non-linear transforms compared were:
 
@@ -35,18 +37,21 @@ All of the multi-objective utility functions we compared first follow the follow
     \item Squared error based alignment (SEBA)
 \end{itemize}
 
-Each non-linear transform is a transform of the value obtained along a specific objective $O$ at a specific state $s$ with a specific action $a$.
+\noindent Each non-linear transform is a transform of the value obtained along a specific objective $O$ at a specific state $s$ with a specific action $a$. The SFLLA, ELA, and LELA functions are illustrated in Figure~\ref{fig:transform_functions}.
 
-For each transform, where $x=0$, $f(x)=0$, and $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ declines as $x$ gets larger. Conceptually this also provides a sort of fairness or equality, since worse objective values get disproportionately higher priority.
+For each transform, where $x=0$, $f(x)=0$. This is a modification from the non-linear transform previously proposed in \cite{rolf_need_2020}, typically achieved by adding 1 to the outcome value.
 
-SFLLA, ELA, and LELA are illustrated in Figure~\ref{fig:transform_functions}.
+Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ declines as $x$ gets larger. This lowers inequality between outcomes as measured in different objectives, objectives where values are strongly negative get disproportionately higher priority. Where different objectives were operationalizing, for instance, priorities among different interested parties, this might be particularly useful in reducing inequality between outcomes.
+
+
 
 \begin{figure*}[h]
  
   \includegraphics[width=\columnwidth]{output/transform_graph_2d.png}
-  \caption{Transform functions. Each transform function is applied to the utility received from the environment for each objective. The output of each of these transform functions are summed together in a Maximize Expected Utility Model. (\ref{eq:meu})}
+  \includegraphics[width=\columnwidth]{output/transform_graph_2d_integral.png}
+  \caption{Transform functions. Left: Each transform function is applied to the utility received from the environment for each objective. The output of each of these transform functions are summed together in a Maximize Expected Utility Model (Equation~\ref{eq:meu}). SEBA is not shown here because doesn't use an independent-objective transform function. Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on log scaling. Note that ELA and SFLLA produce greater-than-linear change in $f(x)$ in when $x<0$ and less-than-linear change when $x>0$. In contrast, LELA change never falls below 1.}
   \label{fig:transform_functions}
-  \Description{Transform functions. Each transform function is applied to the utility received from the environment for each objective. The output of each of these transform functions are summed together in a Maximize Expected Utility Model (Equation~\ref{eq:meu}).}
+  \Description{Transform functions.}
 \end{figure*}
 %SFMLA might be the function that most intuitively expresses loss aversion, the idea that losses loom larger than gains:
 
@@ -69,7 +74,7 @@ f(x)= & \ln(cx+1) & \mathrm{ where \: x>0} \\ \nonumber
   &  -\exp(-cx)+1 &  \mathrm{otherwise} \\ \nonumber
 \end{align}
 
-With this function, where $x=0$, $f(x)=0$ and $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ but continually declines from greater than 1 to less than 1. Adding 1 to the equation helps us to ensure this outcome.
+Additionally, by implementing a log rather than a negative exponential in the positive domain, the function retains relatively more weight on positive objectives.
 
 The ELA greatly simplifies this approach, avoiding any split function at the cost of giving very little weight to any increase in values over 1:
 

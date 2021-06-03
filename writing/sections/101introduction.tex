@@ -4,7 +4,7 @@ A key aim of AGI Safety research is to align AGI systems to the fulfillment of h
 %Having more objectives also helps to mitigate against Goodhart’s law.
 %TODO: reference.
 
-\subsection{Current empirical approaches}
+\subsection{Current approaches}
 
 \subsubsection{Multi-objective decision-making}
 Multi-objectives have been previously explored \cite{vamplew_human-aligned_2018,vamplew_potential-based_2021} as functions for reinforcement learning tasks when combining multiple objectives. 
@@ -12,14 +12,32 @@ Multi-objectives have been previously explored \cite{vamplew_human-aligned_2018,
 %not sure if the above is a necessary part of this narrative or not?
 These have included \textit{maximin} approaches and \textit{leximin} approaches. A maximin approach aims to maximize the value of the lowest member of a set--for instance, the outcomes for the least-well-off person in a group of people \cite{rawls2001justice}. A maximin approach may also maximize the value of the least-optimized value--for instance, balancing across a safety objective and a primary objective, assuming they can be placed on a single scale. A leximin approach orders the objectives in a set of objectives, and then optimizes for the first value in the set, followed by the second value, and so on.
 
+\subsubsection{Non-linear multiple objective functions}
+One paper \cite{rolf_need_2020} argues for non-linear utility functions in multiple-objective reinforcement learning. This paper explores a non-linear objective system and its traversal of a learning-space through reinforcement learning that learns highly satisfactory solutions. This references earlier approaches that attempt to exhaustively explore \cite{van2014multi,parisi2016multi} a space or a subset thereof \cite{barrett2008learning} of Pareto-improvements to the current state space.
+
+A multiple objective reward exponential function is been proposed \cite{rolf_need_2020}, of the form:
+
+\begin{align}
+f(x)= &  -\exp(-cx) \\ \nonumber
+\end{align}
+
+The methods section below introduces alternative multiple objective exponential functions and explains the bases for the deviations from the previously proposed \cite{rolf_need_2020} design.
+
 \subsubsection{AI Morality}
 
-Previous efforts have been made to capture moral uncertainty in AI \cite{martinho_empirical_2020}.
+There has been at least one prior effort made capture moral uncertainty in AI \cite{martinho_empirical_2020}. In this project, a discrete choice analysis model was used to demonstrate moral uncertainty about alternative policy choices.
 
 \subsubsection{Scaling}
 
-Scaling has been previously applied using `the penalty of some mild action', or alternatively, the 'total ability to optimize the auxiliary set' \cite{turner_conservative_2020}, although in this account, a scale is applied across all reward functions.
+Scaling has been previously applied using `the penalty of some mild action', or alternatively, the `total ability to optimize the auxiliary set' \cite{turner_conservative_2020}, although in this account, a scale is applied across all reward functions.
 
+\subsubsection{Theoretical approaches}
+
+
+`Conservative agency' has been previously described as a unification of side effect avoidance, state change minimization, and reachability preservation \cite{armstrong_low_2017, turner_conservative_2020}. Its goal is to optimize `the primary reward function while preserving the ability to optimize others', or `Attainable Utility Preservation'.
+%Roland: This low-impact AI approach can also be technically implemented as a form of multi-objective AI.
+
+Conservativism in Bayesian \cite{pmlr-v125-cohen20a} or neuromorphic systems \cite{byrnes_steve_conservatism_2020} has also been previously proposed, including the possibility of requesting help from an agent mentor.
 
 
 %%%% Peter's provided a nice summary of a bunch of papers. I want to avoid filling this workshop paper up with a full review of the field--it's probably not necessary--but we should give the main prior accounts at least to explain why ours is different.
@@ -33,39 +51,29 @@ Scaling has been previously applied using `the penalty of some mild action', or 
 
 
 
-\subsection{orphaned sections}
+%\subsection{orphaned sections}
 
-(these are isolated points that probably need to be made; I'm not sure where tehy should be a this point).
+%(these are isolated points that probably need to be made; I'm not sure where tehy should be a this point).
 
-Sotala argued that the standard account of aligning to human preference as a single RL goal is insufficient \cite{sotala2016defining} -this will be important as several people have raised this objective to me and it's probably something Stuart Russell would raise, too.
+%(do we need to briefly discuss the distinction between thinking about MORL and MO decision-making? probably doesn't need discussion but we need to make sure the disinction is kept clear in our own text)
 
-(do we need to briefly discuss the distinction between thinking about MORL and MO decision-making? probably doesn't need discussion but we need to make sure the disinction is kept clear in our own text)
+%Go back and discuss core ideas and motivations--do we mention using a min function with decision paralysis? My progress has been something like a realization that decision-paralysis will happen very quickly; what do we do then? This paper tries to address that question.
 
-(what about the scaling problem? something to discuss in limitations?--have now addressed this in method but may need to discuss theory too)
+%- Roland: I propose to leave decision paralysis out of this paper.Decision paralysis seems to be a quite interesting and deep topicfor me. Maybe it is easier to start illustrating it with a paralysisbetween two performance objectives. Paralysis between a safetyobjective and a performance objective may not be so clear cut casesince doing nothing might be the safest thing, and therefore needsmore complex analysis than the paralysis between two performanceobjectives
 
-Go back and discuss core ideas and motivations--do we mention using a min function with decision paralysis? My progress has been something like a realization that decision-paralysis will happen very quickly; what do we do then? This paper tries to address that question.
-- Roland: I propose to leave decision paralysis out of this paper. Decision paralysis seems to be a quite interesting and deep topic for me. Maybe it is easier to start illustrating it with a paralysis between two performance objectives. Paralysis between a safety objective and a performance objective may not be so clear cut case since doing nothing might be the safest thing, and therefore needs more complex analysis than the paralysis between two performance objectives. 
+%(subagent solution for wireheading: In order to prevent wireheading, I propose a multi-objective agent with objective functions determined by subagents run on observation-utility maximization \cite{dewey_learning_2011}. Each subagent is somehow primed to respond to a particular moral objective, perhaps with an objective function that maximizes for a particular value.)
+%--out of scope, but Ben Smith should follow this stuff up I guess?
 
-(subagent solution for wireheading: In order to prevent wireheading, I propose a multi-objective agent with objective functions determined by subagents run on observation-utility maximization \cite{dewey_learning_2011}. Each subagent is somehow primed to respond to a particular moral objective, perhaps with an objective function that maximizes for a particular value.)
+%(make sure we discuss applications in terms of Victoria Krakovna's of problems and/or DeepMind's scenarios and how MORL is important for resolving these, making sure that no objectives get ignored in the context of AI, distinct from AGI--Roland to add this?)
+%Roland: This too seems to be appropriate for the next paper since we did not cover stronger multi-objective cases there, where there are two or more safety objectives or two or more performance objectives.
 
-
-(make sure we discuss applications in terms of Victoria Krakovna's of problems and/or DeepMind's scenarios and how MORL is important for resolving these, making sure that no objectives get ignored in the context of AI, distinct from AGI--Roland to add this?)
-Roland: This too seems to be appropriate for the next paper since we did not cover stronger multi-objective cases there, where there are two or more safety objectives or two or more performance objectives.
-
-https://www.lesswrong.com/posts/c92YC89tznC7579Ej/conservatism-in-neocortex-like-agis
+%(This section includes references to various prior literature and directions that need to be explored before we submit this paper.)
 
 
-\subsubsection{}
-Preferences are often, but not exclusively, expressed in negative terms--limits on behavior that produces undesirable outcomes rather than prescriptive desirable outcomes. 
+%\subsubsection{}
+%Preferences are often, but not exclusively, expressed in negative terms--limits on behavior that produces undesirable outcomes rather than prescriptive desirable outcomes. 
 
-\subsection{Prior work for editing}
-
-(This section includes references to various prior literature and directions that need to be explored before we submit this paper.)
-
-Non-linear multi-objective RL by Matthias Rolf\cite{rolf_need_2020} sounds similar to what we're trying to do here-- need to look into it.
-
-`Conservative agency' has been previously described as a unification of side effect avoidance, state change minimization, and reachability preservation \cite{armstrong_low_2017, turner_conservative_2020}. Its goal is to optimize `the primary reward function while preserving the ability to optimize others', or `Attainable Utility Preservation'.
-Roland: This low-impact AI approach can also be technically implemented as a form of multi-objective AI.
+%\subsection{Prior work for editing}
 
 
 %\subsection{Motivation}
@@ -89,6 +97,7 @@ Roland: It is also important question of how to combine the utility functions th
 \end{enumerate*}.\footnote{I have to say, now that I have looked at this argument, I think it is fairy weak. I think a stronger challenge to the unitary preference learning approach, as advocated by Stuart Russell, is Kyle Bogosian's approach above; however I am not entirely convinced by that either. Something to add to the `limitations' section perhaps}
 
 
+
 \subsection{Conflicting individual preferences}
 
 \subsection{Design principles}\footnote{look at Roland's desiridata file and make sure stuff is covered}
@@ -108,13 +117,13 @@ In this paper we propose a similar compromise between a maximin and an MEU funct
 
 \subsection{Steps in this paper}
 
-In this paper we explore slightly more flexible ways to find a conservative compromise between multiple values. If one had dozens of objectives, a strict maximin or leximin function might come to be overly inflexible and result in defaulting to no action most of the time, because of the high likelihood that every possible action evaluates negatively according to some function. As a result, perhaps a soft maximin function that combines MEU with a strong penalty for negative utility concentrated within a single objective might be an interesting alternative to examine.
+In this paper we explore slightly more flexible ways to find a conservative compromise between multiple values using non-linear mutliple objective systems \cite{rolf_need_2020}. If one had dozens of objectives, a strict maximin or leximin function might come to be overly inflexible and result in defaulting to no action most of the time, because of the high likelihood that every possible action evaluates negatively according to some function. As a result, perhaps a soft maximin function that combines MEU with a strong penalty for negative utility concentrated within a single objective might be an interesting alternative to examine.
 
  
 \subsection{Analytical testing}
 
 We can start with a strict min function that defaults to no action any time there is not a Pareto-optimal action to take, as described in \cite{vamplew_human-aligned_2018}. One implementation of this approach could include  deference to a human agent whenever there's no Pareto-optimal action to take. A human agent might choose to indicate a path forward, either through a training process that adjusts the agent's perception of payoffs or its evaluation of the payoffs, adjusting the fundamental values of the system, or simply ordering an override.
 
-It might be possible rather than deferring to come up with sensible rules that trade between values.
-TODO: This last paragraph/sentence seems to be incomplete.
+%It might be possible rather than deferring to come up with sensible rules that trade between values.
+%TODO: This last paragraph/sentence seems to be incomplete.
 
