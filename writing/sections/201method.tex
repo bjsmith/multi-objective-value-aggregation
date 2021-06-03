@@ -7,6 +7,13 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 
 \subsection{Aggregation functions}
 
+\begin{align}
+U=\text{min}({x_i}) \\
+U=\sum_{i}^n{x_i} \\
+U=\sum_{i}^n{f(x_i)} \\
+U=\sum_{i}^n{f_i(x_i)}
+\end{align}
+
 All of the multi-objective utility functions we compared first follow the following basic steps:
 \begin{enumerate}
 
@@ -19,7 +26,7 @@ All of the multi-objective utility functions we compared first follow the follow
 
 \begin{itemize}
     %\item Split-function multiplicative loss aversion (SFMLA)
-    \item Split-function log loss aversion (SFLLA)
+    \item Split-function exp-log loss aversion (SFLLA)
     \item Exponential loss aversion (ELA)
     \item Linear-exponential loss aversion (LELA)
     \item Squared error based alignment (SEBA)
@@ -84,13 +91,19 @@ f(x)= &  -(cx)^2 \\ \nonumber
 The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no constraint violations are occurring. Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
 \begin{itemize}
     \item The desired target value is zero (for example, zero harm, etc).
-    \item Alternatively it might be a homeostatic setpoint (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of deviation.
+    \item Alternatively it might be a homeostatic setpoint (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of the deviation.
 \end{itemize}
 
 \subsection{Weight changes}
 
 \subsection{Environment}
 
-As previously described, we started with four environments reported in \cite{vamplew_potential-based_2021}. We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's primary utility feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment utility feedback.
+In every environment, agents a two objectives: a `primary' objective and an `impact' objective. We started with four environments reported in \cite{vamplew_potential-based_2021}. We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's primary utility feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the impact utility feedback.
+
+\subsection{Benchmark}
+
+
+
+Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the `TLO$^A$` function, on the `R$^*$` metric from the same paper. The `R$^*$` arbitrarily scores a weighted combination of Primary and Impact objectives where one unit of Impact objective (always on a negative scale) is worth 50 units of the Primary objective.
 
 

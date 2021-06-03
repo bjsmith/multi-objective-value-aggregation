@@ -1,3 +1,31 @@
 Here, we present overall results for Online and Offline testing. 
 
-\input{writing/sections/201method}
+
+\begin{table}[t]
+\tiny
+  \caption{Mean $\text{R}^*$ Online performance. Each row represents comparable performance across 5 different objective functions. Values within 10\% of the best value in each row are highlighted. Higher scores are better.}
+  \label{tab:mean_r_star_performance}
+%\begin{adjustbox}{width=\columnwidth,center}%
+%\resizebox{\textwidth}{!}{\include{output/tables/testex}}
+\include{output/tables/testex}
+%\end{adjustbox}
+\end{table}
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=\linewidth]{output/online performance_rew.pdf}
+  \caption{Online Reward scaled performance}
+  \label{fig:offline_pen_performance}
+  \Description{Online Reward scaled performance}
+\end{figure*}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{output/online performance_pen.pdf}
+  \caption{Online penalty scaled performance}
+  \label{fig:offline_pen_performance2}
+  \Description{Online penalty scaled performance}
+\end{figure}
+
+Overall, there was no clear best performer, but SFLLA had the best performance across a wider range of enviornments and enviornment variants than any other agent, including  $\text{TLO}^\text{A}$. Table~\ref{tab:mean_r_star_performance} describes relative $\text{R}^*$ scores for each function, compared to the $\text{TLO}^\text{A}$ function, at different scales.  Within the Breakable Bottles environment, $\text{TLO}^\text{A}$ performed worse than all other environments at all scales, and SFLLA performed within 10\% of the best within five of nine enviornmental variants. In the Unbreakable Bottles Environment, performance between all agents except ELA was roughly equal. In the Doors environment, SFLLA was overall the best performer, but the result was equivocal: it performed within 10\% of the best in just 3 of 9 variants Finally, in the Sokoban environment, $\text{TLO}^\text{A}$ performed slightly better than SFLLA.
+
+SFLLA tended to performed poorly when either primary or impact objectives were scaled down to extremely low values, as did $\text{TLO}^\text{A}$ (Figure~\ref{fig:offline_pen_performance2})
