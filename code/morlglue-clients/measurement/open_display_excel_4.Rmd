@@ -96,6 +96,11 @@ raw_activity[is.na(raw_activity$EnvironmentDimChange),]$EnvironmentDimChange <- 
 raw_activity[is.na(raw_activity$EnvironmentValueChange),]$EnvironmentValueChange <- 1
 ```
 
+```{r}
+raw_activity$ObjectiveDimChange=as.character(NA)
+raw_activity[raw_activity$EnvironmentDimChange=="pen",]$ObjectiveDimChange="Alignment"
+raw_activity[raw_activity$EnvironmentDimChange=="rew",]$ObjectiveDimChange="Performance"
+```
 
 ## Offline performance
 
@@ -171,11 +176,15 @@ table_env <- data.table(raw_activity)[EpisodeType=="Online",]
 table_env$EpisodeType=NULL
 #table_env$Environment=NULL
 table_env$`Episode number`=NULL
+
 table_env$`R^P`=NULL
 table_env$`R^A`=NULL
 
+table_env[is.na(ObjectiveDimChange),ObjectiveDimChange:=""]
+
+
 table_env_long <- table_env %>% dcast.data.table(
-  EnvironmentClass+EnvironmentDimChange+EnvironmentValueChange~Agent
+  EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange~Agent
   ,value.var="R^*",fun.aggregate = mean)
 ```
 
@@ -184,7 +193,8 @@ table_env_long <- table_env %>% dcast.data.table(
 colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
 setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
 setnames(table_env_long,"EnvironmentValueChange","Objective Modified",skip_absent=TRUE)
-setnames(table_env_long,"EnvironmentDimChange","Objective Scale",skip_absent=TRUE)
+setnames(table_env_long,"ObjectiveDimChange","Objective Scale",skip_absent=TRUE)
+
 #colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"Envir","$TLO^A$")
 table_env_long <- 
   table_env_long %>% 
@@ -213,8 +223,8 @@ table_env_long %>%
       ,escape=F
       ) %>%
   column_spec(1,width="5em") %>%
-  column_spec(2,width="3em") %>%
-  column_spec(3,width="3.5em") %>%
+  column_spec(2,width="4em") %>%
+  column_spec(3,width="5em") %>%
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
   #pander(split.cell=10,split.table=Inf)
   writeLines("mytextout.tex")
@@ -226,14 +236,16 @@ table_env_long %>%
 
 ```{r fig.width=8}
 
+
+
 activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
-  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>%
-  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
 
 
 #now do 
-for (env_dim in c("pen","rew")){
-  relevant_activity <- activity_means %>% dplyr::filter(EnvironmentDimChange %in% c("",env_dim))
+for (env_dim in c("Performance","Alignment")){
+  relevant_activity <- activity_means #%>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
       geom_point(size=6,alpha=0.4,shape=21,color="black")+
       scale_x_continuous(trans="log10",
@@ -256,7 +268,7 @@ for (env_dim in c("pen","rew")){
     
     ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
     
-    print(envplot)
+    print(presentation_plot)
 }
 
 
@@ -268,13 +280,13 @@ for (env_dim in c("pen","rew")){
 ```{r fig.width=8}
 
 activity_means <- data.table(raw_activity)[EpisodeType=="Offline"] %>% 
-  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>%
-  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
 
 
 #now do 
-for (env_dim in c("pen","rew")){
-  relevant_activity <- activity_means %>% dplyr::filter(EnvironmentDimChange %in% c("",env_dim))
+for (env_dim in  c("Performance","Alignment")){
+  relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
     envplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
       geom_point(size=6,alpha=0.4,shape=21,color="black")+
       scale_x_continuous(trans="log10",
