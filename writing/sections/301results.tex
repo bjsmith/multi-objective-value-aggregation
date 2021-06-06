@@ -27,13 +27,14 @@ Learning was switched off after 5000 episodes. Following that time, offline perf
 %   \Description{Online penalty scaled performance}
 % \end{figure}
 
-\begin{figure}[h]
+\begin{figure}
   %\centering
-  \includegraphics[width=\columnwidth]{output/onlinerew.pdf}
-  \includegraphics[width=\columnwidth]{output/onlinepen.pdf}
-  \caption{Online Reward and Penalty scaled performance}
+  %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
+  \includegraphics[width=\columnwidth]{output/onlinePerformance.pdf}
+  \includegraphics[width=\columnwidth]{output/onlineAlignment.pdf}
+  \caption{Online Performance and Alignment scaled performance\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}}
    \label{fig:online_performance}
-   \Description{Online Reward and Penalty scaled performance}
+   \Description{Online Performance and Alignment scaled performance}
  \end{figure}
 
 While there was no clear best performer, SFELLA had the best performance across a wider range of environments and environment variants than any other agent, including  $\text{TLO}^\text{A}$. Table~\ref{tab:mean_r_star_performance} describes relative $\text{R}^*$ scores for each function, compared to the $\text{TLO}^\text{A}$ function, at different scales.  Within the Breakable Bottles environment, $\text{TLO}^\text{A}$ performed worse than all other environments at all scales, and SFELLA performed within 10\% of the best within five of nine environmental variants. In the Unbreakable Bottles Environment, performance between all agents except ELA was roughly equal. In the Doors environment, SFELLA was overall the best performer, but the result was equivocal: it performed within 10\% of the best in just 3 of 9 variants. Finally, in the Sokoban environment, $\text{TLO}^\text{A}$ performed slightly better than SFELLA.
