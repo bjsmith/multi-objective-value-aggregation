@@ -28,7 +28,7 @@ U=\sum_{i}^n{f_i(c_i x_i)}
 \end{align}
 
 \noindent where ${f_i}$ describes a specific transform function for the $i$th objective. Note that here, $U$ describes our modeling of Q-values. The scaling factors $c_i$ can be treated as parameters of the model. They could be, for example, specified directly by the human, automatically determined in the future by the agent using a value learning method, or calculated by some other algorithm. 
-% For the purposes of this experiment, we left these at $c=1$, but emphasize that modifying these scale values could be useful in the future.
+For the purposes of this experiment, we left these at $c=1$ (instead, we directly modified $x$, the value returned by the environment), but emphasize that modifying these scale values could be useful in the future.
 
 
  New non-linear transforms compared are:
@@ -56,12 +56,12 @@ Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ decline
 
 \begin{figure*}[h]
  
-  \includegraphics[width=\columnwidth]{output/transform_graph_2d_with_rolf2.png}%\footnote{Roland: Can you please add the -x*x from SEBA to the left part of the plots too? Maybe using some short-dashed line for example. It would illustrate that the square function is less steep than the exponential functions, thus being in between linear and exponential}
+  \includegraphics[width=\columnwidth]{output/transform_graph-2d_with_rolf2.png}%\footnote{Roland: Can you please add the -x*x from SEBA to the left part of the plots too? Maybe using some short-dashed line for example. It would illustrate that the square function is less steep than the exponential functions, thus being in between linear and exponential}
   \includegraphics[width=\columnwidth]{output/transform_graph_2d_integral_with_rolf2.png}%\footnote{Roland: I would add comment that the the y scale is log scale, otherwise this plot is confusing, until one looks at the numbers at the left side}
   \caption{Transform functions. Left: Each transform function is applied to the reward received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
   %\footnote{why repeat the same thing when you can leave out the other option?}. 
   The output of each of these transform functions are averaged together % in a Maximize Expected Utility Model \footnote{if anything this should be called MOMEU, right?}
-  (Equation~\ref{eq:meu}). SEBA is not shown here because it doesn't use an objective-independent transform function. Right: Change in $f(x)$ per unit $x$%, with $y$ axis plotted on a log scale\footnote{could be omitted}
+  (Equation~\ref{eq:meu}). Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on a log scale%\footnote{could be omitted}
   . Note that ELA and SFELLA produce greater-than-linear change in $f(x)$ when $x<0$ and less-than-linear change when $x>0$. In contrast, LELA's change never falls below 1.}
   \label{fig:transform_functions}
   \Description{Transform functions.}
@@ -131,7 +131,7 @@ f(x)= &  -(cx)^2 \\ \nonumber
 The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no (soft) constraint violations are occurring. Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
 \begin{itemize}
     \item The desired target value is zero (for example, zero harm, etc).
-    \item Alternatively it might be a homeostatic setpoint (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of the deviation.
+    \item Alternatively it might be a homeostatic set-point (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of the deviation.
 \end{itemize}
 The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions_3d}. A number of specific situations are illustrated in the graph using upper-case letter points, and it is helpful to consider their interpretation:
   \begin{itemize}
