@@ -1,0 +1,5 @@
+/.metadata/
+.metadata/
+*.classpath
+.DS_Store
+morlglue-clients/data/*

@@ -1,0 +1,44 @@
+Learning was switched off after 5000 episodes. Following that time, offline performance was observed. There was very little difference between the best-performing proposed function and $TLO^A$. For this reason, the remainder of the results reported will discuss performance during online testing, i.e., performance during learning itself.% and Offline testing\footnote{did we meantion what those words mean, did we even mention learning before?}. 
+
+
+\begin{table}[t]
+\scriptsize
+  \caption{Mean $\text{R}^*$ Online performance. Each row represents comparable performance across 5 different objective functions. Values within 10\% of the best value in each row are highlighted. Higher scores are better.}
+  \label{tab:mean_r_star_performance}
+%\begin{adjustbox}{width=\columnwidth,center}%
+%\resizebox{\textwidth}{!}{\include{output/tables/testex}}
+\include{output/tables/testex}
+%\end{adjustbox}
+\end{table}
+
+% \begin{figure*}[h]
+ 
+%   \includegraphics[width=\columnwidth]{output/onlinerew.pdf}
+%   \caption{Online Reward scaled performance}
+%   \label{fig:offline_pen_performance}
+%   \Description{Online Reward scaled performance}
+% \end{figure*}
+
+% \begin{figure}[h]
+%   %\centering
+%   \includegraphics[width=\columnwidth]{output/onlinepen.pdf}
+%   \caption{Online penalty scaled performance}
+%   \label{fig:offline_pen_performance2}
+%   \Description{Online penalty scaled performance}
+% \end{figure}
+
+\begin{figure}
+  %\centering
+  %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
+  \includegraphics[width=\columnwidth]{output/onlinePerformance.pdf}
+  \includegraphics[width=\columnwidth]{output/onlineAlignment.pdf}
+  \caption{Online performance across different scales. (A): R* when scaling Performance across 5000 learning trials. Note SFELLA consistently performs similar or better to $\text{TLO}^\text{A}$. (B): R* when scaling Alignment across 5000 learning trials. No algorithm is a clear best performer.%\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}
+  }
+   \label{fig:online_performance}
+   \Description{Online Performance and Alignment scaled performance}
+ \end{figure}
+
+While there was no clear best performer, SFELLA had the best Online performance during training across a wider range of environments and environment variants than any other agent, including  $\text{TLO}^\text{A}$. Table~\ref{tab:mean_r_star_performance} describes relative $\text{R}^*$ scores for each function, compared to the $\text{TLO}^\text{A}$ function, at different scales.  Within the Breakable Bottles environment, $\text{TLO}^\text{A}$ performed worse than all other environments at all scales, and SFELLA performed within 10\% of the best within five of nine environmental variants. In the Unbreakable Bottles Environment, performance between all agents except ELA was roughly equal. In the Doors environment, SFELLA was overall the best performer, but the result was equivocal: it performed within 10\% of the best in just 3 of 9 variants. Finally, in the Sokoban environment, $\text{TLO}^\text{A}$ performed slightly better than SFELLA.
+
+SFELLA tended to perform at best level when perturbing the Performance scaling (Figure~\ref{fig:online_performance}a), but less well when Alignment scaling was perturbed. (Figure~\ref{fig:online_performance}b).
+
