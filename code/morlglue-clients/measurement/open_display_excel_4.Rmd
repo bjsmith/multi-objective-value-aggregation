@@ -97,7 +97,11 @@ raw_activity[is.na(raw_activity$EnvironmentValueChange),]$EnvironmentValueChange
 ```
 
 ```{r}
+<<<<<<< HEAD
 raw_activity$ObjectiveDimChange=""
+=======
+raw_activity$ObjectiveDimChange=as.character(NA)
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
 raw_activity[raw_activity$EnvironmentDimChange=="pen",]$ObjectiveDimChange="Alignment"
 raw_activity[raw_activity$EnvironmentDimChange=="rew",]$ObjectiveDimChange="Performance"
 ```
@@ -180,7 +184,11 @@ table_env$`Episode number`=NULL
 table_env$`R^P`=NULL
 table_env$`R^A`=NULL
 
+<<<<<<< HEAD
 #table_env[is.na(ObjectiveDimChange),ObjectiveDimChange:=""]
+=======
+table_env[is.na(ObjectiveDimChange),ObjectiveDimChange:=""]
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
 
 
 table_env_long <- table_env %>% dcast.data.table(
@@ -192,9 +200,14 @@ table_env_long <- table_env %>% dcast.data.table(
 #change this column name.
 colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
 setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
+<<<<<<< HEAD
 setnames(table_env_long,"EnvironmentValueChange","Objective Scale",skip_absent=TRUE)
 setnames(table_env_long,"ObjectiveDimChange","Objective Modified",skip_absent=TRUE)
 setnames(table_env_long,"SFLLA","SFELLA",skip_absent=TRUE)
+=======
+setnames(table_env_long,"EnvironmentValueChange","Objective Modified",skip_absent=TRUE)
+setnames(table_env_long,"ObjectiveDimChange","Objective Scale",skip_absent=TRUE)
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
 
 #colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"Envir","$TLO^A$")
 table_env_long <- 
@@ -205,12 +218,22 @@ table_env_long <-
 #highlight results within 10% of the best value in each row.
 row_max <- apply(table_env_long[,4:ncol(table_env_long)],1,max)*0.9<table_env_long[,4:ncol(table_env_long)]
 table_env_long %>%
+<<<<<<< HEAD
   mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
   #mutate_if(is.numeric,~format(.x,digits=1),"latex") %>%
   mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
   #mutate_if(is.numeric,~cell_spec(format(.x,digits=2),"latex",color="red")) %>%
   mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
   mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFELLA'],"blue","black"))) %>%
+=======
+  
+  
+  mutate(`Objective Modified`=format(`Objective Modified`,scientific = FALSE,drop0trailing = TRUE)) %>%
+  mutate_if(is.numeric,~format(.x,digits=2),"latex") %>%
+  #mutate_if(is.numeric,~cell_spec(format(.x,digits=2),"latex",color="red")) %>%
+  mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
+  mutate(SFLLA=cell_spec(SFLLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
   mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
   mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
   mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO$^A$'],"blue","black"))) %>%
@@ -221,11 +244,18 @@ table_env_long %>%
       #,digits=2
       ,format.args=list(scientific=FALSE)
       ,escape=F
+<<<<<<< HEAD
       ,align="lrlrrrrr"
       ) %>%
   column_spec(1,width="5em") %>%
   column_spec(2,width="4em") %>%
   column_spec(3,width="4.5em") %>%
+=======
+      ) %>%
+  column_spec(1,width="5em") %>%
+  column_spec(2,width="4em") %>%
+  column_spec(3,width="5em") %>%
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
   #pander(split.cell=10,split.table=Inf)
   writeLines("mytextout.tex")
@@ -246,14 +276,22 @@ activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>%
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
+<<<<<<< HEAD
   relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+=======
+  relevant_activity <- activity_means #%>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
       geom_point(size=6,alpha=0.4,shape=21,color="black")+
       scale_x_continuous(trans="log10",
                          limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
                          breaks = c(0.01,0.1,1,10,100))+
       geom_line(linetype="dashed")+
+<<<<<<< HEAD
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
+=======
+      geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1)+
+>>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
           x=paste0(env_dim, " Scale"),

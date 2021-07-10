@@ -114,7 +114,7 @@ f(x)= &  -\exp(-cx)+cx+1 \\ \nonumber
 This still yields loss aversion at points less than zero but always provides that an increase in $x$ increases at least linearly in $f(x)$%\footnote{sound repetitive}.
 
 
-Finally, SEBA implements a different set of principles. Instead of branching depending on the value of $x$ the function treats the dimensions differently depending on their type: depending on whether a dimension is part of the performance objective or part of the alignment objective.%\footnote{earlier this was called a safety objective}.
+Finally, SEBA takes a different approach in that rather than treating each objective identically, transformations are applied differently to Performance and Alignment objectives.%\footnote{earlier this was called a safety objective}.
 
 For performance objectives the SEBA formula is linear:
 \begin{align}
@@ -122,13 +122,15 @@ f(x)= &  cx \\ \nonumber
 \end{align}
 There is no differentiation between negative and positive areas of the measures of the performance objectives. This avoids the need for establishing a zero-point. Proper scaling is still needed.
 
-For alignment objectives the SEBA formula is a negated square power function in order to express loss aversion. It is assumed that the incoming rewards in the alignment objective can only be negative or zero.
+SEBA expresses loss aversion for alignment objectives using a negated square power function, and assumes that alignment objectives are non-positive:
 \begin{align}
 \label{eq:seba}
 f(x)= &  -(cx)^2 \\ \nonumber
   &  \mathrm{ where \: x \leq 0}
 \end{align}
-The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no (soft) constraint violations are occurring. Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
+
+The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no (soft) constraint violations are occurring. %Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. 
+Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
 \begin{itemize}
     \item The desired target value is zero (for example, zero harm, etc).
     \item Alternatively it might be a homeostatic set-point (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of the deviation.
@@ -148,7 +150,34 @@ The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions
 \subsection{Environment}
 
 In every environment, agents have two objectives: a `performance' objective and an `alignment' objective. %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
-We started with four environments reported in \cite{vamplew_potential-based_2021}. We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes / scaling factors. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Performance reward feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment reward feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
+Four gridworld environments reported in \cite{vamplew_potential-based_2021} were examined.
+They are shown in \ref{fig:envs} and we call them the 'breakable and unbreakable bottles', 'Sokoban' and 'Doors'.
+
+The bottles environments share the same 1D grid layout where one end is the destination 'D' where the agent has to deliver bottles and the other end is the source 'S' where bottles are provided.
+Initially, the agent does not carry a bottle and it can hold up to two bottles and an episode ends when two bottles have been delivered.
+While in between source and destination an agent holding two bottles can drop a bottle on a tile with a probability of 10\%.
+Leaving a bottle on the way yields a penalty of -50 in $R^*$.
+While in unbreakable bottles the bottles can be picked up again where they were left, in breakable bottles they break upon dropping hence irreversibly changing the environment and receiving the penalty.
+
+In the Sokoban environment the agent starts on tile 'S' and is tasked with pushing away the box 'B' in order to reach the goal tile 'G'.
+There are two ways of pushing: downwards into a corner (irreversible) and to the left (reversible, but involving more steps).
+A penalty of -25 is evoked for each wall touching the box in the final position.
+
+In the doors environment the agent must simply travel from the start 'S' to the goal 'G'.
+It can choose to open or close the doors (grey) which takes each one action. 
+There are two possible paths: either the agent can move around the right corridor taking 10 moves to reach 'G' or the agent can move straight down by opening the doors (6 moves if the doors stay open).
+However, there is a penalty of -10 associated with leaving a door open.
+Therefore the desired solution is moving down while closing the doors behind the agent taking 8 moves.
+
+We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes / scaling factors. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Performance reward feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment reward feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\columnwidth]{output/env_figure.pdf}
+    \caption{(a) (Un)Breakable Bottles, (b) Sokoban, (c) Doors}. Based on Figure in \cite{vamplew_potential-based_2021}.
+    \label{fig:envs}
+\end{figure}
 
 \subsection{Benchmark}
 

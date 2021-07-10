@@ -8,10 +8,6 @@ One solution is to design systems that aim for Pareto-optimality, but as the num
 
 It can be argued that having multiple objectives, none of which is allowed to dominate over others, helps to mitigate against Goodhart's / Campbell's law as well. These laws manifest when a pressure is placed upon a particular measure or indicator and it becomes an objective. When the measures are somewhat uncorrelated and domination of any objective is forbidden by a utility aggregation function then particular measures are avoided from bearing too much pressure.
 
-
-
-
-
 \subsection{Current approaches}
 
 \subsubsection{Multi-objective decision-making in reinforcement learning}
@@ -94,21 +90,20 @@ Conservativism in Bayesian \cite{pmlr-v125-cohen20a} or neuromorphic systems \ci
 %\subsection{Prior work for editing}
 
 
-%\subsection{Motivation}
-
 \subsection{Building on previous work}
 
 This paper is the first to examine continuous non-linear multi-objective decision-making in the context of low-impact AI work as described in \cite{vamplew_potential-based_2021}. It is also the first we are aware of to apply a split-function exponential-log transform to any AI decision-making or RL application.  Previous work has explored thresholded continuous functions for traversing environments where rewards need to be gathered in different parts of the environment and traded off over time \cite{rolf_need_2020}, although that work focused on a function resembling ELA and did not explore SFELLA. 
 
 \cite{turner_conservative_2020} started out with similar goals to ours; they described `conservative agency' to balance `optimization of the primary reward function with preservation of the ability to optimize auxiliary reward functions'. They did not examine non-linear combinations of objectives, and instead focused on learning approaches for optimizing the scaling between objectives. We have not applied arbitrary scaling between objectives, and applying the scaling method as in \cite{turner_conservative_2020} could be complementary to our work.
 
+
 \subsection{Pluralistic human value system}
 
-Often, AI alignment aims to ensure AI systems fulfill human preferences. While both can be conceptualized as conflicting at times \cite{sotala2016defining}, values are higher-order and harder to identify \cite{barrett2008learning}, but preferences are more sensitive to context and recalculation \cite{warren2011values}. The framework here focuses on modeling distinct human values as distinct objectives, while recognizing that there may be many preferences to satisfy within each overarching value function. As outlined above, intuitions of individuals frequently conflict \cite{haidt2001emotional} and moral views between individuals also conflict \cite{bogosian_implementation_2017}.
+Often, AI alignment aims to ensure AI systems fulfill human preferences. While neither human preferences nor human values are always consistent \cite{sotala2016defining}, values are higher-order and harder to identify \cite{barrett2008learning}, but preferences are more sensitive to context and recalculation \cite{warren2011values}. The framework here focuses on modeling distinct human values as distinct objectives, while recognizing that there may be many preferences to satisfy within each overarching value function. As outlined above, intuitions of individuals frequently conflict \cite{haidt2001emotional} and moral views between individuals also conflict \cite{bogosian_implementation_2017}.
 
-It has been argued that one way to address uncertainty in moral decision-making is to learn human moral judgement in a bottom-up fashion \cite{bogosian_implementation_2017}; rather than learning human values, an agent learns human preferences, and those preferences are implicitly held within values. 
+It has been argued that one way to address uncertainty in moral decision-making is to learn human moral judgement in a bottom-up fashion \cite{bogosian_implementation_2017}; rather than learning human values, an agent learns human preferences, and those preferences are implicitly held within values. Even if this is technically adequate, in practice it might be necessary to put constraints on system to ensure they don't learn anti-social preferences \cite{neff2016talking}.
 
-This approach been challenged: creators of AI systems may themselves have disagreement about what counts as `moral', and will need to make choices about the way systems are designed  \cite{bogosian_implementation_2017}. For this reason, it's likely the bottom-up approach will be considered insufficient, and attempts will be made to correct the system \cite{stray2020you}, either by re-engineering the learning approach or through post-hoc correction. For instance, we may expect an AI system to rise above human racial prejudices rather than reflect them. 
+%This approach been challenged: creators of AI systems may themselves have disagreement about what counts as `moral', and will need to make choices about the way systems are designed  \cite{bogosian_implementation_2017}. For this reason, it's likely the bottom-up approach will be considered insufficient, and attempts will be made to correct the system \cite{stray2020you}, either by re-engineering the learning approach or through post-hoc correction. For instance, we may expect an AI system to rise above human racial prejudices rather than reflect them. 
 
 Furthermore, a utility function based on human preferences themselves has been argued to be an insufficient definition of value \cite{sotala2016defining, DBLP:journals/corr/abs-1712-05812}, because \begin{enumerate*}
     \item humans do not have consistent utility functions,
@@ -121,6 +116,9 @@ It is arguably also an important question of how to combine the rewards that are
 A theoretical Bayesian preference-learning system could model preferences and through learning human values, learn the proper way to combine them. But there is the trade-off between a model being too simple (linear sum of rewards), and too complex (a Bayesian network, requires potentially unpractical amounts of data). The middle ground would be to have a model-based approach which describes some rules (like the presence of negative exponential shape for violated alignment objectives) while being still flexible and able to learn the data as parameters of the model.
 %\footnote{I have to say, now that I have looked at this argument, I think it is fairy weak. I think a stronger challenge to the unitary preference learning approach, as advocated by Stuart Russell, is Kyle Bogosian's approach above; however I am not entirely convinced by that either. Something to add to the `limitations' section perhaps}
 
+`wireheading' is a possible failure mode for transformational AI systems. A system attempting to maximize a utility function might attempt to reprogram that reward function to make it easier to achieve higher levels of reward \cite{demski_a_stable_2017}. One solution is ensuring that each proposed action is evaluated in terms of current objectives; this ensures that changing an objective itself would not score highly with respect to the objective being changed \cite{dewey_learning_2011}. A `thin' conception of objectives, such as `discover and fulfill human preferences' might fail to sufficiently constrain the objective space. It might be that objectives need to be hard-wired. To do this without making objectives overly narrow, consideration of multiple objectives might be essential.
+
+
 
 %\subsection{Conflicting individual preferences}\footnote{Roland: Is there missing something? Section 1.4 seems to follow immediately?}
 
@@ -131,8 +129,9 @@ A theoretical Bayesian preference-learning system could model preferences and th
 The following principles guided us in selecting an aggregate function different to the maximin or leximin approaches:
 \begin{itemize}
     \item \textit{Loss aversion}, \textit{conservatism}, or \textit{soft maximin}. We seek to improve the position of the lowest member of the set of values, while also not entirely disregarding optimization of other values.
-    \item \textit{Balancing outcomes across objectives}. We aim to achieve a balance in optimization across objectives. There are multiple applications of this principle in multi-objective decision-making for moral systems. When balancing competing moral systems, each objective represents a different moral system and has some non-zero probability of being correct. To be conservative and ensure a low probability of any bad outcome, we must avoid strongly negative outcomes in any system. When balancing the moral preferences or other preferences of multiple human individuals, outcomes across objectives represents an implementation of fairness between individuals.
-    \item \textit{Zero-point consistency}. It is useful for an agent to be able to evaluate whether an action performs better not only compared to alternatives, but also compared to no action at all, which would have a value of 0. For this reason it is valuable for any transformation function to preserve the overall valence of each proposed action in terms of each objective.
+    \item \textit{Balancing outcomes across objectives}. %There are at least two different ways to distinguish separate objectives; balancing outcomes across objectives is important in both cases. 
+    Each objective represents a different moral system, each moral system bears some non-zero probability of being correct. To be conservative and ensure a low probability of any bad outcome, we avoid strongly negative outcomes in any system. Alternatively, each objective represents a particular subject's preferences. Then, balancing outcomes across objectives represents an implementation of fairness between subjects.
+    \item \textit{Zero-point consistency}. An agent evaluates whether an action performs better not only compared to alternatives, but also compared to no action at all, which would have a value of 0. For this reason any aggregation or transformation function should preserve the overall estimated sign or valence of an objective.
 \end{itemize}
 
 Previous work \cite{vamplew_potential-based_2021} has described thresholded leximin approaches in order to trade-off objectives, in the context of trading off a Primary objective and an Impact Objective in low-impact AI. A thresholded leximin function aims to first maximize the thresholded value of thresholded objectives, and then secondarily maximize the unthresholded value of one or more other objectives. If the alignment objective is thresholded, then the system aims to first achieve at least a thresholded level of the alignment objective, and then subject to this, to achieve a maximum level of the performance objective. Alternatively, a \textit{complete thresholded leximin}, aims to maximize the thresholded value of all objectives, i.e., reach the threshold on each objective; then, subject to this, aims to maximize the unthresholded value of each objective.
@@ -144,9 +143,3 @@ Third, in the context of modeling human values, this approach might sometimes be
 
 
 A continuous compromise between multiple values using non-linear multiple objective systems also offers greater benefits for complex low-impact artificial systems. If one had dozens of objectives, a strict maximin or leximin function might come to be overly inflexible. In order to be low-impact, a system must evaluate the specific, counterfactual impact of its own actions on those states. If a system with dozens of competing objectives evaluated the effect of its own actions on the state of the world, and `no action' was one possible choice, there is a high probability that most of the time, `no action' would win, because of the high likelihood that every possible action evaluates negatively according to some function. A soft maximin function that combines MEU with a strong penalty for negative utility might facilitate more action without substantially increasing risk.
-
- 
-%\subsection{Analytical testing}
-%\footnote{Roland: It seems to me that we currently do not treat this min-function based no-action approach in our paper, so probably need to skip this section from current paper?}
-%We can start with a strict min function that defaults to no action any time there is not a Pareto-optimal action to take, as described in\footnote{is Parteo-optimal a meaningful term here?} \cite{vamplew_human-aligned_2018}. One implementation of this approach could include  deference to a human agent whenever there's no Pareto-optimal action to take. A human agent might choose to indicate a path forward, either through a training process that adjusts the agent's perception of payoffs or its evaluation of the payoffs, adjusting the fundamental values of the system, or simply ordering an override.\footnote{this needs to be MUCH clearer. Maybe we simply delete this section}
-
