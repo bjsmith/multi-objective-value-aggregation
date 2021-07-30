@@ -11,7 +11,7 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_gen_vary_UAPA extends MORL_Glue_Local_Base
+public class MORL_Glue_Local_gen_vary_UAPA_zscore extends MORL_Glue_Local_Base
 {
 	
 	// Runs all combinations of (agent, environment, experiment)
@@ -20,9 +20,9 @@ public class MORL_Glue_Local_gen_vary_UAPA extends MORL_Glue_Local_Base
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{	
 			// our agents
-			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"});}});
-			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFMLA"});}});
-			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","ELA"});}});
+//			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"});}});
+//			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFMLA"});}});
+//			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","ELA"});}});
 			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
 //			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
 			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA" }); } });
@@ -105,6 +105,7 @@ public class MORL_Glue_Local_gen_vary_UAPA extends MORL_Glue_Local_Base
 		int num_online = 5000;
 		int num_offline = 500;
 		int max_episode_length = 1000; //number of TRIALS in EPISODE
+		int num_repetitions = 3; //number of times to repeat each exeriment.
 		
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
@@ -112,25 +113,29 @@ public class MORL_Glue_Local_gen_vary_UAPA extends MORL_Glue_Local_Base
 		
     	for(String envstring : envs.keySet()) {
     		experiment_id = "Test " + envstring;
-    		String[] outputfiles = new String[agents.size()];
+    		String[] outputfiles = new String[agents.size() * num_repetitions];
     		int runid = 0;
     		for(String astring : agents.keySet()) {
-	    		// generator agent and environment
-	    		AgentGenerator atg = agents.get(astring);
-	    		EnvGenerator etg = envs.get(envstring);
-	    		EnvironmentInterface env = etg.getEnv(new String[] {});
-	    		AgentInterface agent = atg.getAgent(new String[] {});
-	    		
-	    		// build experiment settings and run experiment
-	    		ExperimentSettings settings = new ExperimentBuilder()
-						.name(experiment_id).outpath(outpath)
-						.agent(astring).env(envstring)
-						.episodes(num_online, num_offline, max_episode_length)
-						.buildExperiment();
-	    		//settings.additional_settings.put("PenaltyScale",env.)
-	    		String outputfile = LocalExperiment.main(agent, env, settings);
-	    		outputfiles[runid] = outputfile;
-	    		runid ++;
+    			for (int exp_i=0; exp_i<num_repetitions; exp_i++){
+    				
+		    		// generator agent and environment
+		    		AgentGenerator atg = agents.get(astring);
+		    		EnvGenerator etg = envs.get(envstring);
+		    		EnvironmentInterface env = etg.getEnv(new String[] {});
+		    		AgentInterface agent = atg.getAgent(new String[] {});
+		    		
+		    		// build experiment settings and run experiment
+		    		ExperimentSettings settings = new ExperimentBuilder()
+							.name(experiment_id).outpath(outpath)
+							.agent(astring).env(envstring)
+							.episodes(num_online, num_offline, max_episode_length)
+							.buildExperiment();
+		    		//settings.additional_settings.put("PenaltyScale",env.)
+		    		String outputfile = LocalExperiment.main(agent, env, settings);
+		    		outputfiles[runid] = outputfile;
+		    		runid ++;
+    			}
+
 	    	}
     		ExperimentSettings plot_settings = new ExperimentBuilder()
 					.name(experiment_id).outpath(outpath).env(envstring)

@@ -45,10 +45,13 @@ get_raw_activity <-function(file_list,source_path){
     TLO_A_page0$Agent <- row[["Agent"]]
     TLO_A_page0$Environment <- row[["Environment"]]
     TLO_A_page0$EnvironmentClass <- row[["EnvironmentClass"]]
+    TLO_A_page0$Filename = row[["filename"]]
     return(TLO_A_page0)
   })
   
   raw_activity <- do.call(rbind,raw_activity_list)
+  raw_activity$FileID <- as.numeric(as.factor(raw_activity$Filename))
+  raw_activity$Filename <- NULL #we don't really need this, we just need to store a unique ID for each file.
   return(raw_activity)
 }
 
