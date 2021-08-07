@@ -61,12 +61,15 @@ public class SokobanSideEffects implements EnvironmentInterface
     
     // define the ordering of the objectives
     private final int NUM_OBJECTIVES = 3;
+	
     private final int GOAL_REWARD = 0; //RP
     private final int IMPACT_REWARD = 1; //RA
     private final int PERFORMANCE_REWARD = 2; //R*?
+	
     private double time_use_penalty_scaling = 1;
     private double goal_reach_reward_scaling = 1;
     private double box_position_penalty_scaling = 1;
+    
     // state variables
     private int agentLocation;
     private int boxLocation;
@@ -76,10 +79,14 @@ public class SokobanSideEffects implements EnvironmentInterface
     // debugging variables
     boolean debugging = false;
 
-    public SokobanSideEffects(double time_use_penalty_scaling,double goal_reach_reward_scaling,double box_position_penalty_scaling) {
+    public SokobanSideEffects(
+		double time_use_penalty_scaling,
+		double goal_reach_reward_scaling,
+		double box_position_penalty_scaling,
+	) {
     	this.time_use_penalty_scaling = time_use_penalty_scaling;
     	this.goal_reach_reward_scaling = goal_reach_reward_scaling;
-    	this.box_position_penalty_scaling=box_position_penalty_scaling;
+    	this.box_position_penalty_scaling = box_position_penalty_scaling;
     }
     
     public SokobanSideEffects() {

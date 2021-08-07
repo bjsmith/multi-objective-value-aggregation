@@ -62,9 +62,11 @@ public class Doors implements EnvironmentInterface
     
     // define the ordering of the objectives
     private final int NUM_OBJECTIVES = 3;
-    private final int GOAL_REWARD = 0;
-    private final int IMPACT_REWARD = 1;
-    private final int PERFORMANCE_REWARD = 2;
+	
+    private final int GOAL_REWARD = 0; //RP
+    private final int IMPACT_REWARD = 1; //RA
+    private final int PERFORMANCE_REWARD = 2; //R*?
+	
     private final int DOORS_OPEN_PENALTY = -10;
     // state variables
     private int agentLocation;
@@ -81,13 +83,15 @@ public class Doors implements EnvironmentInterface
     private double goal_reward_scaling = 1;
     private double impact_penalty_scaling = 1;
     private double time_use_penalty_scaling = 1;
-    
-    
 
-    public Doors(double time_use_penalty_scaling, double goal_reward_scaling,double impact_penalty_scaling) {
+    public Doors(
+		double time_use_penalty_scaling, 
+		double goal_reward_scaling,
+		double impact_penalty_scaling
+	) {
+    	this.time_use_penalty_scaling = time_use_penalty_scaling;
     	this.goal_reward_scaling = goal_reward_scaling;
-    	this.impact_penalty_scaling=impact_penalty_scaling;
-    	this.time_use_penalty_scaling=time_use_penalty_scaling;
+    	this.impact_penalty_scaling = impact_penalty_scaling;
     }
     
     public Doors() {

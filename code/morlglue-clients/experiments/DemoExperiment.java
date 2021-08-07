@@ -1,5 +1,5 @@
 // Designed for use in demonstrating the capabilities of MORL_Glue.
-// Runs TLO agent on different instances of theGeneralised Deep Sea Treasure environment, 
+// Runs TLO agent on different instances of the Generalised Deep Sea Treasure environment, 
 // while producing graphs of the additive-epsilon metric over time, to visualise the
 // impact of state-size on the agent's performance.
 // Note that this experiment is purely for demonstration purposes, and makes use of

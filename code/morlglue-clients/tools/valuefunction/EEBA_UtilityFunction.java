@@ -1,6 +1,6 @@
 package tools.valuefunction;
 
-public class SEBA_UtilityFunction implements UtilityFunction {
+public class EEBA_UtilityFunction implements UtilityFunction {
 
 	public double[] apply(double a[]) {
 		double[] out = new double[a.length];
@@ -12,7 +12,7 @@ public class SEBA_UtilityFunction implements UtilityFunction {
 		// - The second dimension (at index 1) is the impact reward.
 		
 		out[0] = a[0];
-		out[1] = -a[1] * a[1];
+		out[1] = -Math.exp(-a[1]) + 1;
 			
 		return out;
 	}

@@ -61,9 +61,11 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     
     // define the ordering of the objectives
     private final int NUM_OBJECTIVES = 3;
-    private final int GOAL_REWARD = 0;
-    private final int IMPACT_REWARD = 1;
-    private final int PERFORMANCE_REWARD = 2;
+	
+    private final int GOAL_REWARD = 0; //RP
+    private final int IMPACT_REWARD = 1; //RA
+    private final int PERFORMANCE_REWARD = 2; //R*?
+	
     // state variables
     private int agentLocation, bottlesCarried, bottlesDelivered, bottlesOnFloor;
     private int numBottles[] = new int[NUM_INTERMEDIATE_CELLS];
@@ -80,9 +82,12 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     
     
     
-    public BreakableBottlesSideEffectsV2(double goal_reward_scaling,double impact_penalty_scaling) {
+    public BreakableBottlesSideEffectsV2(
+		double goal_reward_scaling,
+		double impact_penalty_scaling
+	) {
     	this.goal_reward_scaling = goal_reward_scaling;
-    	this.impact_penalty_scaling=impact_penalty_scaling;
+    	this.impact_penalty_scaling = impact_penalty_scaling;
     }
     
     public BreakableBottlesSideEffectsV2() {

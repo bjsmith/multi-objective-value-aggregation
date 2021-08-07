@@ -8,7 +8,7 @@
 
 package agents;
 
-import java.util.Random;
+//import java.util.Random;
 import java.util.Stack;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
@@ -22,26 +22,36 @@ import tools.staterep.DummyStateConverter;
 import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionDiscrete;
 import tools.valuefunction.Agg_LookupTable;
+
 import tools.valuefunction.Aggregator;
 import tools.valuefunction.ELA_Aggregator;
 import tools.valuefunction.UtilityFunction;
 import tools.valuefunction.ELA_UtilityFunction;
 import tools.valuefunction.FDP_Aggregator;
+
 import tools.valuefunction.LELA_UtilityFunction;
 //import tools.valuefunction.MIN_UtilityFunction;
 import tools.valuefunction.SFLLA_UtilityFunction;
 import tools.valuefunction.SFMLA_Aggregator;
 import tools.valuefunction.SFMLA_UtilityFunction;
+import tools.valuefunction.Rolf_EXP_UtilityFunction;
+
 import tools.valuefunction.MIN_Aggregator;
 import tools.valuefunction.SEBA_Aggregator;
+import tools.valuefunction.EEBA_Aggregator;
 import tools.valuefunction.SUM_Aggregator;
+
 import tools.valuefunction.FDP_UtilityFunction;
 import tools.valuefunction.Identity_UtilityFunction;
 import tools.valuefunction.LELA_Aggregator;
 import tools.valuefunction.SEBA_UtilityFunction;
+import tools.valuefunction.EEBA_UtilityFunction;
 import tools.valuefunction.SFLLA_Aggregator;
+import tools.valuefunction.Rolf_EXP_LOG_Aggregator;
+import tools.valuefunction.SUM_EXP_LOG_Aggregator;
+
 import tools.valuefunction.interfaces.ActionSelector;
-import tools.valuefunction.interfaces.ValueFunction;
+//import tools.valuefunction.interfaces.ValueFunction;
 
 
 public class Agg_Agent implements AgentInterface {
@@ -55,7 +65,7 @@ public class Agg_Agent implements AgentInterface {
 
     private boolean policyFrozen = false;
     private boolean debugging = false;
-    private Random random;
+    //private Random random; 	//commented out unused variable
 
     private int numActions = 0;
     private int numStates = 0;
@@ -87,18 +97,30 @@ public class Agg_Agent implements AgentInterface {
     StateConverter stateConverter = null;
     String utilityFunctionstring;
     String aggregatorstring;
+    double goal_reward_granularity = 1; 	//TODO: implement step function at the right place
+    double impact_penalty_granularity = 1; 	//TODO: implement step function at the right place
     
     UtilityFunction utilityFunction;
     Aggregator aggregator;
     
     public Agg_Agent(String[] args) {
+    	this(args, 1, 1);
+    }
+    
+    public Agg_Agent(
+		String[] args,
+		double goal_reward_granularity,
+		double impact_penalty_granularity
+	) {
     	
 		String utilityFunction_type = args[0];
 		String aggregator_type = args[1];
 		
 		this.utilityFunctionstring = utilityFunction_type;
-		this.aggregatorstring = aggregator_type;
-		
+		this.aggregatorstring = aggregator_type;		
+    	this.goal_reward_granularity = goal_reward_granularity;
+    	this.impact_penalty_granularity = impact_penalty_granularity;		
+    	
 		switch(utilityFunction_type) {
 		case "IDENT":
 			this.utilityFunction = new Identity_UtilityFunction();
@@ -120,6 +142,12 @@ public class Agg_Agent implements AgentInterface {
 			break;
 		case "SEBA":
 			this.utilityFunction = new SEBA_UtilityFunction();
+			break;
+		case "EEBA":
+			this.utilityFunction = new EEBA_UtilityFunction();
+			break;
+		case "ROLF_EXP":
+			this.utilityFunction = new Rolf_EXP_UtilityFunction();
 			break;
 		}
 		
@@ -148,6 +176,15 @@ public class Agg_Agent implements AgentInterface {
 		case "SEBA":
 			this.aggregator = new SEBA_Aggregator();
 			break;
+		case "EEBA":
+			this.aggregator = new EEBA_Aggregator();
+			break;
+		case "ROLF_EXP_LOG":
+			this.aggregator = new Rolf_EXP_LOG_Aggregator();
+			break;
+		case "SUM_LOG":
+			this.aggregator = new SUM_LOG_Aggregator();
+			break;
 		}
 	}
 
@@ -161,7 +198,7 @@ public class Agg_Agent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         vf = new Agg_LookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold, utilityFunction, aggregator);
 
-        random = new Random(471);
+        //random = new Random(471); 	//commented out unused variable
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

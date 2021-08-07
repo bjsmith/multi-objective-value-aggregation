@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-// Implement util functions for aggregating multiple utility values with geberic aggregators
+// Implement util functions for aggregating multiple q values with generic aggregators
 public abstract class AggregatorUtils {
 
 		
@@ -45,7 +45,7 @@ public abstract class AggregatorUtils {
                 bestActions.add(a);
             }            
         }
-       /* for (int i=0; i<bestActions.size(); i++)
+        /*for (int i=0; i<bestActions.size(); i++)
         {
         	System.out.print(bestActions.get(i) + " ");
         }
