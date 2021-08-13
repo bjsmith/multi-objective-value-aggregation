@@ -33,7 +33,7 @@ public class TLO_EOVF_Agent implements AgentInterface {
     public static final boolean PENG = false; // use Peng's traces (don't clear traces on non-greedy actions)
     private final double EOVF_INIT = 200; // change this on a per-environment basis
     private boolean policyFrozen = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numStates = 0;
@@ -84,7 +84,7 @@ public class TLO_EOVF_Agent implements AgentInterface {
         	thresholds[i]=0.0;
         vf = new TLO_EOVF_LookupTable(numOfObjectives, numActions, numStates, 0, thresholds, 0.9); // 0.9 is a default setting for the EOVF gamma value
 
-        random = new Random(471);
+        //random = new Random(471);
         tracingStack = new Stack<>();
         startingEpsilon = 0; // default - just use greedy exploration in combination with the EOVF objective
 

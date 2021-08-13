@@ -30,7 +30,7 @@ public class TLO_Agent implements AgentInterface {
     public static final boolean WATKINS = true; // use Watkin's traces (clear on non-greedy actions)
     public static final boolean PENG = false; // use Peng's traces (don't clear traces on non-greedy actions)
     private boolean policyFrozen = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numStates = 0;
@@ -80,7 +80,7 @@ public class TLO_Agent implements AgentInterface {
         	thresholds[i]=0.0;
         vf = new TLO_LookupTable( numOfObjectives, numActions, numStates, 0, thresholds);
 
-        random = new Random(471);
+        //random = new Random(471);
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

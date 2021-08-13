@@ -59,7 +59,7 @@ public class SatisficingMOAgent implements AgentInterface {
 
     private boolean policyFrozen = false;
     private boolean debugging = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numEnvtStates = 0; // number of states in the environment
@@ -111,7 +111,7 @@ public class SatisficingMOAgent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         vf = new SatisficingLookupTable(numOfObjectives, numActions, numStates, 0, primaryRewardThreshold, safetyThreshold);
 
-        random = new Random(471);
+        //random = new Random(471);
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

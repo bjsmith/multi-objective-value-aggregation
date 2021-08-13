@@ -59,7 +59,7 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
     private int agentRow;
     private int agentCol;
     // random number generator
-    private Random r;
+    private Random random;
     // variables and objects related to the visual display of the environment
     private GDST_Frame frame;
 	
@@ -73,7 +73,7 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
     private void constructEnvironment(int _width, int _minDepth, int _minVerticalStep, int _maxVerticalStep, double _transitionNoise, 
 			double _rewardNoise, int _frontShape, int _seed)
 	{
-    	r = new Random(_seed);
+    	random = new Random(_seed);
     	// set up the structure of the environment
     	numCols = _width;
     	depths = new int[numCols];
@@ -83,7 +83,7 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
     	int stepRange = _maxVerticalStep - _minVerticalStep + 1;
     	for (int col=1; col<numCols; col++)
     	{
-    		depths[col] = depths[col-1] + r.nextInt(stepRange) + _minVerticalStep;
+    		depths[col] = depths[col-1] + random.nextInt(stepRange) + _minVerticalStep;
     		steps[col] = col + depths[col];
     	}
     	numRows = depths[numCols-1]+1;
@@ -137,7 +137,7 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
     		}
     		else if (frontShape==MIXED) // only change some points to get a mixed front, possibly with some dominated points
     		{
-    			treasure[col] += adjustmentFactor * treasureRange * (r.nextDouble()*2-1);
+    			treasure[col] += adjustmentFactor * treasureRange * (random.nextDouble()*2-1);
     		}
     	}
 		// once finished, set steps to -ve value to assist in charting
@@ -269,8 +269,8 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
         // setup new rewards, add noise as required
         Reward rewards = new Reward(0,2,0);
         double[] rewardsArray = getRewards(agentCol,agentRow);
-        rewards.setDouble(0, rewardsArray[0] * (1+r.nextGaussian()*rewardNoise));
-        rewards.setDouble(1, rewardsArray[1] * (1+r.nextGaussian()*rewardNoise));
+        rewards.setDouble(0, rewardsArray[0] * (1+random.nextGaussian()*rewardNoise));
+        rewards.setDouble(1, rewardsArray[1] * (1+random.nextGaussian()*rewardNoise));
         RewardObs.setReward(rewards);
         return RewardObs;
     }
@@ -318,7 +318,7 @@ public class GeneralisedDeepSeaTreasureEnv implements EnvironmentInterface
     public void updatePosition(int theAction) 
     {
         int state = getState(agentCol,agentRow);
-        int nextState = transitionFunction[state][theAction].getNextState(r);
+        int nextState = transitionFunction[state][theAction].getNextState(random);
         agentRow = nextState % numRows;
         agentCol = nextState / numRows;  
         // update display

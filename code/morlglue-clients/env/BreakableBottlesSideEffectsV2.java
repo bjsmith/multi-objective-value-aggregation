@@ -71,7 +71,7 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private int numBottles[] = new int[NUM_INTERMEDIATE_CELLS];
     private Reward rewards = new Reward(0,NUM_OBJECTIVES,0);
     private boolean terminal;
-    private Random r = new Random(471);
+    //private Random r = new Random(471);
     // debugging variables
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;

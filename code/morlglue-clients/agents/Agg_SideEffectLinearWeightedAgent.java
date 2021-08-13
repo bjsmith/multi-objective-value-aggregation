@@ -43,7 +43,7 @@ public class Agg_SideEffectLinearWeightedAgent implements AgentInterface {
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numStates = 0;
@@ -119,7 +119,7 @@ public class Agg_SideEffectLinearWeightedAgent implements AgentInterface {
         	weights[i]=otherWeights;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        random = new Random();
+        //random = new Random();
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

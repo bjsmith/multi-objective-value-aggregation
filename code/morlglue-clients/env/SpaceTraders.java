@@ -21,7 +21,7 @@ public class SpaceTraders implements EnvironmentInterface
 	private int currentState; 
 	private boolean terminal;
 	private Reward rewards;
-    private Random r = new Random(471);
+    private Random random = new Random(471);
     // action names
     private final int INDIRECT = 0;
     private final int DIRECT = 1;
@@ -89,7 +89,7 @@ public class SpaceTraders implements EnvironmentInterface
     {
     	if (currentState==0) // Planet A
     	{
-    		if (r.nextDouble()<STATE_A_DATA[theAction][0]) // success! we reach planet B
+    		if (random.nextDouble()<STATE_A_DATA[theAction][0]) // success! we reach planet B
     		{
     			rewards.setDouble(0, 0); // no penalty or reward for mission success until ended
     			rewards.setDouble(1,STATE_A_DATA[theAction][1]); // use the success time penalty
@@ -106,7 +106,7 @@ public class SpaceTraders implements EnvironmentInterface
         //  Planet  B
         else if (currentState==1)
         {
-    		if (r.nextDouble()<STATE_B_DATA[theAction][0]) // success! we got back to planet A
+    		if (random.nextDouble()<STATE_B_DATA[theAction][0]) // success! we got back to planet A
     		{
     			rewards.setDouble(0, 1); // reward for succesful mission completion
     			rewards.setDouble(1,STATE_B_DATA[theAction][1]); // use the success time penalty

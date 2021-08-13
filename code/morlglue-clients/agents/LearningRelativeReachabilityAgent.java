@@ -31,7 +31,7 @@ public class LearningRelativeReachabilityAgent implements AgentInterface {
     Stack<StateActionDiscrete> tracingStack = null;
 
     private boolean policyFrozen = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numStates = 0;
@@ -85,7 +85,7 @@ public class LearningRelativeReachabilityAgent implements AgentInterface {
         	weights[i]=0;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        random = new Random();
+        //random = new Random();
         tracingStack = new Stack<>();
         // set up relative reachability data structures and variables
         noopIndex = numActions - 1;

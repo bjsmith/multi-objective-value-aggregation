@@ -25,7 +25,7 @@ public class ResourceGatheringEpisodic implements EnvironmentInterface
     private final int ENEMY_LOCN1[] = {1,2};
     private final int ENEMY_LOCN2[] = {0,3};
     private final double ENEMY_CHANCE = 0.1;
-    private Random r = new Random(58);
+    private Random random = new Random(58);
     private boolean terminal;
     
     // define the ordering of the objectives
@@ -183,7 +183,7 @@ public class ResourceGatheringEpisodic implements EnvironmentInterface
         // check for enemy attack
         else if ((agentRow==ENEMY_LOCN1[0] && agentCol==ENEMY_LOCN1[1]) || (agentRow==ENEMY_LOCN2[0] && agentCol==ENEMY_LOCN2[1]))
         {
-        	if (r.nextDouble()<=ENEMY_CHANCE) 
+        	if (random.nextDouble()<=ENEMY_CHANCE) 
         	{
         		// the agent was attacked, so move to the home position and lose all resources
         		attacked = true;

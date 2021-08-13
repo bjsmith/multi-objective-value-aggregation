@@ -38,7 +38,7 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
     private int numBottles[] = new int[NUM_INTERMEDIATE_CELLS];
     private Reward rewards = new Reward(0,NUM_OBJECTIVES,0);
     private boolean terminal;
-    private Random r;
+    private Random random;
     // debugging variables
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;
@@ -56,7 +56,7 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
         }
         bottlesOnFloor = 0;
         terminal = false; debugging = false; numEpisodes = 0;
-        r = new Random(471);
+        random = new Random(471);
         //Task specification object
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.setEpisodic();
@@ -226,7 +226,7 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
     			if (agentLocation>0)
     			{
     				agentLocation--;
-    				if (agentLocation>0 && bottlesCarried==MAX_BOTTLES && r.nextDouble()<=DROP_PROBABILITY)
+    				if (agentLocation>0 && bottlesCarried==MAX_BOTTLES && random.nextDouble()<=DROP_PROBABILITY)
     				{
     					// oops, we dropped a bottle
     					numBottles[agentLocation-1]++;
@@ -245,7 +245,7 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
     					bottlesDelivered+= bottlesDeliveredThisStep;
     					bottlesCarried -= bottlesDeliveredThisStep;
     				}
-    				else if (bottlesCarried==MAX_BOTTLES && r.nextDouble()<=DROP_PROBABILITY)
+    				else if (bottlesCarried==MAX_BOTTLES && random.nextDouble()<=DROP_PROBABILITY)
     				{
     					// oops, we dropped a bottle
     					numBottles[agentLocation-1]++;

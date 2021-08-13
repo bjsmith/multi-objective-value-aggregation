@@ -47,7 +47,7 @@ public class TLO_Agent_Conditioned_On_Actual_Rewards implements AgentInterface
 
     private boolean policyFrozen = false;
     private boolean debugging = false;
-    private Random random;
+    //private Random random;
 
     private int numActions = 0;
     private int numEnvtStates = 0; // number of states in the environment
@@ -104,7 +104,7 @@ public class TLO_Agent_Conditioned_On_Actual_Rewards implements AgentInterface
         // discretisations levels are being used for each objective, and what the thresholds are - that needs to happen before the 
         // first trial is started
 
-        random = new Random(471);
+        //random = new Random(471);
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation
