@@ -2,6 +2,7 @@ package tools.valuefunction;
 
 public class EEBA_Aggregator implements Aggregator {
 
+	@Override
 	public double[] apply(double a[], double b[]) {
 		double[] out = new double[2];
 		double f_a_tot = 0.0;
@@ -25,7 +26,8 @@ public class EEBA_Aggregator implements Aggregator {
 			boolean qqq2 = true;
 		}
 		
-		//NB! The order of array elements is swapped by Vamplew's code
+		//NB! The order of array elements is swapped by Vamplew's code 
+		//BEFORE aggregator function is called
 		//in method private void getActionValues(int state)
 		//the first dimension is impact reward
 		//the second dimension is goal reward

@@ -4,6 +4,7 @@ public class Rolf_EXP_LOG_Aggregator implements Aggregator {
 	public double scale = 1;
 	public double offset = 0.0;
 	
+	@Override
 	public double[] apply(double a[], double b[]) {
 		double[] out = new double[2];
 		double[] f_a = new double[a.length];

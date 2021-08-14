@@ -50,6 +50,9 @@ import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.Rolf_EXP_LOG_Aggregator;
 import tools.valuefunction.SUM_LOG_Aggregator;
 
+import tools.valuefunction.GranularUtilityFunction;
+import tools.valuefunction.GranularAggregator;
+
 import tools.valuefunction.interfaces.ActionSelector;
 //import tools.valuefunction.interfaces.ValueFunction;
 
@@ -104,7 +107,7 @@ public class Agg_Agent implements AgentInterface {
     Aggregator aggregator;
     
     public Agg_Agent(String[] args) {
-    	this(args, 1, 1);
+    	this(args, 0, 0);
     }
     
     public Agg_Agent(
@@ -121,35 +124,57 @@ public class Agg_Agent implements AgentInterface {
     	this.goal_reward_granularity = goal_reward_granularity;
     	this.impact_penalty_granularity = impact_penalty_granularity;		
     	
+    	
+		//NB! The order of array elements will be LATER swapped by Vamplew's code
+		//in method private void getActionValues(int state)
+		//but at the stage the utility function is called, 
+    	//the array elements are still in the original order of reward dimensions
+		// - The first dimension (at index 0) is the goal reward.
+		// - The second dimension (at index 1) is the impact reward.
+    	double[] utilityFunctionGranularities = new double[2];
+    	utilityFunctionGranularities[0] = goal_reward_granularity;
+    	utilityFunctionGranularities[1] = impact_penalty_granularity;		
+    	
+		//NB! The order of array elements is swapped by Vamplew's code 
+		//BEFORE aggregator function is called
+		//in method private void getActionValues(int state)
+		//the first dimension is impact reward
+		//the second dimension is goal reward
+    	double[] aggregatorGranularities = new double[2];
+    	aggregatorGranularities[0] = impact_penalty_granularity;
+    	aggregatorGranularities[1] = goal_reward_granularity;
+    	
+    	
 		switch(utilityFunction_type) {
 		case "IDENT":
 			this.utilityFunction = new Identity_UtilityFunction();
 			break;
 		case "SFLLA":
-			this.utilityFunction = new SFLLA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new SFLLA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "LELA":
-			this.utilityFunction = new LELA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new LELA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "SFMLA":
-			this.utilityFunction = new SFMLA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new SFMLA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "ELA":
-			this.utilityFunction = new ELA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new ELA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "FDP":
-			this.utilityFunction = new FDP_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new FDP_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "SEBA":
-			this.utilityFunction = new SEBA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new SEBA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "EEBA":
-			this.utilityFunction = new EEBA_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new EEBA_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		case "ROLF_EXP":
-			this.utilityFunction = new Rolf_EXP_UtilityFunction();
+			this.utilityFunction = new GranularUtilityFunction(new Rolf_EXP_UtilityFunction(), utilityFunctionGranularities);
 			break;
 		}
+		
 		
 		switch(aggregator_type) {
 		case "MIN":
@@ -159,34 +184,34 @@ public class Agg_Agent implements AgentInterface {
 			this.aggregator = new SUM_Aggregator();
 			break;
 		case "SFLLA":
-			this.aggregator = new SFLLA_Aggregator();
+			this.aggregator = new GranularAggregator(new SFLLA_Aggregator(), aggregatorGranularities);
 			break;
 		case "LELA":
-			this.aggregator = new LELA_Aggregator();
+			this.aggregator = new GranularAggregator(new LELA_Aggregator(), aggregatorGranularities);
 			break;
 		case "SFMLA":
-			this.aggregator = new SFMLA_Aggregator();
+			this.aggregator = new GranularAggregator(new SFMLA_Aggregator(), aggregatorGranularities);
 			break;
 		case "ELA":
-			this.aggregator = new ELA_Aggregator();
+			this.aggregator = new GranularAggregator(new ELA_Aggregator(), aggregatorGranularities);
 			break;
 		case "FDP":
-			this.aggregator = new FDP_Aggregator();
+			this.aggregator = new GranularAggregator(new FDP_Aggregator(), aggregatorGranularities);
 			break;
 		case "SEBA":
-			this.aggregator = new SEBA_Aggregator();
+			this.aggregator = new GranularAggregator(new SEBA_Aggregator(), aggregatorGranularities);
 			break;
 		case "EEBA":
-			this.aggregator = new EEBA_Aggregator();
+			this.aggregator = new GranularAggregator(new EEBA_Aggregator(), aggregatorGranularities);
 			break;
 		case "ROLF_EXP_LOG":
-			this.aggregator = new Rolf_EXP_LOG_Aggregator();
+			this.aggregator = new GranularAggregator(new Rolf_EXP_LOG_Aggregator(), aggregatorGranularities);
 			break;
 		case "SUM_LOG":
-			this.aggregator = new SUM_LOG_Aggregator();
+			this.aggregator = new GranularAggregator(new SUM_LOG_Aggregator(), aggregatorGranularities);
 			break;
 		}
-	}
+	} 	//public Agg_Agent()
 
     @Override
     public void agent_init(String taskSpecification) {

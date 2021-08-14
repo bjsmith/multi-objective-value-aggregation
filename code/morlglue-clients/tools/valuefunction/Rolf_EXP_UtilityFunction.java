@@ -4,6 +4,7 @@ public class Rolf_EXP_UtilityFunction implements UtilityFunction {
 	public double scale = 1;
 	public double offset = 0.0;
 	
+	@Override
 	public double[] apply(double a[]) {
 		double[] out = new double[a.length];
 		

@@ -2,6 +2,7 @@ package tools.valuefunction;
 
 public class SEBA_Aggregator implements Aggregator {
 
+	@Override
 	public double[] apply(double a[], double b[]) {
 		double[] out = new double[2];
 		double f_a_tot = 0.0;
@@ -25,9 +26,8 @@ public class SEBA_Aggregator implements Aggregator {
 			boolean qqq2 = true;
 		}
 		
-		//f_a[i] = a[i]; // - a[1] * a[1]; 	 			
-		//f_b[i] = b[i]; // - b[1] * b[1];
-		//NB! The order of array elements is swapped by Vamplew's code
+		//NB! The order of array elements is swapped by Vamplew's code 
+		//BEFORE aggregator function is called
 		//in method private void getActionValues(int state)
 		//the first dimension is impact reward
 		//the second dimension is goal reward

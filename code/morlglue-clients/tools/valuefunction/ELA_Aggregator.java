@@ -7,8 +7,9 @@ public class ELA_Aggregator implements Aggregator {
 	public double scale = 4;
 	public double offset = 0.0;
 	
+	@Override
 	public double[] apply(double a[], double b[]) {
-		//System.out.println("applying ELA");
+	
 		double[] out = new double[2];
 		double[] f_a = new double[a.length];
 		double[] f_b = new double[b.length];

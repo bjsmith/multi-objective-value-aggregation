@@ -2,6 +2,7 @@ package tools.valuefunction;
 
 public class SFMLA_Aggregator implements Aggregator {
 
+	@Override
 	public double[] apply(double a[], double b[]) {
 		//System.out.println("applying SFMLA");
 		double[] out = new double[2];

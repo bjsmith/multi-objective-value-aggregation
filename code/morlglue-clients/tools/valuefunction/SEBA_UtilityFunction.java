@@ -2,6 +2,7 @@ package tools.valuefunction;
 
 public class SEBA_UtilityFunction implements UtilityFunction {
 
+	@Override
 	public double[] apply(double a[]) {
 		double[] out = new double[a.length];
 			

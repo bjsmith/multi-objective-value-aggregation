@@ -7,6 +7,7 @@ public class ELA_UtilityFunction implements UtilityFunction {
 	public double scale = 4;
 	public double offset = 0.0;
 	
+	@Override
 	public double[] apply(double a[]) {
 		double[] out = new double[a.length];
 		

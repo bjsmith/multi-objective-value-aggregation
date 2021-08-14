@@ -2,6 +2,7 @@ package tools.valuefunction;
 
 public class FDP_Aggregator implements Aggregator {
 
+	@Override
 	public double[] apply(double a[], double b[]) {
 		double[] out = new double[2];
 		double[] f_a = new double[a.length];
