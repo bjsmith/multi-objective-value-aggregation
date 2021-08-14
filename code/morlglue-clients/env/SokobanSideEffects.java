@@ -82,7 +82,7 @@ public class SokobanSideEffects implements EnvironmentInterface
     public SokobanSideEffects(
 		double time_use_penalty_scaling,
 		double goal_reach_reward_scaling,
-		double box_position_penalty_scaling,
+		double box_position_penalty_scaling
 	) {
     	this.time_use_penalty_scaling = time_use_penalty_scaling;
     	this.goal_reach_reward_scaling = goal_reach_reward_scaling;
