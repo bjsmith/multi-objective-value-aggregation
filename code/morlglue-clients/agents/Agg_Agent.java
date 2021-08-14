@@ -48,7 +48,7 @@ import tools.valuefunction.SEBA_UtilityFunction;
 import tools.valuefunction.EEBA_UtilityFunction;
 import tools.valuefunction.SFLLA_Aggregator;
 import tools.valuefunction.Rolf_EXP_LOG_Aggregator;
-import tools.valuefunction.SUM_EXP_LOG_Aggregator;
+import tools.valuefunction.SUM_LOG_Aggregator;
 
 import tools.valuefunction.interfaces.ActionSelector;
 //import tools.valuefunction.interfaces.ValueFunction;
