@@ -1,0 +1,193 @@
+We adapted algorithms in \cite{vamplew_potential-based_2021}, comparing the existing $TLO^A$ aggregation function with several new aggregation and scalarization functions. These were compared using the same environments and benchmarks as in \cite{vamplew_potential-based_2021}  with permission from the authors.
+
+%\subsection{Testing environment}
+
+
+
+%Learning proceeded for 5,000 episodes, and performance during learning (online performance) and after learning (offline performance) was measured. There were several key changes for our implementation. Changes affecting modeling results themselves are described below.
+
+\subsection{Environments}
+
+Four gridworld environments reported in \cite{vamplew_potential-based_2021} were examined.
+They are shown in figure~\ref{fig:envs} and we call them the `BreakableBottles', `UnbreakableBottles', `Sokoban' and `Doors'.
+
+%Specifically, the environments were the UnbreakableBottles environment, the BreakableBottles environment, the Sokoban Environment, and the Doors environment.
+
+%We used a modified version of the testing environment from \cite{vamplew_potential-based_2021}, obtained with permission from the authors.
+
+In every environment, agents receive two reward streams: a Performance reward $R^P$ (values the goal) and an Alignment reward $R^A$ (values a certain low-impact measure). %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
+
+The two bottles environments share the same 1D grid layout, where one end is the destination 'D' where the agent has to deliver bottles and the other end is the source 'S' where bottles are provided.
+Initially, the agent does not carry a bottle. It can hold up to two bottles and an episode ends when two bottles have been delivered.
+In between source and destination an agent holding two bottles can drop a bottle on a tile with a probability of 10\%.
+Leaving a bottle on the way yields a penalty of -50 in $R^*$.
+While in UnbreakableBottles the bottles can be picked up again where they were left, in breakable bottles they break upon dropping hence irreversibly changing the environment and receiving the penalty.
+
+In the Sokoban environment the agent starts on tile `S' and is tasked with pushing away the box `B' in order to reach the goal tile `G'.
+There are two ways of pushing: from the top into a corner (irreversible) and from the left (reversible, but involving more steps).
+A penalty of -25 is evoked for each wall touching the box in the final position.
+
+In the Doors environment the agent must simply travel from the start `S' to the goal `G'.
+It can choose to open or close the doors (grey) which takes one action, or time step, each. 
+There are two possible paths: either the agent can move around the right corridor taking 10 moves to reach 'G' or the agent can move straight down by opening the doors (6 moves if the doors stay open).
+However, there is a penalty of -10 associated with leaving a door open.
+Therefore the desired solution is moving down while closing the doors behind the agent taking 8 moves.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\columnwidth]{output/env_figure.pdf}
+    \caption{(a) (Un)Breakable Bottles, (b) Sokoban, (c) Doors. Based on figures 1, 2, 4 in \cite{vamplew_potential-based_2021}.}
+    \label{fig:envs}
+\end{figure}
+
+\subsection{Aggregation functions}
+
+All of the multi-objective utility functions we compared work as follows. 
+\begin{enumerate}
+
+    \item Apply an objective specific scaling factor $c_i$ which is multiplied with the value of the reward. Different objectives likely have different scaling factors.  
+    \item Transform the scaled output using a non-linear transform (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
+    
+    \item Combine the transformed output using a simple average/sum.
+\end{enumerate}
+
+These steps describe a value function which can be applied either to the individual rewards of each time-step or to the values of the Q-values. In our current setup we applied the functions to the Q values.
+
+Each non-linear function is applied component-wise before aggregation occurs by averaging/summing of the transformed values
+
+\begin{align}
+\label{eq:meu}
+U=\sum_{i}^n{f_i(c_i x_i)}
+\end{align}
+
+\noindent where ${f_i}$ describes a specific transform function for the $i$th objective. Note that here, $U$ describes our modeling of Q-values. The scaling factors $c_i$ can be treated as parameters of the model. They could be, for example, specified directly by the human, automatically determined in the future by the agent using a value learning method, or calculated by some other algorithm. 
+For the purposes of this experiment, we left these at $c=1$ (instead, we directly modified $x$, the value returned by the environment), but emphasize that modifying these scale values could be useful in the future.
+
+
+ New non-linear transforms compared are:
+
+\begin{itemize}
+    %\item Split-function multiplicative loss aversion (SFMLA)
+    \item Split-function exp-log loss aversion (SFELLA)
+    \item Exponential loss aversion (ELA)
+    \item Linear-exponential loss aversion (LELA)
+    \item Squared error based alignment (SEBA)
+\end{itemize}
+
+\noindent The SEBA transform function envisages differing functions for two categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
+
+Each non-linear transform is a transform of the value obtained along a specific objective %$O$
+at a specific state %$s$ 
+with a specific action %$a$\footnote{need to decide how much of this notation we include. If we include it, need to rewrite formulae to reflect it. Might take some inspiration from Vamplew's earlier papers. Should almost certainly be giving a formula for $TLO^A$}. 
+The SFELLA, ELA, and LELA functions are illustrated in Figure~\ref{fig:transform_functions}. The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions_3d}.
+
+For each transform, where $x=0$, $f(x)=0$. This is a minor modification from the non-linear transform previously proposed in \cite{rolf_need_2020}, typically achieved by adding 1 to the outcome value.
+
+Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ declines as $x$ gets larger. This lowers inequality between outcomes as measured in different objectives, objectives where values are strongly negative get disproportionately higher priority. Where different objectives were operationalizing, for instance, priorities among different interested parties, this might be particularly useful in reducing inequality between outcomes.
+
+
+
+\begin{figure*}[h]
+ 
+  \includegraphics[width=\columnwidth]{output/transform_graph-2d_with_rolf2.png}
+  \includegraphics[width=\columnwidth]{output/transform_graph_2d_integral_with_rolf2.png}%\footnote{Roland: I would add comment that the the y scale is log scale, otherwise this plot is confusing, until one looks at the numbers at the left side}
+  \caption{Transform functions. Left: Each transform function is applied to the reward received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
+  %\footnote{why repeat the same thing when you can leave out the other option?}. 
+  The output of each of these transform functions are averaged together % in a Maximize Expected Utility Model \footnote{if anything this should be called MOMEU, right?}
+  (Equation~\ref{eq:meu}). Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on a log scale%\footnote{could be omitted}
+  . Note that ELA and SFELLA produce greater-than-linear change in $f(x)$ when $x<0$ and less-than-linear change when $x>0$. In contrast, LELA's change never falls below 1.}
+  \label{fig:transform_functions}
+  \Description{Transform functions.}
+\end{figure*}
+
+\begin{figure*}[h]
+ 
+  \includegraphics[width=\columnwidth]{output/seba1b.png}
+  \includegraphics[width=\columnwidth]{output/seba2b.png}
+  \caption{Transform for the SEBA aggregation. One of the objectives is the alignment objective (y-axis), and the other objective is the performance objective (x-axis). z-axis represents the aggregated utility. The two types of objectives are treated differently. The performance objective has always linear treatment regardless of the current sign of its input measure, while the alignment measure is upper-bounded at zero and has exponential treatment (in case of SEBA it is a negated squared error). These plots illustrate two things. 1. The performance objective (x-axis) is linear regardless of the sign of the value of the input measure. 2. The alignment related measure (y-axis) may be sacrificed, but only up to a degree. Once alignment would be sacrificed too much, the evaluation of the aggregated utility quickly becomes strongly negative, since the alignment measure is treated exponentially. So this provides the loss aversion aspect.}
+  \label{fig:seba_transform_functions_3d}
+  \Description{Transform for the SEBA aggregation.}
+\end{figure*}
+
+%SFMLA might be the function that most intuitively expresses loss aversion, the idea that losses loom larger than gains:
+
+%\begin{align}
+%U^P(s, a)'= & cU^P(s, a) & \mathrm{ where \: U^P(s, a)>0} \\ \nonumber
+%  &  2c U^P(s, a) &  \mathrm{otherwise} \\ \nonumber
+%\end{align}
+
+%(or we can write the following; which is better?)
+
+%\begin{align}
+%f(x)= & cx & \mathrm{ where \: x>0} \\ \nonumber
+%  & 2c x &  \mathrm{otherwise} \\ \nonumber
+%\end{align}
+
+In SFELLA, there is a split in the function at $x=0$. It expresses a loss-averse function where losses will be amplified more than gains:
+
+\begin{align}
+f(x)= & \ln(cx+1) & \mathrm{ where \: x>0} \\ \nonumber
+  &  -\exp(-cx)+1 &  \mathrm{otherwise} \\ \nonumber
+\end{align}
+
+Additionally, by implementing a log rather than a negative exponential in the positive domain, the function retains relatively more weight on positive objectives, i.e. is not bounded.
+
+The ELA, resembling a previously-tested function \cite{rolf_need_2020}, is a simplification of this without a case distinction at the cost of giving very little weight to any increase in $x$-values over 1:
+
+\begin{align}
+f(x)= &  -\exp(-cx)+1 \\ \nonumber
+\end{align}
+
+With LELA we add a $x$ term so that value continues to increase at least linearly for large inputs:
+
+\begin{align}
+f(x)= &  -\exp(-cx)+cx+1 \\ \nonumber
+\end{align}
+
+This still yields loss aversion at points less than zero but always provides that an increase in $x$ increases at least linearly in $f(x)$%\footnote{sound repetitive}.
+
+
+Finally, SEBA takes a different approach in that rather than treating each objective identically, transformations are applied differently to performance and alignment objectives.%\footnote{earlier this was called a safety objective}.
+
+For performance objectives the SEBA formula is linear:
+\begin{align}
+f(x) &=  cx \\ \nonumber
+\end{align}
+There is no differentiation between negative and positive areas of the measures of the performance objectives. This avoids the need for establishing a zero-point. Proper scaling is still needed.
+
+SEBA expresses loss aversion for alignment objectives using a negated square function, and assumes that alignment objectives are non-positive:
+\begin{align}
+\label{eq:seba}
+f(x)= &  -(cx)^2 \\ \nonumber
+  &  \mathrm{ where \: x \leq 0}
+\end{align}
+
+The alignment related measures still have a “natural” zero-point, since they by definition are bounded at zero where no (soft) constraint violations are occurring. %Therefore in case of safety related features it is not so difficult to establish where the zero-point is located at. 
+Such measures would usually measure the deviation of something from a desired target value. Such measures have two main types:
+\begin{itemize}
+    \item The desired target value is zero (for example, zero harm, etc).
+    \item Alternatively it might be a homeostatic set-point (for example, optimal temperature, etc), so the measure is representing the negated absolute value of the deviation regardless of the direction of the deviation.
+\end{itemize}
+The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions_3d}. A number of specific situations are illustrated in the graph using upper-case letter points, and it is helpful to consider their interpretation:
+  \begin{itemize}
+      \item A - Initial state. The alignment objective / soft constraint is met and the performance objective is either at zero (left plot) or at negative value (right plot).
+      \item B - The performance objective is improved, the alignment constraint is preserved. Moving in this direction changes the aggregated score linearly thus enabling independence from the zero-point.
+      \item C - (right plot) Performance objective is improved significantly, while alignment constraint is sacrificed just so slightly that the aggregated utility is still improved.
+      \item D - Performance objective is improved substantially, but the alignment constraint is sacrificed so much that the aggregated utility does not change as compared to the initial state. The agent is neutral to this state change and is neither driven towards this state nor avoiding it.
+      \item E - Performance objective is improved significantly, while the alignment constraint is violated significantly, so aggregated utility becomes worse than the initial state. The agent avoids this state.
+      \item F - The measure for the performance objective does not change, but the alignment constraint gets violated.
+      \item G - (left plot) Both the performance objective and the alignment objective / constraint get worse.
+      \item H - (left plot) The performance objective gets much worse but the alignment constraint is still satisfied. It is noteworthy that this state is evaluated to be about as good as the alternative state somewhere between D and E where the alignment constraint is getting notably violated but the performance objective is improved much.
+  \end{itemize}
+
+
+
+\subsection{Experiments}
+
+In our experiments we wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes / scaling factors. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Performance reward feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment reward feedback. This scaling could in some scenarios potentially be distinguished from the factor $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
+
+\subsection{Benchmark}
+
+Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the `TLO$^A$' function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and Alignment objectives where one unit of Alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
+
+

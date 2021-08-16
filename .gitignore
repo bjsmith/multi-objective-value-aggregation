@@ -1,0 +1,18 @@
+# Historical .svn files
+.svn
+
+# Java generated files
+*.class
+
+# IDE generated files
+.vscode
+
+# MacOS Finder preview files
+.DS_Store
+.Rproj.user
+
+# Beyond Compare backup files
+*.*~
+
+#R
+.Rhistory

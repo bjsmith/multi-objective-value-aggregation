@@ -1,0 +1,155 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+This notebook demos opening different Excel files and printing their output.
+```{r}
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(signal)
+library(stringr)
+library(directlabels)
+
+source("utils.R")
+
+```
+
+Now--great--can we compare different sheets?
+
+```{r}
+source_path <- "../data/comparison_noscaling_2d/"
+
+file_list <- get_file_list(source_path)
+
+raw_activity <- get_raw_activity(file_list,source_path)
+
+
+print(object.size(raw_activity))
+#get memory efficiencies
+raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
+raw_activity$Environment <- as.factor(raw_activity$Environment)
+raw_activity$Agent <- as.factor(raw_activity$Agent)
+print(object.size(raw_activity))
+
+
+```
+
+
+Now we apply some of the postprocessing we did before:
+
+
+```{r}
+activity_long <-melt.data.table(data.table(raw_activity),id.vars =c("EpisodeType","Episode number","Agent","Environment"),variable.name = "Measure",value.name="Score")
+
+
+activity_long <- append_blackman_averaging(activity_long)
+
+print(object.size(activity_long))
+
+```
+
+```{r fig.width=14}
+
+for (select_env in unique(activity_long$Environment)){
+  to_plot <- ggplot(
+  activity_long[EpisodeType=="Online" & Environment==select_env ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim = c(0,max(activity_long$`Episode number`,na.rm = TRUE)*1.2))+
+  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+  labs(y="Score",title=select_env)+facet_wrap(~Measure,scales="free")
+  print(to_plot)
+}
+
+
+
+```
+
+
+```{r fig.width=14}
+
+for (model_env in unique(activity_long$Environment)){
+  myplot <- ggplot(
+  activity_long[EpisodeType=="Online" & Environment==model_env & !(Agent %in% c("ELA","MIN","SingleObjective")) 
+                &(`Episode number` >=4000)
+                ],
+  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim=c(4000,5500))+
+  geom_dl(aes(label=Agent),method= list("last.bumpup", cex = 0.5))+
+  labs(y="Score",title=model_env)+#facet_grid(cols = vars(Measure),scales="free")
+  facet_wrap(Measure~.,nrow=1,scales="free")
+
+print(myplot)
+}
+
+```
+
+
+I think the absolute best we can hope for is to reach performance equivalent to the Linear environment for the $R^P$ but equivalent to the overall level in $R^*$. The Sokoban environment most clearly shows those differences.
+
+
+## Let's look at 
+
+## Offline performance
+
+```{r}
+for(model_env in unique(raw_activity$Environment)){
+
+  table_env <- data.table(raw_activity)[EpisodeType=="Offline" & Environment==model_env,]
+  table_env$EpisodeType=NULL
+  table_env$Environment=NULL
+  table_env$`Episode number`=NULL
+  print(model_env)
+  print(knitr::kable(table_env,caption = model_env))
+  
+}
+
+
+```
+
+## online
+
+```{r}
+
+activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
+  select(-`Episode number`,-EpisodeType) %>%
+  group_by(Environment, Agent) %>% summarise_all(mean)
+
+activity_means$`R^P`=NULL
+activity_means$`R^A`=NULL
+
+table_env_long <- activity_means %>% data.table %>% dcast.data.table(Environment~Agent,value.var="R^*")
+print(knitr::kable(table_env_long))
+
+
+ggplot(activity_means,aes(x=Environment,y=`R^*`,fill=Agent))+geom_bar(stat="identity",position="dodge")+
+  #geom_line(data=activity_means[activity_means$Agent=='TLO_A',],mapping = aes(x=Environment,y=`R^*`,group=Agent),linetype="dashed")+
+  theme(axis.text.x = element_text(angle=30))
+```
+
+
+
+## Now what?
+
+ - We can write a function to equalize the variance of each objective's input. We were always planning to do this. But I don't have a particular reason to think that'll help.
+ - Come up with a better algorithm??? 
+    - Not sure any conservative function can get us primary reward faster, though. It is designed to avoid that.
+    - We might be able to come up with an algorithm that obtains the safety objective faster?
+ - Think about other contexts where our approach would be more advantageous and see if we can implement _that_ environment.
+ - 
+ 
+ 
+ 
+ 
+
+
+

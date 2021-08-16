@@ -1,0 +1,104 @@
+
+\section{Perturbing the probability of dropping a bottle in BreakableBottles}
+
+or finding other ways to perturb reward/punishment contingencies in the environment.
+
+\section{other ideas listed in the paper's future directions section}
+
+\section{integrating Alex Turner's ideas about scaling}
+
+\cite{turner_conservative_2020}
+
+\section{with an increasing number of objectives, achieving Pareto-optimality becomes increasingly intractable}
+
+A continuous compromise between multiple values using non-linear multiple objective systems also offers greater benefits for complex low-impact artificial systems. If one had dozens of objectives, a strict maximin or leximin function might come to be overly inflexible.
+
+Not sure if this is a solid idea or not.
+
+\section{notes on implementing Alex Turner's scaling methods for auto-learning appropriate scaling between objectives}
+
+conceptualizes a `state embedding space' where each dimension is one objective and they aim to penalize distance travelled in this embedding.
+
+They introduce the notion of `conservative agency' and discuss `attainable utility preservation'.
+
+Their motivation for balancing is here: `We want the penalty term to be roughly invariant to the absolute magnitude of the auxiliary Q-values, which can be arbitrary (it is well-known that the optimal policy is invariant to positive affine transformation of the reward function).'
+Equation 2 defines a scale function for each state, with respect to the penalty or a total ability to optimize auxiliary set (those seem like very different things!). Maybe it is designer-chosen.
+
+Equation 3 has a $\lambda$ parameter as well as the scale function that is a function of the specific state.
+
+Question: what is the role of $SCALE(S)$ and $\lambda$? Isn't $\lambda$ redundant if you already have $SCALE(S)$?
+
+An aside: Alex Turner discusses the baseline for penalty and that's interesting because I've thought a fair bit about how that should apply. Discusses \emph{starting state} and \emph{inaction} baselines, but also a \emph{stepwise inaction} an \emph{action} function.
+
+$SCALE(S)$ sums over (aggregates with linear aggregation) all the multiple reward functions
+
+\section{ben and roland notes 2021-08-15}
+\subsection{page 1}
+
+\begin{align}
+PENALTY(S,A) :=\sum^{|R|}_{i=1}|Q_{r_i}(s,a)-Q_{r_i}(s,\o) | \\
+
+PENALTY(S,A) / SCALE(S) :=-1+\sum^{|R|}_{i=1}|Q_{r_i}(s,a)/Q_{r_i}(s,\o) | \\
+
+SCALE(S) :=\sum^{|R|}_{i=1}Q_{r_i}(s,\o) \\
+
+SCALE(S) :=-1+\sum^{|R|}_{i=1}\frac{Q_{r_i}(s,a)}{Q_{r_i}(s,\o)} \\
+
+SCALE(r_i) :=\sum^{a}_{k=1}\sum^{s}_{j=1}\frac{Q_{r_i}(s_j,a_k)}{Q_{r_i}(s,\o)} \\
+
+SCALE(r_i,s) :=\sum^{a}_{k=1}\frac{Q_{r_i}(a_k)}{Q_{r_i}(s,\o)} \\
+
+U=\sum_{i}^n{f_i(c_i x_i)} \\
+
+
+
+Q_{r_i}(s,\o) \text{ is obtainable}
+
+
+\end{align}
+
+\begin{align}
+    
+    Q_{r_i}(s,\o) \text{ is obtainable} \\
+
+SCALE(r_i,s) :=\sum^{a}_{k=1}\frac{Q_{r_i}(a_k)}{Q_{r_i}(s,\o)} \\
+
+U=\sum_{i}^n{f_i(c_i x_i)} \\
+
+U(s)=\sum_{i}^n{f_i(SCALE(x_i,s), x_i)} \\
+
+U(s)=\sum_{i}^n{SCALE(x_i,s)f_i(x_i)} \\
+
+\text{where } x_i = Q_i() \\
+
+z =\frac{x_i-\mu}{\sigma} \\
+
+
+\end{align}
+
+\section{Multiple objectives and Goodhart's law}
+I’m deleting this paragraph. I think it is good but also think it needs to be sourced. If there’s no source actually arguing that Goodhart’s law can be mitigated with multiple objectives I think that is a great paper idea on its own :smile: but we can’t make the argument in a single paragraph.
+we can restore this paragraph if we can source it a little bit better.
+
+> It can be argued that having multiple objectives, none of which is allowed to dominate over others, helps to mitigate against Goodhart’s / Campbell’s law as well. These laws manifest when a pressure is placed upon a particular measure or indicator and it becomes an objective. When the measures are somewhat uncorrelated and domination of any objective is forbidden by a utility aggregation function then particular measures are avoided from bearing too much pressure.
+
+
+\section{decision-paralysis}
+
+We propose that any time the nonlinear aggregation vetoes a choice which otherwise would have been made by a linear aggregation, and there is no other usable action plan, is a situation where the mentor can be of help to the agent. %\footnote{why do we propose this?} 
+In contrast, when both nonlinear and linear aggregations agree on the action choice, even if no action is taken, then asking the mentor is not necessary.
+
+Where sufficient uncertainty exists, a sufficiently intelligent agent motivated to align to human preferences might respond by requesting clarification about the correct course of action from a human. This has in common the `clarification request' under `decision paralysis' described in this paper. But it remains to be seen whether a preference alignment approach can eliminate the need for explicit modeling of competing values.
+
+\section{Roland's ideas for future work}
+
+\begin{enumerate}
+    \item Still use the alignment and performance objective separation as in SEBA. But use ELA function instead of negated square function for the alignment objective. In other words, combine main ideas from ELA and SEBA.
+    \item Perturb the bottle drop probability.
+    \item Perturb the $TLO_A$ threshold.
+    \item Compute average performance of online learning starting after some number of training episodes (for example, after 2500 episodes).
+    \item Try SARSA RL.
+    \item Try out Rolf's softmin.
+    \item Analyse / experiment with Goodhart's law and see how well multi-objective approach mitigates it.
+    \item Test the constraint relaxation explanation / hypothesis by changing our curves into stepwise functions (into coarse grained curves), and see how it affects the agent's learning. This can be achieved easily: just put round() function around each of our functions. Or if round(f(x)) is too coarse, then for example 0.1 * round(f(x) * 10) to enable rounding with step 0.1.
+\end{enumerate}
