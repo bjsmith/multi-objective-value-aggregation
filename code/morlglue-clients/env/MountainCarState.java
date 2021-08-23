@@ -68,7 +68,7 @@ public class MountainCarState {
         this.transitionNoise = transitionNoise;
 
         if (randomSeed == 0) {
-            this.randomGenerator = new Random();
+            this.randomGenerator = new Random(33);
         } else {
             this.randomGenerator = new Random(randomSeed);
         }

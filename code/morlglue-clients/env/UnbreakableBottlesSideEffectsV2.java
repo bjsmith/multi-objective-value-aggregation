@@ -65,7 +65,7 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
 	
     private final int GOAL_REWARD = 0; //RP
     private final int IMPACT_REWARD = 1; //RA
-    private final int PERFORMANCE_REWARD = 2; //R*?
+    private final int PERFORMANCE_REWARD = 2; //R*
 	
     // state variables
     private int agentLocation, bottlesCarried, bottlesDelivered, bottlesOnFloor;

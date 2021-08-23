@@ -5,9 +5,9 @@
 
 package agents;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Random;
+//import java.math.BigDecimal;
+//import java.util.ArrayList;
+//import java.util.Random;
 import java.util.Stack;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
@@ -17,14 +17,14 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 
-import tools.hypervolume.Point;
+//import tools.hypervolume.Point;
 import tools.staterep.DummyStateConverter;
 import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionIndexPair;
 import tools.valuefunction.TLOConditionedLookupTable;
 import tools.valuefunction.TLO_LookupTable;
 import tools.valuefunction.interfaces.ActionSelector;
-import tools.valuefunction.interfaces.ValueFunction;
+//import tools.valuefunction.interfaces.ValueFunction;
 
 
 public class TLO_Agent_Conditioned_On_Expected_Rewards implements AgentInterface 

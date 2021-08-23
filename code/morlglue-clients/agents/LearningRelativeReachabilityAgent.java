@@ -63,7 +63,7 @@ public class LearningRelativeReachabilityAgent implements AgentInterface {
     int noopTransitionCount[][]; 		// state x state - how often taking a_noop has transitioned from first state to second state
     int noopVisits[];			// for each state, how many times no-op has been selected in that state
     int noopIndex; 				// the index of the no-op action - will be the last action provided by the environment
-    Random noopSampler = new Random();
+    Random noopSampler = new Random(33);
     
 
     StateConverter stateConverter = null;
@@ -85,7 +85,7 @@ public class LearningRelativeReachabilityAgent implements AgentInterface {
         	weights[i]=0;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        //random = new Random();
+        //random = new Random(33);
         tracingStack = new Stack<>();
         // set up relative reachability data structures and variables
         noopIndex = numActions - 1;

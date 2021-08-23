@@ -41,7 +41,7 @@ public class FloatValueFunction {
         }
         errors = new float[numberOfObjectives];
         this.weights = weights;
-        random = new Random();
+        random = new Random(33);
     }
 
     public void calculateErrors(int previousAction, Observation prevObservation, int greedyAction, Observation newObservation, float gamma, Reward reward) {

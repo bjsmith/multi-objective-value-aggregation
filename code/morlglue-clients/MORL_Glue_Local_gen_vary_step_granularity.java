@@ -38,21 +38,28 @@ public class MORL_Glue_Local_gen_vary_step_granularity extends MORL_Glue_Local_B
 		
 		double[][] granularities = {
 				
-				{0.01,0.01},
-				{0.1,0.1},
-				{1,1},
-				{10,10},
-				{100,100},
+				{0.0, 0.0},	//no granularity
 				
-				{1,0.01},
-				{1,0.1},
-				{1,10},
-				{1,100},
+				//no granularity for reward
+				{0, 0.01},
+				{0, 0.1},
+				{0, 1},
+				{0, 10},
+				{0, 100},
 				
-				{0.01,1},
-				{0.1,1},
-				{10,1},
-				{100,1}
+				//no granularity for penalty
+				{0.01, 0},
+				{0.1, 0},
+				{1, 0},
+				{10, 0},
+				{100, 0},
+				
+				//granularity for both objectives
+				{0.01, 0.01},
+				{0.1, 0.1},
+				{1, 1},
+				{10, 10},
+				{100, 100},
 		};
 		
 		for (double[] granularity_set: granularities) {

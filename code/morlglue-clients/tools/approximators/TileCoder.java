@@ -98,7 +98,7 @@ public class TileCoder {
     Takes an array of integers and returns the corresponding tile after hashing
      */
     static final int RNDSEQNUMBER = 16384;
-    static Random theRand = new Random();
+    static Random theRand = new Random(33);
     static int rndseq[] = new int[RNDSEQNUMBER];
     static boolean first_call = true;
 

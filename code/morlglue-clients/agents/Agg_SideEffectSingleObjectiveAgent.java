@@ -116,7 +116,7 @@ public class Agg_SideEffectSingleObjectiveAgent implements AgentInterface {
         	weights[i]=0;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        //random = new Random();
+        //random = new Random(33);
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

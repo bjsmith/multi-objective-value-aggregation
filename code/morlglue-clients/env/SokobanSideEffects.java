@@ -24,8 +24,8 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
-import java.util.Arrays;
-import java.util.Random;
+//import java.util.Arrays;
+//import java.util.Random;
 
 
 public class SokobanSideEffects implements EnvironmentInterface

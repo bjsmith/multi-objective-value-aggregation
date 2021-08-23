@@ -10,7 +10,7 @@ import org.rlcommunity.rlglue.codec.util.AgentLoader;
 
 public class SkeletonAgent implements AgentInterface {
 
-    Random randGenerator = new Random();
+    Random randGenerator = new Random(33);
     Action lastAction;
     Observation lastObservation;
 

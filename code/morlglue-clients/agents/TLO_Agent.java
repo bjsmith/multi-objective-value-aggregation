@@ -1,8 +1,8 @@
 // A modification of Rustam's original WSAgent to use thresholded lexicographic ordering to perform action selection instead.
 package agents;
 
-import java.math.BigDecimal;
-import java.util.Random;
+//import java.math.BigDecimal;
+//import java.util.Random;
 import java.util.Stack;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
@@ -12,13 +12,13 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 
-import tools.hypervolume.Point;
+//import tools.hypervolume.Point;
 import tools.staterep.DummyStateConverter;
 import tools.staterep.interfaces.StateConverter;
 import tools.traces.StateActionDiscrete;
 import tools.valuefunction.TLO_LookupTable;
 import tools.valuefunction.interfaces.ActionSelector;
-import tools.valuefunction.interfaces.ValueFunction;
+//import tools.valuefunction.interfaces.ValueFunction;
 
 
 public class TLO_Agent implements AgentInterface {

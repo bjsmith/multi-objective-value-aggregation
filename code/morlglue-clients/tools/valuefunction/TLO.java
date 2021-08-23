@@ -8,7 +8,7 @@ import java.util.Random;
 
 public abstract class TLO {
 	
-	static Random r = new Random();
+	static Random r = new Random(33);
 	
 	// Compare two sets of values based on TLO ordering
 	// Returns 1 if a is ranked higher, -1 if b is higher, 0 if they are equal

@@ -47,7 +47,7 @@ public class MOMountainCarDiscretised implements EnvironmentInterface
     static final int NUM_CELLS = 6; //specifies the degree of quantisation in each dimension of state space
     private MountainCarState theState;
     //Problem parameters have been moved to MountainCarState
-    private Random randomGenerator = new Random();
+    private Random randomGenerator = new Random(33);
 
    /* public static TaskSpecPayload getTaskSpecPayload(ParameterHolder P) {
         MountainCar theMC = new MountainCar(P);
