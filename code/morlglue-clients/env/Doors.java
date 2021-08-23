@@ -289,18 +289,21 @@ public class Doors implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
+	    
+	    //RA
 	    rewards.setDouble(IMPACT_REWARD, potentialDifference(doorsOpenCount, newDoorsOpenCount)*this.impact_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, doorsOpenCount * DOORS_OPEN_PENALTY);
+	    
 	    doorsOpenCount = newDoorsOpenCount;
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);
-	    	rewards.setDouble(PERFORMANCE_REWARD, -1);
+	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);	//RP
+	    	rewards.setDouble(PERFORMANCE_REWARD, -1);	//R*
 	    }
 	    else
 	    {
-	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reward_scaling); // reward for reaching goal
-	    	rewards.setDouble(PERFORMANCE_REWARD, 50+doorsOpenCount * DOORS_OPEN_PENALTY);	    	
+	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reward_scaling);	//RP 	// reward for reaching goal
+	    	rewards.setDouble(PERFORMANCE_REWARD, 50+doorsOpenCount * DOORS_OPEN_PENALTY);	//R*  	
 	    }
     }
     

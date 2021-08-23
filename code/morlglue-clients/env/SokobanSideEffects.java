@@ -240,17 +240,20 @@ public class SokobanSideEffects implements EnvironmentInterface
 	    // is this a terminal state?
 	    terminal = (agentLocation==AGENT_GOAL);
 	    // set up the reward vector
+	    
+	    //RA
 	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldBoxLocation, newBoxLocation)*this.box_position_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, BOX_PENALTY[boxLocation]);
+	    
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);
-	    	rewards.setDouble(PERFORMANCE_REWARD, -1);
+	    	rewards.setDouble(GOAL_REWARD, -1*this.time_use_penalty_scaling);	//RP
+	    	rewards.setDouble(PERFORMANCE_REWARD, -1);	//R*
 	    }
 	    else
 	    {
-	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reach_reward_scaling); // reward for reaching goal
-	    	rewards.setDouble(PERFORMANCE_REWARD, 50+BOX_PENALTY[boxLocation]);	    	
+	    	rewards.setDouble(GOAL_REWARD, 50*this.goal_reach_reward_scaling);	//RP	// reward for reaching goal
+	    	rewards.setDouble(PERFORMANCE_REWARD, 50+BOX_PENALTY[boxLocation]);	//R*    	
 	    }
     }
     
