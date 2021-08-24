@@ -73,7 +73,7 @@ public class SafetyFirstMOAgent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         vf = new SafetyFirstLookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold);
 
-        //random = new Random(471);
+        //random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

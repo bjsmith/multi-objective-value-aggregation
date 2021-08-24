@@ -17,6 +17,8 @@ package tools.approximators;
 
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 /**
  * This code is a direct port from C to Java of the code at
  * <a target=_new href=http://rlai.cs.ualberta.ca/RLAI/RLtoolkit/tilecoding.html>the RLAI Tile Coding Page</a>.
@@ -98,7 +100,7 @@ public class TileCoder {
     Takes an array of integers and returns the corresponding tile after hashing
      */
     static final int RNDSEQNUMBER = 16384;
-    static Random theRand = new Random();
+    static Random random = new Random(AggregatorUtils.random.nextInt());
     static int rndseq[] = new int[RNDSEQNUMBER];
     static boolean first_call = true;
 
@@ -112,7 +114,7 @@ public class TileCoder {
             for (k = 0; k < RNDSEQNUMBER; k++) {
                 rndseq[k] = 0;
                 for (i = 0; i < 4/*int(sizeof(int))*/; ++i) {
-                    rndseq[k] = (rndseq[k] << 8) | (theRand.nextInt() & 0xff);
+                    rndseq[k] = (rndseq[k] << 8) | (random.nextInt() & 0xff);
                 }//do these need to change?
             }
             first_call = false;

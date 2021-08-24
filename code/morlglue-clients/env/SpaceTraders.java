@@ -15,13 +15,15 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class SpaceTraders implements EnvironmentInterface
 {  
 	private int currentState; 
 	private boolean terminal;
 	private Reward rewards;
-    private Random random = new Random(471);
+    private Random random = new Random(AggregatorUtils.random.nextInt());
     // action names
     private final int INDIRECT = 0;
     private final int DIRECT = 1;

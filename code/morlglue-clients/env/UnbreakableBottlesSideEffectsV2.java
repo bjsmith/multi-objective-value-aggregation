@@ -48,6 +48,8 @@ import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
 {  
@@ -65,7 +67,7 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
 	
     private final int GOAL_REWARD = 0; //RP
     private final int IMPACT_REWARD = 1; //RA
-    private final int PERFORMANCE_REWARD = 2; //R*?
+    private final int PERFORMANCE_REWARD = 2; //R*
 	
     // state variables
     private int agentLocation, bottlesCarried, bottlesDelivered, bottlesOnFloor;
@@ -95,7 +97,7 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
         }
         bottlesOnFloor = 0;
         terminal = false; debugging = false; numEpisodes = 0;
-        random = new Random(471);
+        random = new Random(AggregatorUtils.random.nextInt());
         //Task specification object
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.setEpisodic();
@@ -332,19 +334,22 @@ public class UnbreakableBottlesSideEffectsV2 implements EnvironmentInterface
     	{
     		newBottlesOnFloor += numBottles[i];
     	}
+    	
+    	//RA
 	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles)*this.impact_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, -50 * bottlesOnFloor);
     	//rewards.setDouble(IMPACT_REWARD, -Math.abs(newBottlesOnFloor-bottlesOnFloor)); // temporary non-potential-based version
+	    
     	bottlesOnFloor = newBottlesOnFloor;
 	    int stepReward = -1 + bottlesDeliveredThisStep*25;
-	    rewards.setDouble(GOAL_REWARD, stepReward*this.goal_reward_scaling);
+	    rewards.setDouble(GOAL_REWARD, stepReward*this.goal_reward_scaling);	//RP
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward);
+	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward);	//R*
 	    }
 	    else
 	    {
-	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward - 50 * bottlesOnFloor);	    	
+	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward - 50 * bottlesOnFloor);	//R*	    	
 	    }
     }
     

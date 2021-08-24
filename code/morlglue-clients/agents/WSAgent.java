@@ -61,7 +61,7 @@ public class WSAgent implements AgentInterface {
         	weights[i]=1.0/numOfObjectives;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        random = new Random();
+        random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

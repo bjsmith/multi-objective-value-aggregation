@@ -70,7 +70,7 @@ public class CMACValueFunction {
             valueFunction.add( approximators );
         }
        
-        r = new Random();
+        r = new Random(AggregatorUtils.random.nextInt());
         //Temp code for pausing output -- Dean
         try{
     		BufferedReader br = 

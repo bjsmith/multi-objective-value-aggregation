@@ -47,6 +47,8 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
 {  
@@ -71,7 +73,7 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private int numBottles[] = new int[NUM_INTERMEDIATE_CELLS];
     private Reward rewards = new Reward(0,NUM_OBJECTIVES,0);
     private boolean terminal;
-    private Random random = new Random(471);
+    private Random random = new Random(AggregatorUtils.random.nextInt());
     // debugging variables
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;
@@ -316,19 +318,22 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     	{
     		newBottlesOnFloor += numBottles[i];
     	}
+    	
+    	//RA
 	    rewards.setDouble(IMPACT_REWARD, potentialDifference(oldState, numBottles)*this.impact_penalty_scaling);  //works only on very conservative agents
 	    //rewards.setDouble(IMPACT_REWARD, -50 * bottlesOnFloor); 
     	//rewards.setDouble(IMPACT_REWARD, -Math.abs(newBottlesOnFloor-bottlesOnFloor)); // temporary non-potential-based version
+	    
     	bottlesOnFloor = newBottlesOnFloor;
 	    int stepReward = -1 + bottlesDeliveredThisStep*25;
-	    rewards.setDouble(GOAL_REWARD, stepReward*this.goal_reward_scaling);
+	    rewards.setDouble(GOAL_REWARD, stepReward*this.goal_reward_scaling);	//RP
 	    if (!terminal)
 	    {
-	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward);
+	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward);	//R*
 	    }
 	    else
 	    {
-	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward - 50 * bottlesOnFloor);	    	
+	    	rewards.setDouble(PERFORMANCE_REWARD, stepReward - 50 * bottlesOnFloor);	//R*	    	
 	    }
     }
     

@@ -223,7 +223,7 @@ public class Agg_Agent implements AgentInterface {
         numOfObjectives = theTaskSpec.getNumOfObjectives();
         vf = new Agg_LookupTable(numOfObjectives, numActions, numStates, 0, impactThreshold, utilityFunction, aggregator);
 
-        //random = new Random(471); 	//commented out unused variable
+        //random = new Random(AggregatorUtils.random.nextInt()); 	//commented out unused variable
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation
