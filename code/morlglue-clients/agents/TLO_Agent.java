@@ -80,7 +80,7 @@ public class TLO_Agent implements AgentInterface {
         	thresholds[i]=0.0;
         vf = new TLO_LookupTable( numOfObjectives, numActions, numStates, 0, thresholds);
 
-        //random = new Random(471);
+        //random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

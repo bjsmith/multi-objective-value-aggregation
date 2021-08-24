@@ -119,7 +119,7 @@ public class Agg_SideEffectLinearWeightedAgent implements AgentInterface {
         	weights[i]=otherWeights;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        //random = new Random(33);
+        //random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

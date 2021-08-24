@@ -21,6 +21,8 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import tools.valuefunction.interfaces.ActionSelector;
 import tools.valuefunction.interfaces.LookupTable;
 
+import tools.valuefunction.AggregatorUtils;
+
 public class TLO_EOVF_LookupTable extends LookupTable implements ActionSelector 
 {
 	
@@ -41,7 +43,7 @@ public class TLO_EOVF_LookupTable extends LookupTable implements ActionSelector
     public TLO_EOVF_LookupTable(int numberOfObjectives, int numberOfActions, int numberOfStates, int initValue, double thresholds[], double eovfGamma) 
     {
         super(numberOfObjectives+1, numberOfActions, numberOfStates, initValue);
-        r = new Random(499);    
+        r = new Random(AggregatorUtils.random.nextInt());    
         this.thresholds = thresholds;
         numActualObjectives = numberOfObjectives;
         eovfIndex = numberOfObjectives;

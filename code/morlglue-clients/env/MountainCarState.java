@@ -32,6 +32,8 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
+import tools.valuefunction.AggregatorUtils;
+
 /**
  * This class manages all of the problem parameters, current state variables, 
  * and state transition and reward dynamics.
@@ -68,7 +70,7 @@ public class MountainCarState {
         this.transitionNoise = transitionNoise;
 
         if (randomSeed == 0) {
-            this.randomGenerator = new Random(33);
+            this.randomGenerator = new Random(AggregatorUtils.random.nextInt());
         } else {
             this.randomGenerator = new Random(randomSeed);
         }

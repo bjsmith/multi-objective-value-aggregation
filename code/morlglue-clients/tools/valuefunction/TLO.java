@@ -8,7 +8,7 @@ import java.util.Random;
 
 public abstract class TLO {
 	
-	static Random r = new Random(33);
+	static Random random = new Random(AggregatorUtils.random.nextInt());	//let there be only one global base / static random generator
 	
 	// Compare two sets of values based on TLO ordering
 	// Returns 1 if a is ranked higher, -1 if b is higher, 0 if they are equal
@@ -73,7 +73,7 @@ public abstract class TLO {
         System.out.println();*/
         if (bestActions.size() > 1) 
         {
-            return bestActions.get(r.nextInt(bestActions.size()));
+            return bestActions.get(random.nextInt(bestActions.size()));
         } 
         else 
         {

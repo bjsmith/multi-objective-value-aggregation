@@ -13,6 +13,8 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class ResourceGatheringEpisodic implements EnvironmentInterface
 {  
@@ -25,7 +27,7 @@ public class ResourceGatheringEpisodic implements EnvironmentInterface
     private final int ENEMY_LOCN1[] = {1,2};
     private final int ENEMY_LOCN2[] = {0,3};
     private final double ENEMY_CHANCE = 0.1;
-    private Random random = new Random(58);
+    private Random random = new Random(AggregatorUtils.random.nextInt());
     private boolean terminal;
     
     // define the ordering of the objectives

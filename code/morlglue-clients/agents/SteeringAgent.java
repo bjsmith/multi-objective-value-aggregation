@@ -116,7 +116,7 @@ public abstract class SteeringAgent implements AgentInterface {
             tracingStacks.add( new Stack<StateActionDiscrete>() );
         }
 
-        random = new Random(33);
+        random = new Random(AggregatorUtils.random.nextInt());
 
         //set the model of converting MDP observation to an int state representation
         stateConverter = new DummyStateConverter();

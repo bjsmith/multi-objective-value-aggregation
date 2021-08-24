@@ -8,7 +8,7 @@ import java.util.Random;
 public abstract class AggregatorUtils {
 
 		
-	static Random r = new Random(33);
+	public static Random random = new Random(33);
 	
 	// Compare two sets of values based on a specified aggregation function
 	public static int compare(double a[], double b[], Aggregator agg)
@@ -52,7 +52,7 @@ public abstract class AggregatorUtils {
         System.out.println();*/
         if (bestActions.size() > 1) 
         {
-            return bestActions.get(r.nextInt(bestActions.size()));
+            return bestActions.get(random.nextInt(bestActions.size()));
         } 
         else 
         {

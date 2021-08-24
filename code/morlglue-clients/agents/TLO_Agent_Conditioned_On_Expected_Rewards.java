@@ -108,7 +108,7 @@ public class TLO_Agent_Conditioned_On_Expected_Rewards implements AgentInterface
         // discretisations levels are being used for each objective, and what the thresholds are - that needs to happen before the 
         // first trial is started
 
-        //random = new Random(471);
+        //random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

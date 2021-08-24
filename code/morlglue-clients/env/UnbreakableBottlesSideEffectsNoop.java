@@ -16,6 +16,8 @@ import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
 {  
@@ -56,7 +58,7 @@ public class UnbreakableBottlesSideEffectsNoop implements EnvironmentInterface
         }
         bottlesOnFloor = 0;
         terminal = false; debugging = false; numEpisodes = 0;
-        random = new Random(471);
+        random = new Random(AggregatorUtils.random.nextInt());
         //Task specification object
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.setEpisodic();

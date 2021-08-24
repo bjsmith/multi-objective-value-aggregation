@@ -69,7 +69,7 @@ public class WSNoveltyAgent implements AgentInterface {
         weights[numOfObjectives-1] = noveltyWeight;
         vf = new WSLookupTable( numOfObjectives, numActions, numStates, 0, weights );
 
-        random = new Random(33);
+        random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
 
         //set the model of converting MDP observation to an int state representation

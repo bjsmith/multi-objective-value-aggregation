@@ -38,6 +38,7 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
+import tools.valuefunction.AggregatorUtils;
 
 
 public class MOMountainCarDiscretised implements EnvironmentInterface
@@ -47,7 +48,7 @@ public class MOMountainCarDiscretised implements EnvironmentInterface
     static final int NUM_CELLS = 6; //specifies the degree of quantisation in each dimension of state space
     private MountainCarState theState;
     //Problem parameters have been moved to MountainCarState
-    private Random randomGenerator = new Random(33);
+    private Random randomGenerator = new Random(AggregatorUtils.random.nextInt());
 
    /* public static TaskSpecPayload getTaskSpecPayload(ParameterHolder P) {
         MountainCar theMC = new MountainCar(P);

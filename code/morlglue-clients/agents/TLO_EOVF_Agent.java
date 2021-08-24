@@ -84,7 +84,7 @@ public class TLO_EOVF_Agent implements AgentInterface {
         	thresholds[i]=0.0;
         vf = new TLO_EOVF_LookupTable(numOfObjectives, numActions, numStates, 0, thresholds, 0.9); // 0.9 is a default setting for the EOVF gamma value
 
-        //random = new Random(471);
+        //random = new Random(AggregatorUtils.random.nextInt());
         tracingStack = new Stack<>();
         startingEpsilon = 0; // default - just use greedy exploration in combination with the EOVF objective
 

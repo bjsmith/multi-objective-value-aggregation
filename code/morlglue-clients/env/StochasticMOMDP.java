@@ -15,12 +15,14 @@ import org.rlcommunity.rlglue.codec.types.Reward;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class StochasticMOMDP implements EnvironmentInterface
 {  
 	private int currentState; 
 	private Reward rewards;
-    private Random random = new Random(471);
+    private Random random = new Random(AggregatorUtils.random.nextInt());
     private double[][] STATE_1_REWARDS = {{1.5, 10},{1.7,7},{2.5,6},{3.3,5},{3.7,0}};
 	
     public String env_init() 

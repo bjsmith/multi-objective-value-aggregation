@@ -4,7 +4,7 @@ import java.util.Random;
 
 public abstract class Softmax 
 {
-	static Random r = new Random(548);
+	static Random random = new Random(AggregatorUtils.random.nextInt());	//comment-out: let there be only one global / static random generator
 	
 	// Performs softmax selection. Should an error occur in the calculations as temperature gets too low, we detect this
 	// and simply return the greedy action instead
@@ -21,7 +21,7 @@ public abstract class Softmax
 				return greedyAction;
 			}
 		}
-		double nextRandom = r.nextDouble();
+		double nextRandom = random.nextDouble();
 		int selectedAction = 0;
 		while((sumOfSoftmaxTerms[selectedAction]/sumOfSoftmaxTerms[numActions-1])<nextRandom)
 		{

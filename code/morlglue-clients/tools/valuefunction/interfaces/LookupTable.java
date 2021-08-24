@@ -5,8 +5,11 @@ import java.util.Random;
 
 import org.rlcommunity.rlglue.codec.types.Reward;
 
+import tools.valuefunction.AggregatorUtils;
 import tools.valuefunction.Softmax;
 import tools.valuefunction.TLO;
+
+import tools.valuefunction.AggregatorUtils;
 
 public abstract class LookupTable extends ValueFunction {
     
@@ -29,7 +32,7 @@ public abstract class LookupTable extends ValueFunction {
         this.numberOfObjectives = numberOfObjectives;
         this.numberOfActions = numberOfActions;
         this.numberOfStates = numberOfStates;
-        r = new Random(499);
+        r = new Random(AggregatorUtils.random.nextInt());
         
         valueFunction = new ArrayList<>();
         for(int i=0 ; i<numberOfObjectives ; i++) {

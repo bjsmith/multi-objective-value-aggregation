@@ -47,6 +47,8 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 import java.util.Random;
 
+import tools.valuefunction.AggregatorUtils;
+
 
 public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
 {  
@@ -71,7 +73,7 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private int numBottles[] = new int[NUM_INTERMEDIATE_CELLS];
     private Reward rewards = new Reward(0,NUM_OBJECTIVES,0);
     private boolean terminal;
-    private Random random = new Random(471);
+    private Random random = new Random(AggregatorUtils.random.nextInt());
     // debugging variables
     private int numEpisodes, numSteps; // useful as a way to trigger debugging
     private boolean debugging;
