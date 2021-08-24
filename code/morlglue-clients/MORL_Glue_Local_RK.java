@@ -37,7 +37,7 @@ public class MORL_Glue_Local_RK
 					settings.NAME, "--path", settings.OUTPATH,
 					"--num_online", Integer.toString(settings.NUM_ONLINE_EPISODES_PER_TRIAL),"--num_offline",
 					Integer.toString(settings.NUM_OFFLINE_EPISODES_PER_TRIAL), "--timestamp",
-					"--title", settings.ENV));//, "--files"));
+					"--title", settings.ENV, "--format", settings.FORMAT));//, "--files"));
 			if(showplots) {
 				command.add("--show");
 			}
@@ -77,7 +77,7 @@ public class MORL_Glue_Local_RK
 			//put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA"});}});
 			//put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA"});}});
 			//put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA"});}});
-			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA"});}});
+			//put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA"});}});
 			//put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});}});
 			//put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] { "SEBA" }); } });
 			// Peter's agents
@@ -90,18 +90,20 @@ public class MORL_Glue_Local_RK
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
 			put("BreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new BreakableBottlesSideEffectsV2();}});
-			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
-			put("Sokoban", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new SokobanSideEffects();}});
-			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
+//			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+//			put("Sokoban", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new SokobanSideEffects();}});
+//			put("Doors", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new Doors();}});
 		}};
 		
 		// define experiment settings
 		boolean showplots = true;
 		String experiment_id = "TLOA_vs_SFLLA_2";
 		String outpath = "data";
+		String format = "csv";
 		int num_online = 5000;
 		int num_offline = 1;
 		int max_episode_length = 1000;
+		int trials = 2;
 		
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
@@ -119,17 +121,17 @@ public class MORL_Glue_Local_RK
 	    		
 	    		// build experiment settings and run experiment
 	    		ExperimentSettings settings = new ExperimentBuilder()
-						.name(experiment_id).outpath(outpath)
+						.name(experiment_id).outpath(outpath).format(format)
 						.agent(astring).env(envstring)
-						.episodes(num_online, num_offline, max_episode_length)
+						.episodes(num_online, num_offline, max_episode_length).trials(trials)
 						.buildExperiment();
 	    		String outputfile = LocalExperiment.main(agent, env, settings);
 	    		outputfiles[agentid] = outputfile;
 	    		agentid ++;
 	    	}
     		ExperimentSettings plot_settings = new ExperimentBuilder()
-					.name(experiment_id+"_"+envstring).outpath(outpath).env(envstring)
-					.episodes(num_online, num_offline, max_episode_length)
+					.name(experiment_id+"_"+envstring).outpath(outpath).format(format).env(envstring)
+					.episodes(num_online, num_offline, max_episode_length).trials(trials)
 					.buildExperiment();
     		plotting(plot_settings, outputfiles, showplots);
 	    }

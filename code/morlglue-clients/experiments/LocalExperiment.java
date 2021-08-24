@@ -4,9 +4,11 @@
 package experiments;
 
 import java.io.File;
-
+import java.io.FileNotFoundException;
 import java.util.Hashtable;
+import java.util.List;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class LocalExperiment
     public static class ExperimentSettings {
     	public String NAME = "Test";
     	public String OUTPATH = "data";
+    	public String FORMAT = "csv";
     	public String AGENT = "";
     	public String ENV = "";
     	public double ALPHA = 0.1;
@@ -43,11 +46,12 @@ public class LocalExperiment
     	public Hashtable<String, String> additional_settings = new Hashtable<String, String>();
 
     	
-    	public ExperimentSettings(String name, String outpath, String agent, String env, double alpha, double lambda, double gamma,
+    	public ExperimentSettings(String name, String outpath, String format, String agent, String env, double alpha, double lambda, double gamma,
     			int num_trials, int exploration, int exploration_param,
     			int num_online_per_trial, int num_offline_per_trial, int max_episode_length) {
     		this.NAME = name;
     		this.OUTPATH = outpath;
+    		this.FORMAT = format;
     		this.AGENT = agent;
     		this.ENV = env;
     		this.ALPHA = alpha;
@@ -66,6 +70,7 @@ public class LocalExperiment
 	public static class ExperimentBuilder {
 		private String NAME = "Test";
 		private String OUTPATH = "data";
+		private String FORMAT = "csv";
 		private String AGENT = "";
 		private String ENV = "";
 		private double ALPHA = 0.1;
@@ -81,13 +86,14 @@ public class LocalExperiment
     	public ExperimentBuilder() {}
     	
     	public ExperimentSettings buildExperiment() {
-    		return new ExperimentSettings(NAME, OUTPATH, AGENT, ENV, ALPHA, LAMBDA, GAMMA, NUM_TRIALS, EXPLORATION,
+    		return new ExperimentSettings(NAME, OUTPATH, FORMAT, AGENT, ENV, ALPHA, LAMBDA, GAMMA, NUM_TRIALS, EXPLORATION,
     				EXPLORATION_PARAMETER, NUM_ONLINE_EPISODES_PER_TRIAL, NUM_OFFLINE_EPISODES_PER_TRIAL,
     				MAX_EPISODE_LENGTH);
     	}
     	
     	public ExperimentBuilder name(String name) { this.NAME = name; return this;}
     	public ExperimentBuilder outpath(String outpath) { this.OUTPATH = outpath; return this;}
+    	public ExperimentBuilder format(String format) { this.FORMAT = format; return this;}
     	public ExperimentBuilder agent(String agent) { this.AGENT = agent; return this;}
     	public ExperimentBuilder env(String env) { this.ENV = env; return this;}
     	public ExperimentBuilder alpha(double alpha) { this.ALPHA = alpha; return this;}
@@ -119,6 +125,7 @@ public class LocalExperiment
     private int numObjectives;
     private final String PARAM_CHANGE_STRING = "set_softmax_parameters";
 	private ExcelWriter excel;
+	private CSVWriter csv;
 	private ExperimentSettings settings;
 	
 	// members holding the RLGlue instances
@@ -145,7 +152,17 @@ public class LocalExperiment
     // store the data for the most recent Reward. The strings indicates a value or label to be written in the first two columns
     private void saveReward(String labels, Reward r)
     {
-    	excel.writeNextRowTextAndNumbers(labels, r.doubleArray);
+    	switch(settings.FORMAT) {
+	    	case "csv":
+	    		String r0 = Double.toString(r.getDouble(0));
+	    		String r1 = Double.toString(r.getDouble(1));
+	    		String r2 = Double.toString(r.getDouble(2));
+	    		csv.writeLinesRaw(new String[] {labels+","+r0+","+r1+","+r2+","});
+	    		break;
+	    	case "excel":
+	    		excel.writeNextRowTextAndNumbers(labels, r.doubleArray);
+	    		break;
+    	}
     }    
 	    
     // Run One Episode of length maximum cutOff
@@ -179,17 +196,29 @@ public class LocalExperiment
     	//the colon characters weren't being outputted correctly so I removed them.
     	String timeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HHmmss").format(new java.util.Date());
     	final String fileName = settings.OUTPATH + "/" + settings.ENV + "("+ envName + ")"+"-"+settings.AGENT+ "(" + agentName + ")" + "-"+METHOD_PREFIX.get(settings.EXPLORATION)+settings.EXPLORATION_PARAMETER+"-alpha"+settings.ALPHA+"-lambda"+settings.LAMBDA + "-dt" + timeStamp;
-    	excel = new JxlExcelWriter(fileName);
     	
+    	if(settings.FORMAT.equals("excel")) {
+    		excel = new JxlExcelWriter(fileName);
+    	} else if (settings.FORMAT.equals("csv")) {
+    		csv = new CSVWriter(fileName);
+    	}
     	System.out.println("**********************************************");
     	System.out.println("RUNNING " + " WITH "+settings.AGENT+"("+agentName+") in  "+envName);
         
         // run the trials
         for (int trial=0; trial<settings.NUM_TRIALS; trial++)
         {
-        	// start new excel sheet and include header row
-        	excel.moveToNewSheet("Trial"+trial, trial);
-        	excel.writeNextRowText(" &Episode number&R^P&R^A&R^*");
+        	switch(settings.FORMAT) {
+		    	case "csv":
+					csv.writeLinesRaw(new String[] {"Trial "+trial, ",Episode number,R^P,R^A,R^*"});
+		    		break;
+		    	case "excel":
+		        	// start new excel sheet and include header row
+		        	excel.moveToNewSheet("Trial"+trial, trial);
+		        	excel.writeNextRowText(" &Episode number&R^P&R^A&R^*");
+		    		break;
+        	}
+
         	// run the trial and save the results to the spreadsheet
         	System.out.println("Trial " + trial);
             RLGlue.RL_agent_message("start_new_trial");
@@ -198,7 +227,11 @@ public class LocalExperiment
     			//System.out.println("Before running episode");
     			Reward er = runEpisode(episodeNum, settings.MAX_EPISODE_LENGTH);
     			//System.out.println("After running episode");
-    			saveReward("Online&"+(1+episodeNum),er);
+    			if(settings.FORMAT.equals("excel")) {
+    				saveReward("Online&"+(1+episodeNum),er);
+    			} else if (settings.FORMAT.equals("csv")){
+    				saveReward("Online,"+(1+episodeNum),er);
+    			}
     		}
             RLGlue.RL_agent_message("freeze_learning");		// turn off learning and exploration for offline assessment of the final policy    		
             for (int episodeNum=0; episodeNum<settings.NUM_OFFLINE_EPISODES_PER_TRIAL; episodeNum++)
@@ -209,41 +242,61 @@ public class LocalExperiment
 	            	//RLGlue.RL_env_message("start-debugging");
 	    			//RLGlue.RL_agent_message("start-debugging");
             	}
-    			saveReward("Offline&"+(1+episodeNum),runEpisode(episodeNum,settings.MAX_EPISODE_LENGTH));
+            	if(settings.FORMAT.equals("excel")) {
+            		saveReward("Offline&"+(1+episodeNum),runEpisode(episodeNum,settings.MAX_EPISODE_LENGTH));
+            	} else if(settings.FORMAT.equals("csv")){
+            		saveReward("Offline,"+(1+episodeNum),runEpisode(episodeNum,settings.MAX_EPISODE_LENGTH));
+            	}
     		}
         	RLGlue.RL_env_message("stop-debugging");
 			RLGlue.RL_agent_message("stop-debugging");           
-            // add two rows at the end of the worksheet to summarise the means over all online and offline episodes
-            String formulas = "AVERAGE(" + excel.getAddress(2,1) + ":" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")"
-            					+ "&AVERAGE(" + excel.getAddress(3,1) + ":" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")"
-            					+ "&AVERAGE(" + excel.getAddress(4,1) + ":" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")";
-            excel.writeNextRowTextAndFormula("Mean over all online episodes& ", formulas);
-            formulas = "AVERAGE(" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")"         
-            			+ "&AVERAGE(" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")"
-            			+ "&AVERAGE(" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")";
-            excel.writeNextRowTextAndFormula("Mean over all offline episodes& ", formulas);
-        }
-        // make summary sheet - the +2 on the number of rows is to capture the online and offline means as well as the individual episode results
-        excel.makeSummarySheet(settings.NUM_TRIALS, "R^P&R^A&R^*", 2, 1, numObjectives, settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL+2);           
-        // make another sheet which collates the online and off-line per episode means across all trials, for later use in doing t-tests
-        excel.moveToNewSheet("Collated", settings.NUM_TRIALS+1); // put this after the summary sheet
-        excel.writeNextRowText("Trial&R^P Online mean&R^A Online mean&R^* Online mean&R^P Offline mean&R^A Offline mean&R^* Offline mean");
-        final int ONLINE_ROW = settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL+1;
-        final int OFFLINE_ROW = ONLINE_ROW+1;
-        for (int i=0; i<settings.NUM_TRIALS; i++)
-        {
-        	String text = Integer.toString(i);
-        	String lookups = excel.getAddress(i,2,ONLINE_ROW) + "&" + excel.getAddress(i,3,ONLINE_ROW) + "&" + excel.getAddress(i,4,ONLINE_ROW) + "&" 
-        					+ excel.getAddress(i,2,OFFLINE_ROW) + "&" + excel.getAddress(i,3,OFFLINE_ROW) + "&" + excel.getAddress(i,4,OFFLINE_ROW);
-        	excel.writeNextRowTextAndFormula(text, lookups);
+            
+            switch(settings.FORMAT) {
+		    	case "csv":
+		    		//csv.writeLinesRaw(new String[] {"finsihed trial "+trial});
+		    		break;
+		    	case "excel":
+		            // add two rows at the end of the worksheet to summarise the means over all online and offline episodes
+		            String formulas = "AVERAGE(" + excel.getAddress(2,1) + ":" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")"
+		            					+ "&AVERAGE(" + excel.getAddress(3,1) + ":" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")"
+		            					+ "&AVERAGE(" + excel.getAddress(4,1) + ":" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL) + ")";
+		            excel.writeNextRowTextAndFormula("Mean over all online episodes& ", formulas);
+		            formulas = "AVERAGE(" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(2,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")"         
+		            			+ "&AVERAGE(" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(3,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")"
+		            			+ "&AVERAGE(" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL+1) + ":" + excel.getAddress(4,settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL) + ")";
+		            excel.writeNextRowTextAndFormula("Mean over all offline episodes& ", formulas);
+		    		break;
+            }
+
         }
         
-        //TODO write experiment settings into excel file
-        
-        excel.closeFile();
+        switch(settings.FORMAT) {
+	    	case "csv:":
+	    		break;
+	    	case "excel":
+		        // make summary sheet - the +2 on the number of rows is to capture the online and offline means as well as the individual episode results
+		        excel.makeSummarySheet(settings.NUM_TRIALS, "R^P&R^A&R^*", 2, 1, numObjectives, settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL+2);           
+		        // make another sheet which collates the online and off-line per episode means across all trials, for later use in doing t-tests
+		        excel.moveToNewSheet("Collated", settings.NUM_TRIALS+1); // put this after the summary sheet
+		        excel.writeNextRowText("Trial&R^P Online mean&R^A Online mean&R^* Online mean&R^P Offline mean&R^A Offline mean&R^* Offline mean");
+		        final int ONLINE_ROW = settings.NUM_ONLINE_EPISODES_PER_TRIAL+settings.NUM_OFFLINE_EPISODES_PER_TRIAL+1;
+		        final int OFFLINE_ROW = ONLINE_ROW+1;
+		        for (int i=0; i<settings.NUM_TRIALS; i++)
+		        {
+		        	String text = Integer.toString(i);
+		        	String lookups = excel.getAddress(i,2,ONLINE_ROW) + "&" + excel.getAddress(i,3,ONLINE_ROW) + "&" + excel.getAddress(i,4,ONLINE_ROW) + "&" 
+		        					+ excel.getAddress(i,2,OFFLINE_ROW) + "&" + excel.getAddress(i,3,OFFLINE_ROW) + "&" + excel.getAddress(i,4,OFFLINE_ROW);
+		        	excel.writeNextRowTextAndFormula(text, lookups);
+		        }
+		        
+		        //TODO write experiment settings into excel file
+		        
+		        excel.closeFile();
+		        break;
+        }
         
         RLGlue.RL_cleanup();
-
+        System.out.println(settings.FORMAT);
         System.out.println("********************************************** Experiment finished");
         return fileName;
     }
