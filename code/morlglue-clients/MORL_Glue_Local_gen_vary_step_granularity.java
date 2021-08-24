@@ -4,8 +4,6 @@ import java.util.Map;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
-import MORL_Glue_Local.AgentGenerator;
-import MORL_Glue_Local.EnvGenerator;
 import agents.*;
 import env.*;
 import experiments.*;
@@ -99,108 +97,108 @@ public class MORL_Glue_Local_gen_vary_step_granularity extends MORL_Glue_Local_B
 				//do not use this, it is slow
 				//put("TLO_P", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SatisficingMOAgent();}});
 			}};
-		
-		} 	//for (double[] granularity_set: granularities) {
 
-		// comment out agents that you don't want to run (at least one needed per list)
-		Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
-//			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
-			double[][] modifiers = {
+			// comment out agents that you don't want to run (at least one needed per list)
+			Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
+	//			put("UnbreakableBottles", new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {return new UnbreakableBottlesSideEffectsV2();}});
+				double[][] modifiers = {
+						
+						{0.01,0.01},
+						{0.1,0.1},
+						{1,1},
+						{10,10},
+						{100,100},
+						
+						{1,0.01},
+						{1,0.1},
+						{1,10},
+						{1,100},
+						
+						{0.01,1},
+						{0.1,1},
+						{10,1},
+						{100,1}
+				};
+				
+				//String[] base_envs = {"BreakableBottles","UnbreakableBottles"};
+				for (double[] modifier_set: modifiers) {
 					
-					{0.01,0.01},
-					{0.1,0.1},
-					{1,1},
-					{10,10},
-					{100,100},
+					String env_name = "BreakableBottles";
+					env_name += "rew" + modifier_set[0];
+					env_name += "pen" + modifier_set[1];
+					put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+						return new BreakableBottlesSideEffectsV2(modifier_set[0],modifier_set[1]);
+						
+						}});
 					
-					{1,0.01},
-					{1,0.1},
-					{1,10},
-					{1,100},
+					env_name = "UnbreakableBottles";
+					env_name += "rew" + modifier_set[0];
+					env_name += "pen" + modifier_set[1];
+					put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+						return new UnbreakableBottlesSideEffectsV2(modifier_set[0],modifier_set[1]);
+						
+						}});
 					
-					{0.01,1},
-					{0.1,1},
-					{10,1},
-					{100,1}
-			};
+					env_name = "Sokoban";
+					env_name += "rew" + modifier_set[0];
+					env_name += "pen" + modifier_set[1];
+					put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+						return new SokobanSideEffects(modifier_set[0],modifier_set[0],modifier_set[1]);
+						
+						}});
+					
+					env_name = "Doors";
+					env_name += "rew" + modifier_set[0];
+					env_name += "pen" + modifier_set[1];
+					put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
+						return new Doors(modifier_set[0],modifier_set[0],modifier_set[1]);
+						
+						}});	
+					
+				} 	//for (double[] granularity_set: granularities) {
+			}}; 	//Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
+		
+			// define experiment settings
+			String experiment_id = "NoScale";
+			String outpath = "data";
+			int num_online = 5000;
+			int num_offline = 500;
+			int max_episode_length = 1000; //number of TRIALS in EPISODE
 			
-			//String[] base_envs = {"BreakableBottles","UnbreakableBottles"};
-			for (double[] modifier_set: modifiers) {
-				
-				String env_name = "BreakableBottles";
-				env_name += "rew" + modifier_set[0];
-				env_name += "pen" + modifier_set[1];
-				put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-					return new BreakableBottlesSideEffectsV2(modifier_set[0],modifier_set[1]);
-					
-					}});
-				
-				env_name = "UnbreakableBottles";
-				env_name += "rew" + modifier_set[0];
-				env_name += "pen" + modifier_set[1];
-				put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-					return new UnbreakableBottlesSideEffectsV2(modifier_set[0],modifier_set[1]);
-					
-					}});
-				
-				env_name = "Sokoban";
-				env_name += "rew" + modifier_set[0];
-				env_name += "pen" + modifier_set[1];
-				put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-					return new SokobanSideEffects(modifier_set[0],modifier_set[0],modifier_set[1]);
-					
-					}});
-				
-				env_name = "Doors";
-				env_name += "rew" + modifier_set[0];
-				env_name += "pen" + modifier_set[1];
-				put(env_name, new EnvGenerator(){public EnvironmentInterface getEnv(String[] args) {
-					return new Doors(modifier_set[0],modifier_set[0],modifier_set[1]);
-					
-					}});	
-				
-			} 	//for (double[] granularity_set: granularities) {
-		}}; 	//Map<String, EnvGenerator> envs = new HashMap<String, EnvGenerator>(){{
-		
-		// define experiment settings
-		String experiment_id = "NoScale";
-		String outpath = "data";
-		int num_online = 5000;
-		int num_offline = 500;
-		int max_episode_length = 1000; //number of TRIALS in EPISODE
-		
-		System.out.println("SAVING TO PATH: "+outpath);
-		System.out.println("NUMBER OF AGENTS: "+agents.size());
-		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
-		
-    	for(String envstring : envs.keySet()) {
-    		experiment_id = "Test " + envstring;
-    		String[] outputfiles = new String[agents.size()];
-    		int runid = 0;
-    		for(String astring : agents.keySet()) {
-	    		// generator agent and environment
-	    		AgentGenerator atg = agents.get(astring);
-	    		EnvGenerator etg = envs.get(envstring);
-	    		EnvironmentInterface env = etg.getEnv(new String[] {});
-	    		AgentInterface agent = atg.getAgent(new String[] {});
-	    		
-	    		// build experiment settings and run experiment
-	    		ExperimentSettings settings = new ExperimentBuilder()
-						.name(experiment_id).outpath(outpath)
-						.agent(astring).env(envstring)
+			System.out.println("SAVING TO PATH: "+outpath);
+			System.out.println("NUMBER OF AGENTS: "+agents.size());
+			System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
+			
+	    	for(String envstring : envs.keySet()) {
+	    		experiment_id = "Test " + envstring;
+	    		String[] outputfiles = new String[agents.size()];
+	    		int runid = 0;
+	    		for(String astring : agents.keySet()) {
+		    		// generator agent and environment
+		    		AgentGenerator atg = agents.get(astring);
+		    		EnvGenerator etg = envs.get(envstring);
+		    		EnvironmentInterface env = etg.getEnv(new String[] {});
+		    		AgentInterface agent = atg.getAgent(new String[] {});
+		    		
+		    		// build experiment settings and run experiment
+		    		ExperimentSettings settings = new ExperimentBuilder()
+							.name(experiment_id).outpath(outpath)
+							.agent(astring).env(envstring)
+							.episodes(num_online, num_offline, max_episode_length)
+							.buildExperiment();
+		    		//settings.additional_settings.put("PenaltyScale",env.)
+		    		String outputfile = LocalExperiment.main(agent, env, settings);
+		    		outputfiles[runid] = outputfile;
+		    		runid ++;
+		    	}
+	    		ExperimentSettings plot_settings = new ExperimentBuilder()
+						.name(experiment_id).outpath(outpath).env(envstring)
 						.episodes(num_online, num_offline, max_episode_length)
 						.buildExperiment();
-	    		//settings.additional_settings.put("PenaltyScale",env.)
-	    		String outputfile = LocalExperiment.main(agent, env, settings);
-	    		outputfiles[runid] = outputfile;
-	    		runid ++;
-	    	}
-    		ExperimentSettings plot_settings = new ExperimentBuilder()
-					.name(experiment_id).outpath(outpath).env(envstring)
-					.episodes(num_online, num_offline, max_episode_length)
-					.buildExperiment();
-    		plotting(plot_settings, outputfiles);
-	    }
+	    		plotting(plot_settings, outputfiles);
+		    }
+			
+		} 	//for (double[] granularity_set: granularities) {
 		
 	    System.out.println("FINISHED ALL EXPERIMENTS.");
 	}
