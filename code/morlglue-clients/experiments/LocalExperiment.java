@@ -60,7 +60,7 @@ public class LocalExperiment
     		this.NUM_TRIALS = num_trials;
     		this.EXPLORATION = exploration;
     		this.EXPLORATION_PARAMETER = exploration_param;
-    		this.NUM_OFFLINE_EPISODES_PER_TRIAL = num_online_per_trial;
+    		this.NUM_ONLINE_EPISODES_PER_TRIAL = num_online_per_trial;
     		this.NUM_OFFLINE_EPISODES_PER_TRIAL = num_offline_per_trial;
     		this.MAX_EPISODE_LENGTH = max_episode_length;
     	}
@@ -201,6 +201,8 @@ public class LocalExperiment
     		excel = new JxlExcelWriter(fileName);
     	} else if (settings.FORMAT.equals("csv")) {
     		csv = new CSVWriter(fileName);
+    		csv.writeLinesRaw(new String[] {"Description,Episode number,R^P,R^A,R^*"});
+
     	}
     	System.out.println("**********************************************");
     	System.out.println("RUNNING " + " WITH "+settings.AGENT+"("+agentName+") in  "+envName);
@@ -210,7 +212,7 @@ public class LocalExperiment
         {
         	switch(settings.FORMAT) {
 		    	case "csv":
-					csv.writeLinesRaw(new String[] {"Trial "+trial, ",Episode number,R^P,R^A,R^*"});
+					//csv.writeLinesRaw(new String[] {"Trial:"+trial+",0,0,0,0"});
 		    		break;
 		    	case "excel":
 		        	// start new excel sheet and include header row
@@ -250,7 +252,6 @@ public class LocalExperiment
     		}
         	RLGlue.RL_env_message("stop-debugging");
 			RLGlue.RL_agent_message("stop-debugging");           
-            
             switch(settings.FORMAT) {
 		    	case "csv":
 		    		//csv.writeLinesRaw(new String[] {"finsihed trial "+trial});
@@ -296,7 +297,6 @@ public class LocalExperiment
         }
         
         RLGlue.RL_cleanup();
-        System.out.println(settings.FORMAT);
         System.out.println("********************************************** Experiment finished");
         return fileName;
     }

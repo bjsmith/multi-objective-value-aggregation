@@ -100,8 +100,8 @@ public class MORL_Glue_Local_RK
 		String experiment_id = "TLOA_vs_SFLLA_2";
 		String outpath = "data";
 		String format = "csv";
-		int num_online = 5000;
-		int num_offline = 1;
+		int num_online = 20;
+		int num_offline = 10;
 		int max_episode_length = 1000;
 		int trials = 2;
 		

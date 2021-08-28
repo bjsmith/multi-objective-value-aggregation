@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--name', type=str, default='test')
 parser.add_argument('--path', type=str, default='data')
+parser.add_argument('--format', type=str, default='csv')
 parser.add_argument('--title', type=str, default='')
 parser.add_argument('--files', default=["invalidfile"], nargs="+")
 parser.add_argument('--objectives', default=["R^P", "R^A", "R^*"], nargs="+")
@@ -31,7 +32,10 @@ for f in args.files:
     splitlist = f.split("-")
     envname = splitlist[0]
     agentname = splitlist[1]
-    data = pd.read_excel(f+".xls")
+    if args.format == "xls":
+        data = pd.read_excel(f+".xls")
+    elif args.format == "csv":
+        data = pd.read_csv(f+".csv")
     agents[agentname] = data
     print("added ",agentname)
 
