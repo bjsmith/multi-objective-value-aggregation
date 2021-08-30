@@ -59,7 +59,7 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
     private final int AGENT_GOAL = 4;
     private final int MAX_BOTTLES = 2;
     private final int BOTTLES_TO_DELIVER = 2;
-    private final double DROP_PROBABILITY = 0.1;
+    private double DROP_PROBABILITY = 0.1;
     
     // define the ordering of the objectives
     private final int NUM_OBJECTIVES = 3;
@@ -90,6 +90,10 @@ public class BreakableBottlesSideEffectsV2 implements EnvironmentInterface
 	) {
     	this.goal_reward_scaling = goal_reward_scaling;
     	this.impact_penalty_scaling = impact_penalty_scaling;
+    }
+    
+    public BreakableBottlesSideEffectsV2(double bottle_drop_prob) {
+    	this.DROP_PROBABILITY = bottle_drop_prob;
     }
     
     public BreakableBottlesSideEffectsV2() {
