@@ -20,6 +20,8 @@ append_blackman_averaging_simple <- function(activity_long){
   return(activity_long_out)
 }
 
+
+
 append_blackman_averaging <- function(activity_long){
   
   activity_long_out <- activity_long %>% group_by(Measure,EpisodeType,Agent,Environment) %>% 
@@ -113,3 +115,6 @@ get_raw_csv_activity <-function(file_list,source_path){
   raw_activity$Filename <- NULL #we don't really need this, we just need to store a unique ID for each file.
   return(raw_activity)
 }
+
+
+

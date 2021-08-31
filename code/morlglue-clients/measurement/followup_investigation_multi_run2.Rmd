@@ -27,14 +27,83 @@ output_dir <- "../../../output/"
 Now--great--can we compare different sheets?
 ```{r}
 
+get_raw_csv_activity_dt <-function(file_list,source_path){
+  #now we want to iterate through each of those and output the data
+  raw_activity_list <- apply(file_list,1,function(row){
+    #print(row[["full_code"]])
+    cat(".")
+    #load the spreadsheet
+    TLO_A_page0 <- readr::read_csv(
+      paste0(source_path,row[["filename"]])) %>% data.table
+    
+    #clean the data
+    colnames(TLO_A_page0)[1] <- "EpisodeType"
+    TLO_A_page0[,`Episode number`:=as.numeric(TLO_A_page0$`Episode number`)]
+    #label the data
+    TLO_A_page0[,Agent:=row[["Agent"]]]
+    TLO_A_page0[,Environment:=row[["Environment"]]]
+    TLO_A_page0[,EnvironmentClass:=row[["EnvironmentClass"]]]
+    TLO_A_page0[,Filename:=row[["filename"]]]
+    
+    #add an trial iteration label if it's not there already.
+    #print(TLO_A_page0 %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`)))
+    #trial_iteration_by_episode_type <- TLO_A_page0 %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`))
+    trial_iteration_by_episode_type <- TLO_A_page0[,.(MaxEpisode=max(`Episode number`)),EpisodeType]
+    episodes_per_trial_iteration <- sum(trial_iteration_by_episode_type$MaxEpisode)
+    #print(episodes_per_trial_iteration)
+    #now get the number of trials; should be the repetition of each episode number
+    #which should be the same for all episode numbers! We can do it just for episode 1 to speed things up on the assumption
+    #that all episodes present are run for the same number of times
+    #trial_count <- TLO_A_page0 %>% filter(`Episode number`==1 & EpisodeType=="Online") %>% nrow
+    trial_count <- TLO_A_page0[`Episode number`==1 & EpisodeType=="Online",] %>% nrow
+    #print(trial_count)
+    
+    TLO_A_page0[,RunId:=rep(1:trial_count,each=episodes_per_trial_iteration)]
+    
+    return(TLO_A_page0)
+  })
+  
+  raw_activity <- data.table::rbindlist(raw_activity_list)
+  raw_activity$FileID <- as.numeric(as.factor(raw_activity$Filename))
+  raw_activity$Filename <- NULL #we don't really need this, we just need to store a unique ID for each file.
+  return(raw_activity)
+}
 ```
+
+```{r message=FALSE}
+# source_path <- "../data/multirun_n100_start/"
+# 
+# start_time <- Sys.time()
+# 
+# file_list <- get_csv_file_list(source_path)
+# 
+# raw_activity <- get_raw_csv_activity(file_list,source_path)
+# 
+# print(object.size(raw_activity))
+# #get memory efficiencies
+# raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
+# raw_activity$Environment <- as.factor(raw_activity$Environment)
+# raw_activity$Agent <- as.factor(raw_activity$Agent)
+# 
+# #it's pretty big; this will make operations more efficient.
+# raw_activity <- data.table(raw_activity)
+# 
+# print(object.size(raw_activity))
+# 
+# end_time <- Sys.time()
+# duration <- end_time - start_time
+# print(duration)
+```
+
 
 ```{r message=FALSE}
 source_path <- "../data/multirun_n100_start/"
 
+start_time <- Sys.time()
+
 file_list <- get_csv_file_list(source_path)
 
-raw_activity <- get_raw_csv_activity(file_list,source_path)
+raw_activity <- get_raw_csv_activity_dt(file_list,source_path)
 
 print(object.size(raw_activity))
 #get memory efficiencies
@@ -46,13 +115,19 @@ raw_activity$Agent <- as.factor(raw_activity$Agent)
 raw_activity <- data.table(raw_activity)
 
 print(object.size(raw_activity))
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+print(duration)
 ```
+
+About 10% faster. Not sure this is significant but whatever.
 
 
 Filter out SFMLA because it hasn't performed well and there's no point including it.
 
 ```{r}
-raw_activity <- raw_activity[raw_activity$Agent!="SFMLA",]
+raw_activity <- raw_activity[Agent!="SFMLA",]
 ```
 
 
@@ -74,14 +149,13 @@ raw_activity[is.na(raw_activity$EnvironmentValueChange),]$EnvironmentValueChange
 
 ```{r}
 raw_activity$ObjectiveDimChange=""
-raw_activity[raw_activity$EnvironmentDimChange=="pen",]$ObjectiveDimChange="Alignment"
-raw_activity[raw_activity$EnvironmentDimChange=="rew",]$ObjectiveDimChange="Performance"
+raw_activity[EnvironmentDimChange=="pen",ObjectiveDimChange:="Alignment"]
+raw_activity[EnvironmentDimChange=="rew",ObjectiveDimChange:="Performance"]
 ```
 
 
 
 Convert applicable columns to factors. Important because they will use up less space than strings.
-
 
 
 ```{r}
@@ -91,6 +165,13 @@ raw_activity$EnvironmentDimChange <- as.factor(raw_activity$EnvironmentDimChange
 raw_activity$ObjectiveDimChange <- as.factor(raw_activity$ObjectiveDimChange)
 
 print(object.size(raw_activity))
+```
+
+
+
+```{r}
+sapply(raw_activity,class)
+
 ```
 
 We should have run IDs but no need for file IDs.
@@ -115,17 +196,19 @@ rm(environment_labels)
 
 Now we apply some of the postprocessing we did before:
 
-Think we need to recode this stuff to use data.table instead of data.frame.
+```{r}
+
+```
 
 ```{r}
 activity_long <-melt.data.table(
-  data.table(raw_activity %>% select( -EnvironmentVariant,-EnvironmentDimChange)),
+  raw_activity[,setdiff(colnames(raw_activity),c("EnvironmentVariant","EnvironmentDimChange")),with=FALSE],
   id.vars =c("EpisodeType","Episode number","Agent","EnvironmentClass","Environment",
              "EnvironmentValueChange","ObjectiveDimChange","RunId"),
   variable.name = "Measure",value.name="Score")
 
 
-activity_long <- append_blackman_averaging(activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId))
+activity_long <- append_blackman_averaging_simple(activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId))
 
 print(object.size(activity_long))
 
@@ -208,45 +291,58 @@ table_env$`Episode number`=NULL
 table_env$`R^P`=NULL
 table_env$`R^A`=NULL
 
-
-table_env_long <- table_env %>% dcast.data.table(
+table_numeric_vals <- table_env %>% dcast.data.table(
   EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange~Agent
   ,value.var="R^*",fun.aggregate = mean)
 ```
 
-We also need to calculate significance of the difference.
-
-These will compare base case (TLO_A) with the other values. Let's keep it to just that. Perhaps we could do CIs after that.
-
-
 ```{r}
+table_env_run_means <- table_env[,
+          c(mean(`R^*`))
+          
+          ,by=.(Agent,Environment,EnvironmentClass,RunId,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange,ObjectiveDimChange)]
 
-table_env[,.(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange,RunId,Agent,`R^*`)] %>% 
-  
-table_env[,.(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange,RunId,Agent,`R^*`)] %>% 
-  .[,.N,.(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange,RunId,Agent)]
-  
+setnames(table_env_run_means,"V1","Run_Mean_R^*")
 
-table_env %>% select(-`R^P`,-`R^A`)
-table_env %>% dcast.data.table(
-  EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange+RunId~Agent
-  ,value.var="R^*",fun.aggregate = mean) %>% 
-  group_by(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange) %>%
-  summarise(TLO_A_vs_SFLLA=t.test(TLO_A,SFLLA)$p.value)
+ctrl_agent<-"TLO_A"
+
+control_run_means <- table_env_run_means[Agent==ctrl_agent]
+control_run_means$Agent=NULL
+exp_run_means <- table_env_run_means[Agent!=ctrl_agent]
+
+run_means_agent_comparison <- merge(
+  control_run_means,exp_run_means,by =setdiff(colnames(exp_run_means),c("Run_Mean_R^*","Agent")),
+  suffixes = c("_control","_experimental"))
+exp_summary_stats <- run_means_agent_comparison[
+  ,.(`Trial_Mean_R^*`=mean(`Run_Mean_R^*_experimental`),
+    `Trial_SD_R^*`=sd(`Run_Mean_R^*_experimental`),
+    `Trial_Mean_R^*_diff_pvalue`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$p.value,
+    `Trial_Mean_R^*_diff_ci95_lower`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[1]],
+    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]]
+    )
+  ,by=.(Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange,ObjectiveDimChange)]
+                                               
+
+get_formatted_desc <- function(x,pval){
+  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+}
+# exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
+exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`)]
+
+control_summary_stats <- control_run_means[
+  ,
+  .(TLO_A=get_formatted_desc(mean(`Run_Mean_R^*`),1)),
+  by=.(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange)]
 
 
-table_env %>% dcast.data.table(
-  EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange+RunId~Agent
-  ,value.var="R^*",fun.aggregate = mean) %>% 
-  group_by(EnvironmentClass,ObjectiveDimChange,EnvironmentValueChange) %>%
-  summarise(TLO_A_vs_SFLLA=sd(TLO_A,SFLLA))
-
-t.test(c(1,2,3),c(11,6,88))
+summary_stats_wide <- exp_summary_stats %>% dcast.data.table(
+  EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange~Agent,value.var="exp_desc") %>%
+  merge(control_summary_stats)
 ```
 
 
-
 ```{r, knit}
+table_env_long <- summary_stats_wide
 #change this column name.
 colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
 setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
@@ -261,17 +357,16 @@ table_env_long <-
   mutate(Environment=str_replace(Environment,"UnbreakableBottles","Unbreakable Bottles"))
   
 #highlight results within 10% of the best value in each row.
-row_max <- apply(table_env_long[,4:ncol(table_env_long)],1,max)*0.9<table_env_long[,4:ncol(table_env_long)]
+row_max <- apply(table_numeric_vals[,4:ncol(table_numeric_vals)],1,max)*0.9<table_numeric_vals[,4:ncol(table_numeric_vals)]
+
 table_env_long %>%
   mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
-  #mutate_if(is.numeric,~format(.x,digits=1),"latex") %>%
-  mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
-  #mutate_if(is.numeric,~cell_spec(format(.x,digits=2),"latex",color="red")) %>%
+  #mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
   #mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
-  mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFELLA'],"blue","black"))) %>%
+  mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
   #mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
   mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
-  mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO$^A$'],"blue","black"))) %>%
+  mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"))) %>%
   mutate(Environment=linebreak(Environment)) %>%
   kable(
       #%>% order_by(c(EnvironmentClass,EnvironmentDimChange,EnvironmentValueChange))
@@ -286,7 +381,7 @@ table_env_long %>%
   column_spec(3,width="4.5em") %>%
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
   #pander(split.cell=10,split.table=Inf)
-  writeLines("mytextout.tex")
+  writeLines("../../../output/tables/testex.tex")
 ```
 
 
@@ -294,7 +389,7 @@ table_env_long %>%
 ## Average online performance as line graphs
 
 
-Let's add an SD to the graph below....
+
 ```{r fig.width=8}
 
 
