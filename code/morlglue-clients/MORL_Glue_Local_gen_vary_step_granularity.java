@@ -8,6 +8,7 @@ import agents.*;
 import env.*;
 import experiments.*;
 import experiments.LocalExperiment.ExperimentSettings;
+import tools.valuefunction.AggregatorUtils;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
@@ -174,6 +175,11 @@ public class MORL_Glue_Local_gen_vary_step_granularity extends MORL_Glue_Local_B
 	    		String[] outputfiles = new String[agents.size()];
 	    		int runid = 0;
 	    		for(String astring : agents.keySet()) {
+	    			
+	    			//make each experiment repeatable independent from previously run experiments in the same process
+	    	    	//NB! reset random generator outside of the trials loop so that the trials will still be different
+	    	    	AggregatorUtils.ResetRandomGenerator();
+	    	    	
 		    		// generator agent and environment
 		    		AgentGenerator atg = agents.get(astring);
 		    		EnvGenerator etg = envs.get(envstring);

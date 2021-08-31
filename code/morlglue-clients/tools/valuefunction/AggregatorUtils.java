@@ -10,6 +10,11 @@ public abstract class AggregatorUtils {
 		
 	public static Random random = new Random(33);
 	
+	public static void ResetRandomGenerator()
+	{
+		random = new Random(33);
+	}
+	
 	// Compare two sets of values based on a specified aggregation function
 	public static int compare(double a[], double b[], Aggregator agg)
 	{

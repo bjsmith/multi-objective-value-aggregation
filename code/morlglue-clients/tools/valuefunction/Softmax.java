@@ -4,7 +4,8 @@ import java.util.Random;
 
 public abstract class Softmax 
 {
-	static Random random = new Random(AggregatorUtils.random.nextInt());	//comment-out: let there be only one global / static random generator
+	//static Random random = new Random(AggregatorUtils.random.nextInt());	//comment-out: let there be only one global base / static random generator so that if that global generator is reset then this one here also becomes reset
+	static Random random = AggregatorUtils.random;
 	
 	// Performs softmax selection. Should an error occur in the calculations as temperature gets too low, we detect this
 	// and simply return the greedy action instead
