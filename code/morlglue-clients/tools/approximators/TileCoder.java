@@ -100,7 +100,10 @@ public class TileCoder {
     Takes an array of integers and returns the corresponding tile after hashing
      */
     static final int RNDSEQNUMBER = 16384;
-    static Random random = new Random(AggregatorUtils.random.nextInt());
+    
+	//static Random random = new Random(AggregatorUtils.random.nextInt());	//comment-out: let there be only one global base / static random generator so that if that global generator is reset then this one here also becomes reset
+	static Random random = AggregatorUtils.random;
+    
     static int rndseq[] = new int[RNDSEQNUMBER];
     static boolean first_call = true;
 
