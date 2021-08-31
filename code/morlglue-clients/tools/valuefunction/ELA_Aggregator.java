@@ -4,7 +4,7 @@ public class ELA_Aggregator implements Aggregator {
 	// at scale ~ 2 equally good as TLO_A for Sokoban
 	// tradeoff at scale ~ 5 where R^P is pushed whereas R^A and R^* drop
 	// offset deteriorates function at values above ~1  and below 1e-4
-	public double scale = 4;
+	public double scale = 1;
 	public double offset = 0.0;
 	
 	@Override

@@ -4,7 +4,7 @@ public class SFLLA_Aggregator implements Aggregator {
 	// at scale ~ 0.5-0.8 behaves like TLO_A; transition at around 0.9 to being better at R^P but failing in safety
 	// offset at 0.9 (scale = 0.8) learning becomes spikey; with (0.1, 0.3) interesting fail have way through learning happens
 	// (scale, offset): (0.5, 0) (0,17, 0.05) work as well as TLO_A in all environments!
-	public double scale = 0.5;
+	public double scale = 1;
 	public double offset = 0.;
 
 	@Override
