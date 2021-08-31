@@ -15,7 +15,7 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
+public class MORL_Glue_Local_pilot_eeba_rolf
 {
 	public static interface AgentGenerator
 	{
@@ -79,8 +79,8 @@ public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
 			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
 //			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
 			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA" }); } });
-			put("EEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}); } });
-			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
+//			put("EEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}); } });
+//			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
 			// Peter's agents
 //			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
@@ -162,7 +162,7 @@ public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
 		int num_online = 5000;
 		int num_offline = 500;
 		int max_episode_length = 1000; //number of TRIALS in EPISODE
-		int num_repetitions = 100; //number of times to repeat each exeriment.
+		int num_repetitions = 3; //number of times to repeat each exeriment.
 		
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());

@@ -15,7 +15,7 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
+public class MORL_Glue_Local_100iter
 {
 	public static interface AgentGenerator
 	{
@@ -79,8 +79,8 @@ public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
 			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
 //			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
 			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA" }); } });
-			put("EEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}); } });
-			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
+//			put("EEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}); } });
+//			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
 			// Peter's agents
 //			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
@@ -157,7 +157,7 @@ public class MORL_Glue_Local_gen_vary_UAPA_zscore_RK
 		// define experiment settings
 		boolean showplots = false;
 		String experiment_id = "NoScale";
-		String outpath = "data/multirun_n3_eeba_rolf";
+		String outpath = "data/multirun_n100";
 		String format = "csv";
 		int num_online = 5000;
 		int num_offline = 500;
