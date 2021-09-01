@@ -25,169 +25,105 @@ output_dir <- "../../../output/"
 ```
 
 Now--great--can we compare different sheets?
+
+
+```{r message=FALSE}
+source_path <- "../data/multirun_n100/"
+
+start_time <- Sys.time()
+
+file_list <- get_csv_file_list(source_path)
+
+#raw_activity <- get_raw_csv_activity_dt(file_list[1:5,],source_path)
+raw_activity <- get_presummarized_csv_activity_dt(file_list,source_path)
+
+episode_summary<-raw_activity$episode_summary
+run_summary<-raw_activity$run_summary
+print(object.size(raw_activity))
+
+
+#get memory efficiencies
+# raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
+# raw_activity$Environment <- as.factor(raw_activity$Environment)
+# raw_activity$Agent <- as.factor(raw_activity$Agent)
+# 
+# #it's pretty big; this will make operations more efficient.
+# raw_activity <- data.table(raw_activity)
+
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+print(duration)
+```
 ```{r}
 
-get_raw_csv_activity_dt <-function(file_list,source_path){
-  #now we want to iterate through each of those and output the data
-  raw_activity_list <- apply(file_list,1,function(row){
-    #print(row[["full_code"]])
-    cat(".")
-    #load the spreadsheet
-    TLO_A_page0 <- readr::read_csv(
-      paste0(source_path,row[["filename"]])) %>% data.table
-    
-    #clean the data
-    colnames(TLO_A_page0)[1] <- "EpisodeType"
-    TLO_A_page0[,`Episode number`:=as.numeric(TLO_A_page0$`Episode number`)]
-    #label the data
-    TLO_A_page0[,Agent:=row[["Agent"]]]
-    TLO_A_page0[,Environment:=row[["Environment"]]]
-    TLO_A_page0[,EnvironmentClass:=row[["EnvironmentClass"]]]
-    TLO_A_page0[,Filename:=row[["filename"]]]
-    
-    #add an trial iteration label if it's not there already.
-    #print(TLO_A_page0 %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`)))
-    #trial_iteration_by_episode_type <- TLO_A_page0 %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`))
-    trial_iteration_by_episode_type <- TLO_A_page0[,.(MaxEpisode=max(`Episode number`)),EpisodeType]
-    episodes_per_trial_iteration <- sum(trial_iteration_by_episode_type$MaxEpisode)
-    #print(episodes_per_trial_iteration)
-    #now get the number of trials; should be the repetition of each episode number
-    #which should be the same for all episode numbers! We can do it just for episode 1 to speed things up on the assumption
-    #that all episodes present are run for the same number of times
-    #trial_count <- TLO_A_page0 %>% filter(`Episode number`==1 & EpisodeType=="Online") %>% nrow
-    trial_count <- TLO_A_page0[`Episode number`==1 & EpisodeType=="Online",] %>% nrow
-    #print(trial_count)
-    
-    TLO_A_page0[,RunId:=rep(1:trial_count,each=episodes_per_trial_iteration)]
-    
-    return(TLO_A_page0)
-  })
-  
-  raw_activity <- data.table::rbindlist(raw_activity_list)
-  #raw_activity$FileID <- as.numeric(as.factor(raw_activity$Filename))
-  #raw_activity$Filename <- NULL #we don't really need this, we just need to store a unique ID for each file.
-  return(raw_activity)
-}
+print(object.size(episode_summary))
+
+print(object.size(run_summary))
 ```
 
-
-```{r message=FALSE}
-source_path <- "../data/multirun_n100/"
-
-start_time <- Sys.time()
-
-file_list <- get_csv_file_list(source_path)
-
-#raw_activity <- get_raw_csv_activity_dt(file_list[1:5,],source_path)
-raw_activity <- get_presummarized_csv_activity_dt(file_list[1:5,],source_path)
-
-print(object.size(raw_activity))
-#get memory efficencies
-raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
-raw_activity$Environment <- as.factor(raw_activity$Environment)
-raw_activity$Agent <- as.factor(raw_activity$Agent)
-
-#it's pretty big; this will make operations more efficient.
-raw_activity <- data.table(raw_activity)
-
-print(object.size(raw_activity))
-
-end_time <- Sys.time()
-duration <- end_time - start_time
-print(duration)
-```
-
-
-
-
-```{r message=FALSE}
-source_path <- "../data/multirun_n100/"
-
-start_time <- Sys.time()
-
-file_list <- get_csv_file_list(source_path)
-
-#raw_activity <- get_raw_csv_activity_dt(file_list[1:5,],source_path)
-raw_activity <- get_presummarized_csv_activity_dt(file_list[1:5,],source_path)
-
-print(object.size(raw_activity))
-#get memory efficiencies
-raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
-raw_activity$Environment <- as.factor(raw_activity$Environment)
-raw_activity$Agent <- as.factor(raw_activity$Agent)
-
-#it's pretty big; this will make operations more efficient.
-raw_activity <- data.table(raw_activity)
-
-print(object.size(raw_activity))
-
-end_time <- Sys.time()
-duration <- end_time - start_time
-print(duration)
-```
 
 About 10% faster. Not sure this is significant but whatever.
 
 
 Filter out SFMLA because it hasn't performed well and there's no point including it.
 
-```{r}
-raw_activity <- raw_activity[Agent!="SFMLA",]
-```
-
-
-
-
 
 ## Additional data labelling
 
 ```{r}
 
-environment_labels <- str_match(raw_activity$Environment,"(pen|rew)(\\d+.?\\d*)")
-raw_activity$EnvironmentVariant <- environment_labels[,1]
-raw_activity$EnvironmentDimChange <- environment_labels[,2]
-raw_activity$EnvironmentValueChange <- as.numeric(environment_labels[,3])
-raw_activity[is.na(raw_activity$EnvironmentVariant),]$EnvironmentVariant <- "Base"
-raw_activity[is.na(raw_activity$EnvironmentDimChange),]$EnvironmentDimChange <- ""
-raw_activity[is.na(raw_activity$EnvironmentValueChange),]$EnvironmentValueChange <- 1
+environment_labels <- str_match(episode_summary$Environment,"(pen|rew)(\\d+.?\\d*)")
+episode_summary$EnvironmentVariant <- environment_labels[,1]
+episode_summary$EnvironmentDimChange <- environment_labels[,2]
+episode_summary$EnvironmentValueChange <- as.numeric(environment_labels[,3])
+episode_summary[is.na(episode_summary$EnvironmentVariant),]$EnvironmentVariant <- "Base"
+episode_summary[is.na(episode_summary$EnvironmentDimChange),]$EnvironmentDimChange <- ""
+episode_summary[is.na(episode_summary$EnvironmentValueChange),]$EnvironmentValueChange <- 1
+episode_summary$ObjectiveDimChange=""
+episode_summary[EnvironmentDimChange=="pen",ObjectiveDimChange:="Alignment"]
+episode_summary[EnvironmentDimChange=="rew",ObjectiveDimChange:="Performance"]
+
+environment_labels <- str_match(run_summary$Environment,"(pen|rew)(\\d+.?\\d*)")
+run_summary$EnvironmentVariant <- environment_labels[,1]
+run_summary$EnvironmentDimChange <- environment_labels[,2]
+run_summary$EnvironmentValueChange <- as.numeric(environment_labels[,3])
+run_summary[is.na(run_summary$EnvironmentVariant),]$EnvironmentVariant <- "Base"
+run_summary[is.na(run_summary$EnvironmentDimChange),]$EnvironmentDimChange <- ""
+run_summary[is.na(run_summary$EnvironmentValueChange),]$EnvironmentValueChange <- 1
+run_summary$ObjectiveDimChange=""
+run_summary[EnvironmentDimChange=="pen",ObjectiveDimChange:="Alignment"]
+run_summary[EnvironmentDimChange=="rew",ObjectiveDimChange:="Performance"]
 ```
-
-```{r}
-raw_activity$ObjectiveDimChange=""
-raw_activity[EnvironmentDimChange=="pen",ObjectiveDimChange:="Alignment"]
-raw_activity[EnvironmentDimChange=="rew",ObjectiveDimChange:="Performance"]
-```
-
-
 
 Convert applicable columns to factors. Important because they will use up less space than strings.
 
 
 ```{r}
-raw_activity$EnvironmentClass <- as.factor(raw_activity$EnvironmentClass)
-raw_activity$EnvironmentVariant <- as.factor(raw_activity$EnvironmentVariant)
-raw_activity$EnvironmentDimChange <- as.factor(raw_activity$EnvironmentDimChange)
-raw_activity$ObjectiveDimChange <- as.factor(raw_activity$ObjectiveDimChange)
+episode_summary$EnvironmentClass <- as.factor(episode_summary$EnvironmentClass)
+episode_summary$EnvironmentVariant <- as.factor(episode_summary$EnvironmentVariant)
+episode_summary$EnvironmentDimChange <- as.factor(episode_summary$EnvironmentDimChange)
+episode_summary$ObjectiveDimChange <- as.factor(episode_summary$ObjectiveDimChange)
+episode_summary$Agent <- as.factor(episode_summary$Agent)
+episode_summary$Environment <- as.factor(episode_summary$Environment)
+episode_summary$EpisodeType <- as.factor(episode_summary$EpisodeType)
 
-print(object.size(raw_activity))
+run_summary$EnvironmentClass <- as.factor(run_summary$EnvironmentClass)
+run_summary$EnvironmentVariant <- as.factor(run_summary$EnvironmentVariant)
+run_summary$EnvironmentDimChange <- as.factor(run_summary$EnvironmentDimChange)
+run_summary$ObjectiveDimChange <- as.factor(run_summary$ObjectiveDimChange)
+run_summary$Agent <- as.factor(run_summary$Agent)
+run_summary$Environment <- as.factor(run_summary$Environment)
+run_summary$EpisodeType <- as.factor(run_summary$EpisodeType)
+
+print(object.size(episode_summary))
 ```
-```{r}
-ra2 <- raw_activity
-print(object.size(ra2))
-ra2[,EpisodeType:=NULL]
-print(object.size(ra2))
-ra2[,EnvironmentClass:=NULL]
-print(object.size(ra2))
-ra2[,ObjectiveDimChange:=NULL]
-print(object.size(ra2))
-ra2[,EnvironmentDimChange:=NULL]
-print(object.size(ra2))
-```
+
 
 
 
 ```{r}
-sapply(raw_activity,class)
+sapply(episode_summary,class)
 
 ```
 
@@ -214,76 +150,28 @@ rm(environment_labels)
 Now we apply some of the postprocessing we did before:
 
 ```{r}
-
-```
-
-```{r}
-activity_long <-melt.data.table(
-  raw_activity[,setdiff(colnames(raw_activity),c("EnvironmentVariant","EnvironmentDimChange")),with=FALSE],
-  id.vars =c("EpisodeType","Episode number","Agent","EnvironmentClass","Environment",
-             "EnvironmentValueChange","ObjectiveDimChange","RunId"),
-  variable.name = "Measure",value.name="Score")
-
-
-activity_long <- append_blackman_averaging_simple(activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId))
-
-print(object.size(activity_long))
-
-activity_long$Environment <- NULL
-
-print(object.size(activity_long))
+# activity_long <-melt.data.table(
+#   raw_activity[,setdiff(colnames(raw_activity),c("EnvironmentVariant","EnvironmentDimChange")),with=FALSE],
+#   id.vars =c("EpisodeType","Episode number","Agent","EnvironmentClass","Environment",
+#              "EnvironmentValueChange","ObjectiveDimChange","RunId"),
+#   variable.name = "Measure",value.name="Score")
+# 
+# 
+# activity_long <- append_blackman_averaging_simple(activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId))
+# 
+# print(object.size(activity_long))
+# 
+# activity_long$Environment <- NULL
+# 
+# print(object.size(activity_long))
 
 ```
 
 
 ## Offline performance
 
-
-
-
-
 ```{r}
-table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
-table_env$EpisodeType=NULL
-#table_env$Environment=NULL
-table_env$`Episode number`=NULL
-
-```
-
-Maybe we want a table with just R*. Then we can put agent along one axis and environment along the other.
-
-
-```{r}
-
-# activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
-#   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant) %>%
-#   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant) %>% summarise_all(mean) %>% data.table
-activity_means_all_offline <- data.table(raw_activity)[EpisodeType=="Offline"] %>% 
-  select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass) %>%
-  group_by(EnvironmentClass, Environment, Agent) %>% summarise_all(mean) %>% data.table
-
-activity_means_all_online <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
-  select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass) %>%
-  group_by(EnvironmentClass, Environment, Agent) %>% summarise_all(mean) %>% data.table
-
-```
-
-```{r}
-View(activity_means_all_online[
-  (EnvironmentClass=="BreakableBottles") & 
-    (Agent %in% c("TLO_A","SFLLA"))
-    ,])
-
-```
-
-```{r}
-raw_activity[Environment=="UnbreakableBottles" & EpisodeType=="Online",]%>% 
-  dcast.data.table(RunId~Agent,value.var="R^*",fun.aggregate = sd)
-```
-
-
-```{r}
-table_env <- data.table(raw_activity)[EpisodeType=="Offline",]
+table_env <- data.table(run_summary)[EpisodeType=="Offline",]
 table_env$EpisodeType=NULL
 #table_env$Environment=NULL
 table_env$`Episode number`=NULL
@@ -300,10 +188,9 @@ print(knitr::kable(table_env_long))
 
 
 ```{r}
-table_env <- data.table(raw_activity)[EpisodeType=="Online",]
+table_env <- data.table(run_summary)[EpisodeType=="Online",]
 table_env$EpisodeType=NULL
 #table_env$Environment=NULL
-table_env$`Episode number`=NULL
 
 table_env$`R^P`=NULL
 table_env$`R^A`=NULL

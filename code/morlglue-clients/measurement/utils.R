@@ -118,3 +118,64 @@ get_raw_csv_activity <-function(file_list,source_path){
 
 
 
+get_presummarized_csv_activity_dt <-function(file_list,source_path){
+  #now we want to iterate through each of those and output the data
+  raw_activity_list <- apply(file_list,1,function(row){
+    #print(row[["full_code"]])
+    cat(".")
+    #load the spreadsheet
+    csv_data_dt <- readr::read_csv(
+      paste0(source_path,row[["filename"]])) %>% data.table
+    
+    #clean the data
+    colnames(csv_data_dt)[1] <- "EpisodeType"
+    csv_data_dt[,`Episode number`:=as.numeric(csv_data_dt$`Episode number`)]
+    #label the data
+    csv_data_dt[,Agent:=row[["Agent"]]]
+    csv_data_dt[,Environment:=row[["Environment"]]]
+    csv_data_dt[,EnvironmentClass:=row[["EnvironmentClass"]]]
+    #csv_data_dt[,Filename:=row[["filename"]]]
+    
+    #add an trial iteration label if it's not there already.
+    trial_iteration_by_episode_type <- csv_data_dt[,.(MaxEpisode=max(`Episode number`)),EpisodeType]
+    episodes_per_trial_iteration <- sum(trial_iteration_by_episode_type$MaxEpisode)
+    #now get the number of trials; should be the repetition of each episode number
+    #which should be the same for all episode numbers! We can do it just for episode 1 to speed things up on the assumption
+    #that all episodes present are run for the same number of times
+    trial_count <- csv_data_dt[`Episode number`==1 & EpisodeType=="Online",] %>% nrow
+    #print(trial_count)
+    
+    
+    csv_data_dt[,RunId:=rep(1:trial_count,each=episodes_per_trial_iteration)]
+    
+    
+    csv_data_dt_episode_summary <- csv_data_dt[
+      
+      ,.(
+        `R^P`=mean(`R^P`),
+        `R^A`=mean(`R^A`),
+        `R^*`=mean(`R^*`)
+      )
+      ,.(EpisodeType,`Episode number`,Agent,Environment,EnvironmentClass)
+    ]
+    
+    csv_data_dt_run_summary <- csv_data_dt[
+      
+      ,.(
+        `R^P`=mean(`R^P`),
+        `R^A`=mean(`R^A`),
+        `R^*`=mean(`R^*`)
+      )
+      ,.(EpisodeType,RunId,Agent,Environment,EnvironmentClass,RunId)
+    ]
+    
+    return(list("episode_summary"=csv_data_dt_episode_summary,"run_summary"=csv_data_dt_run_summary))
+  })
+  
+  episode_summary_list <- lapply(raw_activity_list,function(li){return(li[["episode_summary"]])})
+  run_summary_list <- lapply(raw_activity_list,function(li){return(li[["run_summary"]])})
+  
+  episode_summary <- data.table::rbindlist(episode_summary_list)
+  run_summary <- data.table::rbindlist(run_summary_list)
+  return(list("episode_summary"=episode_summary,"run_summary"=run_summary))
+}
