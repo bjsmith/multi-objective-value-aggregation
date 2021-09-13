@@ -110,16 +110,17 @@ public class MORL_Glue_Local_gen_vary_UAPA extends MORL_Glue_Local_Base
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
 		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
+	
 		
     	for(String envstring : envs.keySet()) {
     		experiment_id = "Test " + envstring;
     		String[] outputfiles = new String[agents.size()];
     		int runid = 0;
     		for(String astring : agents.keySet()) {
-    			
+
     			//make each experiment repeatable independent from previously run experiments in the same process
     	    	//NB! reset random generator outside of the trials loop so that the trials will still be different
-    	    	AggregatorUtils.ResetRandomGenerator();
+    			AggregatorUtils.ResetRandomGenerator();
     			
 	    		// generator agent and environment
 	    		AgentGenerator atg = agents.get(astring);

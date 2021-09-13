@@ -1,15 +1,20 @@
-blackman50_window <- signal::blackman(50)/sum(signal::blackman(50))
 
-blackman50_function<-function(steps){
-  return(sum(blackman50_window*steps))
+
+get_blackman_smoothing_function <- function(smoothing_level){
+  blackman_x_window <- signal::blackman(smoothing_level)/sum(signal::blackman(smoothing_level))
+  smoothing_function <- function(steps){
+    return(sum(blackman_x_window*steps))
+  }
+  return(smoothing_function)
 }
-blackman200_window <- signal::blackman(200)/sum(signal::blackman(200))
-blackman200_function<-function(steps){
-  return(sum(blackman200_window*steps))
-}
+
+blackman10_function<-get_blackman_smoothing_function(10)
+blackman20_function<-get_blackman_smoothing_function(20)
+blackman50_function<-get_blackman_smoothing_function(50)
+blackman200_function<-get_blackman_smoothing_function(200)
 
 
-append_blackman_averaging_simple <- function(activity_long){
+append_blackman_averaging_dt <- function(activity_long){
   
   activity_long_out <- activity_long %>% 
     mutate(
@@ -117,8 +122,16 @@ get_raw_csv_activity <-function(file_list,source_path){
 }
 
 
-
-get_presummarized_csv_activity_dt <-function(file_list,source_path){
+get_presummarized_csv_activity_dt <-function(source_path){
+  file_list <- get_csv_file_list(source_path)
+  cache_version_filepath <- paste0(source_path,"get_presummarized_csv_activity_dt_20210902_cache.RData")
+  print(cache_version_filepath)
+  if(file.exists(cache_version_filepath)){
+    load(cache_version_filepath)
+    return(output)
+  }
+  
+  
   #now we want to iterate through each of those and output the data
   raw_activity_list <- apply(file_list,1,function(row){
     #print(row[["full_code"]])
@@ -172,10 +185,13 @@ get_presummarized_csv_activity_dt <-function(file_list,source_path){
     return(list("episode_summary"=csv_data_dt_episode_summary,"run_summary"=csv_data_dt_run_summary))
   })
   
+  
   episode_summary_list <- lapply(raw_activity_list,function(li){return(li[["episode_summary"]])})
   run_summary_list <- lapply(raw_activity_list,function(li){return(li[["run_summary"]])})
   
   episode_summary <- data.table::rbindlist(episode_summary_list)
   run_summary <- data.table::rbindlist(run_summary_list)
-  return(list("episode_summary"=episode_summary,"run_summary"=run_summary))
+  output<-list("episode_summary"=episode_summary,"run_summary"=run_summary)
+  save(output,file=cache_version_filepath)
+  return(output)
 }

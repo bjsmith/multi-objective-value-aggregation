@@ -12,10 +12,11 @@ import agents.*;
 import env.*;
 import experiments.*;
 import experiments.LocalExperiment.ExperimentSettings;
+import tools.valuefunction.AggregatorUtils;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_pilot_eeba_rolf
+public class MORL_Glue_Local_random_variance
 {
 	public static interface AgentGenerator
 	{
@@ -73,17 +74,10 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 		// comment out agents that you don't want to run (at least one needed per list)
 		Map<String, AgentGenerator> agents = new HashMap<String, AgentGenerator>(){{	
 			// our agents
-//			put("LELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"});}});
-//			put("SFMLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFMLA"});}});
-//			put("ELA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","ELA"});}});
 			put("SFLLA", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT","SFLLA"});}});
-//			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
 			put("SEBA", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA" }); } });
 			put("EEBA1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}); } });
 			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
-			// Peter's agents
-//			put("Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
-//			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
 			put("TLO_A", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SafetyFirstMOAgent();}});
 		}};
 
@@ -169,6 +163,12 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 		System.out.println("SAVING TO PATH: "+outpath);
 		System.out.println("NUMBER OF AGENTS: "+agents.size());
 		System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
+		
+		//generate some variables for the repetitions
+		//we'll generate the same set for each group to make them more comparable
+		AggregatorUtils.ResetRandomGenerator();
+    	float myrand = AggregatorUtils.random.nextFloat();//generate a number between 0 and 1
+		int[] alpha_array = [0.1, 0.05, 0.8]; //imagine this is generated randomly
 
 		long startTime = System.nanoTime();
 				
@@ -177,26 +177,32 @@ public class MORL_Glue_Local_pilot_eeba_rolf
     		String[] outputfiles = new String[agents.size()];
     		int runid = 0;
     		for(String astring : agents.keySet()) {
-    			//for (int exp_i=0; exp_i<num_repetitions; exp_i++){
+    			
+    			//make each experiment repeatable independent from previously run experiments in the same process
+    	    	//NB! reset random generator outside of the trials loop so that the trials will still be different
+    			AggregatorUtils.ResetRandomGenerator();
+    			
+    			for (int exp_i=0; exp_i<num_repetitions; exp_i++){
     				
-	    		// generator agent and environment
-	    		AgentGenerator atg = agents.get(astring);
-	    		EnvGenerator etg = envs.get(envstring);
-	    		EnvironmentInterface env = etg.getEnv(new String[] {});
-	    		AgentInterface agent = atg.getAgent(new String[] {});
-	    		
-	    		// build experiment settings and run experiment
-	    		ExperimentSettings settings = new ExperimentBuilder()
-						.name(experiment_id).outpath(outpath).format("csv").trials(num_repetitions)
-						.agent(astring).env(envstring)
-						.episodes(num_online, num_offline, max_episode_length)
-						.buildExperiment();
-
-	    		//settings.additional_settings.put("PenaltyScale",env.)
-	    		String outputfile = LocalExperiment.main(agent, env, settings);
-	    		outputfiles[runid] = outputfile;
-	    		runid ++;
-    			//}
+		    		// generator agent and environment
+		    		AgentGenerator atg = agents.get(astring);
+		    		EnvGenerator etg = envs.get(envstring);
+		    		EnvironmentInterface env = etg.getEnv(new String[] {});
+		    		AgentInterface agent = atg.getAgent(new String[] {});
+		    		
+		    		// build experiment settings and run experiment
+		    		ExperimentSettings settings = new ExperimentBuilder()
+							.name(experiment_id).outpath(outpath).format("csv")
+							.trials(num_repetitions)
+							.agent(astring).env(envstring)
+							.episodes(num_online, num_offline, max_episode_length)
+							.buildExperiment();
+	
+		    		//settings.additional_settings.put("PenaltyScale",env.)
+		    		String outputfile = LocalExperiment.main(agent, env, settings);
+		    		outputfiles[runid] = outputfile;
+		    		runid ++;
+    			}
 
 	    	}
     		ExperimentSettings plot_settings = new ExperimentBuilder()

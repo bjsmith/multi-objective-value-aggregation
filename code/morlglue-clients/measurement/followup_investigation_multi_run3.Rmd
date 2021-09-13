@@ -27,20 +27,20 @@ output_dir <- "../../../output/"
 Now--great--can we compare different sheets?
 
 
+
 ```{r message=FALSE}
-source_path <- "../data/multirun_n100/"
+source_path <- "../data/multirun_n100_eeba_rolf/"
 
 start_time <- Sys.time()
 
-file_list <- get_csv_file_list(source_path)
+#file_list <- get_csv_file_list(source_path)
 
 #raw_activity <- get_raw_csv_activity_dt(file_list[1:5,],source_path)
-raw_activity <- get_presummarized_csv_activity_dt(file_list,source_path)
+raw_activity <- get_presummarized_csv_activity_dt(source_path)
 
 episode_summary<-raw_activity$episode_summary
 run_summary<-raw_activity$run_summary
 print(object.size(raw_activity))
-
 
 #get memory efficiencies
 # raw_activity$EpisodeType <- as.factor(raw_activity$EpisodeType)
@@ -63,6 +63,7 @@ print(object.size(run_summary))
 ```
 
 
+
 About 10% faster. Not sure this is significant but whatever.
 
 
@@ -79,7 +80,6 @@ episode_summary$EnvironmentDimChange <- environment_labels[,2]
 episode_summary$EnvironmentValueChange <- as.numeric(environment_labels[,3])
 episode_summary[is.na(episode_summary$EnvironmentVariant),]$EnvironmentVariant <- "Base"
 episode_summary[is.na(episode_summary$EnvironmentDimChange),]$EnvironmentDimChange <- ""
-episode_summary[is.na(episode_summary$EnvironmentValueChange),]$EnvironmentValueChange <- 1
 episode_summary$ObjectiveDimChange=""
 episode_summary[EnvironmentDimChange=="pen",ObjectiveDimChange:="Alignment"]
 episode_summary[EnvironmentDimChange=="rew",ObjectiveDimChange:="Performance"]
@@ -145,27 +145,6 @@ rm(environment_labels)
 
 
 ## Postprocessing
-
-
-Now we apply some of the postprocessing we did before:
-
-```{r}
-# activity_long <-melt.data.table(
-#   raw_activity[,setdiff(colnames(raw_activity),c("EnvironmentVariant","EnvironmentDimChange")),with=FALSE],
-#   id.vars =c("EpisodeType","Episode number","Agent","EnvironmentClass","Environment",
-#              "EnvironmentValueChange","ObjectiveDimChange","RunId"),
-#   variable.name = "Measure",value.name="Score")
-# 
-# 
-# activity_long <- append_blackman_averaging_simple(activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId))
-# 
-# print(object.size(activity_long))
-# 
-# activity_long$Environment <- NULL
-# 
-# print(object.size(activity_long))
-
-```
 
 
 ## Offline performance
@@ -292,41 +271,47 @@ table_env_long %>%
 
 ## Average online performance as line graphs
 
+```{r}
+print(paste0("number of experiment runs in this dataset: ",max(run_summary$RunId)))
+```
+
 
 
 ```{r fig.width=8}
 
 
 
-activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
-  select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
-  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
-
+# activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
+#   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+#   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+activity_means <- run_summary[EpisodeType=="Online"]
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
   relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
-    baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent))+
-      geom_point(size=6,alpha=0.4,shape=21,color="black")+
+    baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
+      #geom_point(size=6,alpha=0.4,shape=21,color="black")+
+      #geom_violin(position="identity",alpha=0.2,size=0.1)+
+      geom_violin(position="dodge",alpha=0.2,size=0.1)+
       scale_x_continuous(trans="log10",
-                         limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
+                         limits = c(min(relevant_activity$EnvironmentValueChange)/5,max(relevant_activity$EnvironmentValueChange)*10),
                          breaks = c(0.01,0.1,1,10,100))+
-      geom_line(linetype="dashed")+
+      #geom_line(linetype="dashed")+
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
           x=paste0(env_dim, " Scale"),
           
-          title=paste0(env_dim, " Scaling: Average Online Performance"),subtitle="Across 5000 trials")
+          title=paste0(env_dim, " Scaling: Average Online Performance"),subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
       
     paper_plot <- baseplot 
 
-    ggsave(filename=paste0(output_dir, "online",env_dim,".pdf"),plot=paper_plot,device="pdf",width = 6,height=7)
+    # ggsave(filename=paste0(output_dir, "online",env_dim,".pdf"),plot=paper_plot,device="pdf",width = 6,height=7)
     
     presentation_plot <- baseplot
             
     
-    ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
+    # ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
     
     print(presentation_plot)
 }
@@ -334,32 +319,47 @@ for (env_dim in c("Performance","Alignment")){
 
 ```
 
+```{r}
+relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim) & (EnvironmentClass=="Sokoban") & EnvironmentValueChange==1
+                                                      & Agent=="SFLLA"
+                                                      )
+    baseplot <- ggplot(relevant_activity,aes(x=`R^*`,fill=Agent,color=Agent,group=Agent))+
+      geom_histogram()
+    
+    
+  baseplot    
+```
 
 
 ## Average online performance for TLO_A vs. SFLLA, all metrics, BreakableBottles
 
 ```{r fig.width=8}
 
-activity_means <- data.table(raw_activity)[
-  (EpisodeType=="Online") & 
-    #(EnvironmentClass=="BreakableBottles") & 
-    (Agent %in% c("TLO_A","SFLLA"))
-    ] %>% 
-  select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
-  group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% 
-  data.table %>% melt(measure.vars = c("R^*","R^P","R^A"))
+# activity_means <- data.table(raw_activity)[
+#   (EpisodeType=="Online") & 
+#     #(EnvironmentClass=="BreakableBottles") & 
+#     (Agent %in% c("TLO_A","SFLLA"))
+#     ] %>% 
+#   select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+#   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% 
+#   data.table %>% melt(measure.vars = c("R^*","R^P","R^A"))
 
+activity_means <- run_summary[EpisodeType=="Online" & (Agent %in% c("TLO_A","SFLLA")) & (EnvironmentClass=="BreakableBottles")] %>%
+  select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+  melt(measure.vars = c("R^*","R^P","R^A"))
+  
 
 #now do 
 for (ec in unique(activity_means$EnvironmentClass)){
   for (env_dim in c("Performance","Alignment")){
     relevant_activity <- activity_means %>% dplyr::filter((ObjectiveDimChange %in% c("",env_dim)) & EnvironmentClass==ec)
-      baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=value,fill=Agent,color=Agent))+
-        geom_point(size=6,alpha=0.4,shape=21,color="black")+
+      baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=value,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
+        #geom_point(size=6,alpha=0.4,shape=21,color="black")+
+        geom_violin(position="identity",alpha=0.4,size=1.5)+
         scale_x_continuous(trans="log10",
                            limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
                            breaks = c(0.01,0.1,1,10,100))+
-        geom_line(linetype="dashed")+
+        #geom_line(linetype="dashed")+
         geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
         facet_wrap(~variable,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
           labs(
@@ -375,11 +375,11 @@ for (ec in unique(activity_means$EnvironmentClass)){
       #ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
       print(presentation_plot)
       
-      comparison_of_values <- relevant_activity %>% dcast(EnvironmentClass+ObjectiveDimChange+variable+EnvironmentValueChange~Agent,value.var="value") %>%
-          arrange(variable,EnvironmentValueChange)
-      comparison_of_values$Percent <- comparison_of_values$SFLLA/comparison_of_values$TLO_A
-      
-      print(knitr::kable(comparison_of_values))
+      # comparison_of_values <- relevant_activity %>% dcast(EnvironmentClass+ObjectiveDimChange+variable+EnvironmentValueChange~Agent,value.var="value") %>%
+      #     arrange(variable,EnvironmentValueChange)
+      # comparison_of_values$Percent <- comparison_of_values$SFLLA/comparison_of_values$TLO_A
+      # 
+      # print(knitr::kable(comparison_of_values))
   }
   
 }
@@ -391,23 +391,115 @@ for (ec in unique(activity_means$EnvironmentClass)){
 For the Performance Scaling, it actually looks like it's Performance where TLO_A is performing better. Agents differ a lot on R^A; for the base scenario they prefer about equivalently on alignment, but SFLLA performs better on all the non-base scenarios. Yet overall the SFLLA scores better than TLO_A even the base scenario. With that said, it _also_ performs consistently better on Alignment.
 
 
-### Individual graphs
+### Time graphs
 
 
+```{r}
+
+
+get_blackman_smoothing_function <- function(smoothing_level){
+  blackman_x_window <- signal::blackman(smoothing_level)/sum(signal::blackman(smoothing_level))
+  smoothing_function <- function(steps){
+    return(sum(blackman_x_window*steps))
+  }
+  return(smoothing_function)
+}
+
+blackman10_function<-get_blackman_smoothing_function(10)
+blackman20_function<-get_blackman_smoothing_function(20)
+blackman50_function<-get_blackman_smoothing_function(50)
+blackman200_function<-get_blackman_smoothing_function(200)
+
+```
+
+
+```{r}
+episode_summary_long <-melt.data.table(
+  episode_summary[,setdiff(colnames(episode_summary),c("EnvironmentVariant","EnvironmentDimChange")),with=FALSE],
+  id.vars =c("EpisodeType","Episode number","Agent","Environment","EnvironmentClass",
+             "EnvironmentValueChange","ObjectiveDimChange"),
+  variable.name = "Measure",value.name="Score")
+
+episode_summary_long[is.na(EnvironmentValueChange),EnvironmentValueChange:=1]
+#activity_long %>% group_by(Measure,EpisodeType,Agent,Environment,RunId)
+
+episode_summary_long[,Score_BMS_10:=frollapply(Score,10,blackman10_function),.(Measure,EpisodeType,Agent,Environment,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange)]
+
+episode_summary_long[,Score_BMS_50:=frollapply(Score,50,blackman50_function),.(Measure,EpisodeType,Agent,Environment,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange)]
+
+```
+
+
+```{r fig.width=8}
+
+time_graph_data <- episode_summary_long[EnvironmentValueChange==1 & Measure=="R^*"]
+#R* over agents, base scaling.
+# for (select_dim in unique(episode_summary_long$ObjectiveDimChange)){
+#   time_graph_data_display <- episode_summary_long[ObjectiveDimChange==select_dim]
+#   
+# }
+# for (select_env in unique(time_graph_data$Environment)){
+  to_plot <- ggplot(
+  time_graph_data[EpisodeType=="Online"],
+  aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+
+  coord_cartesian(xlim = c(0,max(time_graph_data$`Episode number`,na.rm = TRUE)*1.2))+
+  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+  labs(y="Score")+facet_wrap(~Environment,scales="free")
+  
+print(to_plot)
+# }
+
+
+
+```
+
+
+
+```{r }
+table(episode_summary_long$ObjectiveDimChange)
+
+time_graph_data <- episode_summary_long[Measure=="R^*"]
+time_graph_data$Condition <- paste0(time_graph_data$ObjectiveDimChange,time_graph_data$EnvironmentValueChange)
+#R* over agents, base scaling.
+# for (select_dim in unique(episode_summary_long$ObjectiveDimChange)){
+#   time_graph_data_display <- episode_summary_long[ObjectiveDimChange==select_dim]
+#   
+# }
+# for (select_env in unique(time_graph_data$Environment)){
+  to_plot <- ggplot(
+  time_graph_data[EpisodeType=="Online" & EnvironmentClass=="BreakableBottles"],
+  aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
+  )+geom_line(alpha=0.5,size=1)+
+  theme(legend.position="bottom")+facet_wrap(~Condition,scales="free")+
+  coord_cartesian(xlim = c(0,max(time_graph_data$`Episode number`,na.rm = TRUE)*1.2))+
+  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+  labs(y="Score")
+  
+print(to_plot)
+# }
+
+
+
+```
+
+
+### Individual graphs (deprecated)
 
 ```{r fig.width=14}
 
-for (select_env in unique(activity_long$Environment)){
-  to_plot <- ggplot(
-  activity_long[EpisodeType=="Online" & Environment==select_env ],
-  aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
-  )+geom_line(alpha=0.5,size=1)+
-  theme(legend.position="bottom")+
-  coord_cartesian(xlim = c(0,max(activity_long$`Episode number`,na.rm = TRUE)*1.2))+
-  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
-  labs(y="Score",title=select_env)+facet_wrap(~Measure,scales="free")
-  print(to_plot)
-}
+# for (select_env in unique(activity_long$Environment)){
+#   to_plot <- ggplot(
+#   activity_long[EpisodeType=="Online" & Environment==select_env ],
+#   aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
+#   )+geom_line(alpha=0.5,size=1)+
+#   theme(legend.position="bottom")+
+#   coord_cartesian(xlim = c(0,max(activity_long$`Episode number`,na.rm = TRUE)*1.2))+
+#   geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+#   labs(y="Score",title=select_env)+facet_wrap(~Measure,scales="free")
+#   print(to_plot)
+# }
 
 
 

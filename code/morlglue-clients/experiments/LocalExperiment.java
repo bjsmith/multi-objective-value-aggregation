@@ -170,7 +170,10 @@ public class LocalExperiment
         int terminal = RLGlue.RL_episode(stepLimit);
         int totalSteps = RLGlue.RL_num_steps();
         Reward totalReward = RLGlue.RL_return();
-        System.out.println("episode "+episodeId+", num steps: "+totalSteps+", total reward: "+Arrays.toString(totalReward.doubleArray));
+        if ((episodeId % 1000)==0) {
+        		System.out.println("episode "+episodeId+", num steps: "+totalSteps+", total reward: "+Arrays.toString(totalReward.doubleArray));        	
+        }
+        
         return totalReward;
     }
 
