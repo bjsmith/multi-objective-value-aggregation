@@ -163,7 +163,7 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 		int num_repetitions = 100; //number of times to repeat each exeriment.
 		
 		String experiment_id = "NoScale";
-		String outpath = "data/multirun_n" +num_repetitions + "_eeba_rolf";
+		String outpath = "data/multirun_n" +num_repetitions + "_eeba_rolf_attempt2";
 		String format = "csv";
 		
 		System.out.println("SAVING TO PATH: "+outpath);

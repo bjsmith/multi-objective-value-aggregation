@@ -157,7 +157,7 @@ public class LocalExperiment
 	    		String r0 = Double.toString(r.getDouble(0));
 	    		String r1 = Double.toString(r.getDouble(1));
 	    		String r2 = Double.toString(r.getDouble(2));
-	    		csv.writeLinesRaw(new String[] {labels+","+r0+","+r1+","+r2+","});
+	    		csv.writeLinesRaw(new String[] {labels+","+r0+","+r1+","+r2});
 	    		break;
 	    	case "excel":
 	    		excel.writeNextRowTextAndNumbers(labels, r.doubleArray);
