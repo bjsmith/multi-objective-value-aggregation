@@ -26,6 +26,100 @@ output_dir <- "../../../output/"
 
 Now--great--can we compare different sheets?
 
+```{r}
+library(pryr)
+
+mem_format <- function(x){
+  format(x,digits=3)
+}
+get_presummarized_csv_activity_dt <-function(source_path){
+  file_list <- get_csv_file_list(source_path)[1:10,]
+  cache_version_filepath <- paste0(source_path,"get_presummarized_csv_activity_dt_20210902_cache.RData")
+  print(cache_version_filepath)
+  if(file.exists(cache_version_filepath)){
+    load(cache_version_filepath)
+    return(output)
+  }
+  episode_summary<-NULL
+  run_summary <- NULL
+  for (row_i in 1:nrow(file_list)){
+    row <- file_list[row_i,]
+    cat(".")
+    #load the spreadsheet
+    csv_data_dt <- readr::read_csv(
+      paste0(source_path,row[["filename"]])) %>% data.table
+    
+    #clean the data
+    colnames(csv_data_dt)[1] <- "EpisodeType"
+    csv_data_dt[,`Episode number`:=as.numeric(csv_data_dt$`Episode number`)]
+    #label the data
+    csv_data_dt[,Agent:=row[["Agent"]]]
+    csv_data_dt[,Environment:=row[["Environment"]]]
+    csv_data_dt[,EnvironmentClass:=row[["EnvironmentClass"]]]
+    #csv_data_dt[,Filename:=row[["filename"]]]
+    
+    #add an trial iteration label if it's not there already.
+    trial_iteration_by_episode_type <- csv_data_dt[,.(MaxEpisode=max(`Episode number`)),EpisodeType]
+    episodes_per_trial_iteration <- sum(trial_iteration_by_episode_type$MaxEpisode)
+    #now get the number of trials; should be the repetition of each episode number
+    #which should be the same for all episode numbers! We can do it just for episode 1 to speed things up on the assumption
+    #that all episodes present are run for the same number of times
+    trial_count <- csv_data_dt[`Episode number`==1 & EpisodeType=="Online",] %>% nrow
+    #print(trial_count)
+    
+    
+    csv_data_dt[,RunId:=rep(1:trial_count,each=episodes_per_trial_iteration)]
+    
+    
+    csv_data_dt_episode_summary <- csv_data_dt[
+      
+      ,.(
+        `R^P`=mean(`R^P`),
+        `R^A`=mean(`R^A`),
+        `R^*`=mean(`R^*`)
+      )
+      ,.(EpisodeType,`Episode number`,Agent,Environment,EnvironmentClass)
+    ]
+    
+    csv_data_dt_run_summary <- csv_data_dt[
+      
+      ,.(
+        `R^P`=mean(`R^P`),
+        `R^A`=mean(`R^A`),
+        `R^*`=mean(`R^*`)
+      )
+      ,.(EpisodeType,RunId,Agent,Environment,EnvironmentClass,RunId)
+    ]
+    rm(csv_data_dt)
+    
+    if(is.null(episode_summary)){
+      episode_summary<-csv_data_dt_episode_summary
+    }else{
+      episode_summary <- rbind(episode_summary,csv_data_dt_episode_summary)
+    }
+    if(is.null(run_summary)){
+      run_summary<-csv_data_dt_run_summary
+    }else{
+      run_summary <- rbind(run_summary,csv_data_dt_run_summary)
+    }
+    if(row_i%%10==0){
+      
+      print(paste0(mem_format(pryr::mem_used()),
+                   "; should be made up of episode_summary (",
+                   mem_format(object_size(episode_summary)),") and run_summary (", 
+                   mem_format(object_size(run_summary)),")"))
+      gc()
+      print(paste0(mem_format(pryr::mem_used())))
+    }
+  }
+  
+  
+  output<-list("episode_summary"=episode_summary,"run_summary"=run_summary)
+  save(output,file=cache_version_filepath)
+  return(output)
+}
+
+```
 
 
 ```{r message=FALSE}
@@ -431,26 +525,26 @@ episode_summary_long[,Score_BMS_50:=frollapply(Score,50,blackman50_function),.(M
 
 
 ```{r fig.width=8}
-
-time_graph_data <- episode_summary_long[EnvironmentValueChange==1 & Measure=="R^*"]
-#R* over agents, base scaling.
-# for (select_dim in unique(episode_summary_long$ObjectiveDimChange)){
-#   time_graph_data_display <- episode_summary_long[ObjectiveDimChange==select_dim]
+# 
+# time_graph_data <- episode_summary_long[EnvironmentValueChange==1 & Measure=="R^*"]
+# #R* over agents, base scaling.
+# # for (select_dim in unique(episode_summary_long$ObjectiveDimChange)){
+# #   time_graph_data_display <- episode_summary_long[ObjectiveDimChange==select_dim]
+# #   
+# # }
+# # for (select_env in unique(time_graph_data$Environment)){
+#   to_plot <- ggplot(
+#   time_graph_data[EpisodeType=="Online"],
+#   aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
+#   )+geom_line(alpha=0.5,size=1)+
+#   theme(legend.position="bottom")+
+#   coord_cartesian(xlim = c(0,max(time_graph_data$`Episode number`,na.rm = TRUE)*1.2))+
+#   geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
+#   labs(y="Score")+facet_wrap(~Environment,scales="free")
 #   
-# }
-# for (select_env in unique(time_graph_data$Environment)){
-  to_plot <- ggplot(
-  time_graph_data[EpisodeType=="Online"],
-  aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
-  )+geom_line(alpha=0.5,size=1)+
-  theme(legend.position="bottom")+
-  coord_cartesian(xlim = c(0,max(time_graph_data$`Episode number`,na.rm = TRUE)*1.2))+
-  geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
-  labs(y="Score")+facet_wrap(~Environment,scales="free")
-  
-print(to_plot)
-# }
-
+# print(to_plot)
+# # }
+# 
 
 
 ```
@@ -462,14 +556,15 @@ table(episode_summary_long$ObjectiveDimChange)
 
 time_graph_data <- episode_summary_long[Measure=="R^*"]
 time_graph_data$Condition <- paste0(time_graph_data$ObjectiveDimChange,time_graph_data$EnvironmentValueChange)
+time_graph_data <- time_graph_data[(time_graph_data$`Episode number` %%50)==0,]
 #R* over agents, base scaling.
 # for (select_dim in unique(episode_summary_long$ObjectiveDimChange)){
 #   time_graph_data_display <- episode_summary_long[ObjectiveDimChange==select_dim]
 #   
 # }
-# for (select_env in unique(time_graph_data$Environment)){
+ for (select_env in unique(time_graph_data$EnvironmentClass)){
   to_plot <- ggplot(
-  time_graph_data[EpisodeType=="Online" & EnvironmentClass=="BreakableBottles"],
+  time_graph_data[EpisodeType=="Online" & EnvironmentClass==select_env],
   aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
   )+geom_line(alpha=0.5,size=1)+
   theme(legend.position="bottom")+facet_wrap(~Condition,scales="free")+
@@ -478,32 +573,47 @@ time_graph_data$Condition <- paste0(time_graph_data$ObjectiveDimChange,time_grap
   labs(y="Score")
   
 print(to_plot)
-# }
+ }
 
 
 
 ```
 
+### Viewing R* and R^A for each environment
 
-### Individual graphs (deprecated)
 
-```{r fig.width=14}
 
-# for (select_env in unique(activity_long$Environment)){
-#   to_plot <- ggplot(
-#   activity_long[EpisodeType=="Online" & Environment==select_env ],
-#   aes(x=`Episode number`,y=ScoreBlackman200,color=Agent,group=Agent)
-#   )+geom_line(alpha=0.5,size=1)+
-#   theme(legend.position="bottom")+
-#   coord_cartesian(xlim = c(0,max(activity_long$`Episode number`,na.rm = TRUE)*1.2))+
-#   geom_dl(aes(label=Agent),method=list("last.qp",cex=1),alpha=1)+
-#   labs(y="Score",title=select_env)+facet_wrap(~Measure,scales="free")
-#   print(to_plot)
-# }
+```{r }
+table(episode_summary_long$ObjectiveDimChange)
+
+tloa_sflla_compare <- episode_summary_long[Agent %in% c("TLO_A","SFLLA","EEBA1")]
+tloa_sflla_compare$Condition <- paste0(tloa_sflla_compare$ObjectiveDimChange,tloa_sflla_compare$EnvironmentValueChange)
+
+#to speed up plotting, only plot every 10th episode or even every 100th
+tloa_sflla_compare <- tloa_sflla_compare[(tloa_sflla_compare$`Episode number` %%10)==0,]
+
+tloa_sflla_compare <- tloa_sflla_compare[tloa_sflla_compare$EnvironmentValueChange %in% c(0.01,1,100)]
+```
+
+
+```{r fig.width=12}
+for (select_env in unique(tloa_sflla_compare$EnvironmentClass)){
+  to_plot <- ggplot(
+    tloa_sflla_compare[EpisodeType=="Online" & EnvironmentClass==select_env],
+    aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
+    )+geom_line(alpha=0.5,size=1)+
+    theme(legend.position="bottom")+facet_wrap(Measure~Condition,scales="free",ncol = 5)+
+    coord_cartesian(xlim = c(0,max(tloa_sflla_compare$`Episode number`,na.rm = TRUE)*1.2))+
+    geom_dl(aes(label=Agent),method=list("last.qp",cex=0.6),alpha=1)+
+    labs(y="Score",title=select_env)
+  
+  print(to_plot)
+}
 
 
 
 ```
+
 
 ### Testing the activity file
 

@@ -181,6 +181,7 @@ get_presummarized_csv_activity_dt <-function(source_path){
       )
       ,.(EpisodeType,RunId,Agent,Environment,EnvironmentClass,RunId)
     ]
+    rm(csv_data_dt)
     
     return(list("episode_summary"=csv_data_dt_episode_summary,"run_summary"=csv_data_dt_run_summary))
   })

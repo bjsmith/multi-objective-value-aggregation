@@ -104,7 +104,7 @@ public class SideEffectLinearWeightedAgent implements AgentInterface {
 
     @Override
     public Action agent_start(Observation observation) {
-    	System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon);
+    	//System.out.println("Starting episode " + numEpisodes + " Epsilon = " + epsilon);
         tracingStack.clear();
         int state = stateConverter.getStateNumber( observation );
         int action = getAction(state);
