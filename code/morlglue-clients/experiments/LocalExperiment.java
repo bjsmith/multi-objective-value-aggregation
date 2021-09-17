@@ -36,7 +36,9 @@ public class LocalExperiment
 	    public double LAMBDA = 0.95;
 	    public double GAMMA = 1.0;
 	    public int NUM_TRIALS = 1;
-	    public int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
+		
+		//options are: EGREEDY = 0; SOFTMAX_TOURNAMENT = 1; SOFTMAX_ADDITIVE_EPSILON = 2;
+		public int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
 	    
 	    public int EXPLORATION_PARAMETER = 10; 
     	public int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
@@ -77,7 +79,10 @@ public class LocalExperiment
 		private double LAMBDA = 0.95;
 		private double GAMMA = 1.0;
 		private int NUM_TRIALS = 1;
+		
+		//options are: EGREEDY = 0; SOFTMAX_TOURNAMENT = 1; SOFTMAX_ADDITIVE_EPSILON = 2;
 		private int EXPLORATION = TLO_LookupTable.SOFTMAX_TOURNAMENT;
+		
 		private int EXPLORATION_PARAMETER = 10; 
 		private int NUM_ONLINE_EPISODES_PER_TRIAL = 5000;
 		private int NUM_OFFLINE_EPISODES_PER_TRIAL = 1;
