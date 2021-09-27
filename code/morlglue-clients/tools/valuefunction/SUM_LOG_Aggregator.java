@@ -18,8 +18,8 @@ public class SUM_LOG_Aggregator implements Aggregator {
 			sum_b += b[i];
 		}
 		
-		out[0] = -Math.log(sum_a / a.length);
-		out[1] = -Math.log(sum_b / b.length);
+		out[0] = -Math.log(-sum_a / a.length);
+		out[1] = -Math.log(-sum_b / b.length);
 		
 		return out;
 	}
