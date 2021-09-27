@@ -13,6 +13,7 @@ import env.*;
 import experiments.*;
 import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
+import tools.valuefunction.AggregatorUtils;
 
 
 public class MORL_Glue_Local_pilot_eeba_rolf
@@ -75,8 +76,8 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 			// our agents
 
 			
-			//Obsolete
-//			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"MIN"});} });
+
+//			put("MIN", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "MIN"});} });
 			
 			
 			//Using Q value transformation function during aggregation
@@ -201,6 +202,10 @@ public class MORL_Glue_Local_pilot_eeba_rolf
     		int runid = 0;
     		for(String astring : agents.keySet()) {
     			//for (int exp_i=0; exp_i<num_repetitions; exp_i++){
+    			
+    			//make each experiment repeatable independent from previously run experiments in the same process
+    	    	//NB! reset random generator outside of the trials loop so that the trials will still be different
+    	    	AggregatorUtils.ResetRandomGenerator();
     				
 	    		// generator agent and environment
 	    		AgentGenerator atg = agents.get(astring);
