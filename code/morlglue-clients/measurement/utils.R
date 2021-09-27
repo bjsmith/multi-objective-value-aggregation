@@ -49,7 +49,7 @@ get_file_list <- function(source_path){
 
 get_csv_file_list <- function(source_path){
   #list files
-  files <- list.files(source_path,pattern = "*.csv")
+  files <- list.files(source_path,pattern = "*\\.csv$")
   #regex read the main properties of each sheet
   file_list <- stringr::str_match(files,'^([\\w\\d\\.]*)\\(([\\w,]*)\\)-(\\w*)\\(([\\w,]*)\\)') %>% data.frame %>% cbind(files,.)
   colnames(file_list) <- c("filename","full_code","Environment","EnvironmentClass","Agent","AgentClass")
@@ -122,6 +122,82 @@ get_raw_csv_activity <-function(file_list,source_path){
 }
 
 
+
+# get_presummarized_csv_activity <-function(source_path){
+#   file_list <- get_csv_file_list(source_path)
+#   cache_version_filepath <- paste0(source_path,"get_presummarized_csv_activity_dt_20210902_cache.RData")
+#   print(cache_version_filepath)
+#   if(file.exists(cache_version_filepath)){
+#     load(cache_version_filepath)
+#     return(output)
+#   }
+#   
+#   
+#   #now we want to iterate through each of those and output the data
+#   raw_activity_list <- apply(file_list,1,function(row){
+#     #print(row[["full_code"]])
+#     cat(".")
+#     
+#     csv_data <- readr::read_csv(
+#       paste0(source_path,row[["filename"]]))
+#     
+#     #clean the data
+#     colnames(csv_data)[1] <- "EpisodeType"
+#     csv_data$`Episode number` <- as.numeric(csv_data$`Episode number`)
+#     #label the data
+#     csv_data$Agent <- row[["Agent"]]
+#     csv_data$Environment <- row[["Environment"]]
+#     csv_data$EnvironmentClass <- row[["EnvironmentClass"]]
+#     csv_data$Filename = row[["filename"]]
+# 
+#     #add an trial iteration label if it's not there already.
+#     #print(TLO_A_page0 %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`)))
+#     trial_iteration_by_episode_type <- csv_data %>% group_by(EpisodeType) %>% summarise(MaxEpisode=max(`Episode number`)) %>% ungroup()
+#     episodes_per_trial_iteration <- sum(trial_iteration_by_episode_type$MaxEpisode)
+#     #print(episodes_per_trial_iteration)
+#     #now get the number of trials; should be the repetition of each episode number
+#     #which should be the same for all episode numbers! We can do it just for episode 1 to speed things up on the assumption
+#     #that all episodes present are run for the same number of times
+#     trial_count <- csv_data %>% filter(`Episode number`==1 & EpisodeType=="Online") %>% nrow
+#     
+#     csv_data$RunId <- rep(1:trial_count,each=episodes_per_trial_iteration)
+#     
+#     
+#     csv_data_dt_episode_summary <- csv_data %>% data.table %>% csv_data_dt[
+#       ,.(
+#         `R^P`=mean(`R^P`),
+#         `R^A`=mean(`R^A`),
+#         `R^*`=mean(`R^*`)
+#       )
+#       ,.(EpisodeType,`Episode number`,Agent,Environment,EnvironmentClass)
+#     ]
+#     
+#     csv_data_dt_run_summary <- csv_data %>% data.table %>% csv_data_dt[
+#       
+#       ,.(
+#         `R^P`=mean(`R^P`),
+#         `R^A`=mean(`R^A`),
+#         `R^*`=mean(`R^*`)
+#       )
+#       ,.(EpisodeType,RunId,Agent,Environment,EnvironmentClass,RunId)
+#     ]
+#     rm(csv_data)
+#     
+#     return(list("episode_summary"=csv_data_dt_episode_summary,"run_summary"=csv_data_dt_run_summary))
+#   })
+#   
+#   
+#   episode_summary_list <- lapply(raw_activity_list,function(li){return(li[["episode_summary"]])})
+#   run_summary_list <- lapply(raw_activity_list,function(li){return(li[["run_summary"]])})
+#   
+#   episode_summary <- data.table::rbindlist(episode_summary_list)
+#   run_summary <- data.table::rbindlist(run_summary_list)
+#   output<-list("episode_summary"=episode_summary,"run_summary"=run_summary)
+#   save(output,file=cache_version_filepath)
+#   return(output)
+# }
+
+
 get_presummarized_csv_activity_dt <-function(source_path){
   file_list <- get_csv_file_list(source_path)
   cache_version_filepath <- paste0(source_path,"get_presummarized_csv_activity_dt_20210902_cache.RData")
@@ -130,15 +206,17 @@ get_presummarized_csv_activity_dt <-function(source_path){
     load(cache_version_filepath)
     return(output)
   }
-  
-  
-  #now we want to iterate through each of those and output the data
-  raw_activity_list <- apply(file_list,1,function(row){
-    #print(row[["full_code"]])
+  episode_summary_list<-list()
+  run_summary_list <- list()
+  print(file_list)
+  for (row_i in 1:nrow(file_list)){
+    
+    row <- file_list[row_i,]
+    print(row[["filename"]])
     cat(".")
     #load the spreadsheet
     csv_data_dt <- readr::read_csv(
-      paste0(source_path,row[["filename"]])) %>% data.table
+      paste0(source_path,row[["filename"]]),show_col_types = FALSE) %>% data.table
     
     #clean the data
     colnames(csv_data_dt)[1] <- "EpisodeType"
@@ -183,15 +261,19 @@ get_presummarized_csv_activity_dt <-function(source_path){
     ]
     rm(csv_data_dt)
     
-    return(list("episode_summary"=csv_data_dt_episode_summary,"run_summary"=csv_data_dt_run_summary))
-  })
+    episode_summary_list <- append(episode_summary_list,list(csv_data_dt_episode_summary))
+    run_summary_list <- append(run_summary_list,list(csv_data_dt_run_summary))
+    
+    print(length(episode_summary_list))
+    print(length(run_summary_list))
+    gc()
+    
+  }
+  print("finished getting the lists. concatenating...")
+  episode_summary <- rbindlist(episode_summary_list)
+  run_summary <- rbindlist(run_summary_list)
   
   
-  episode_summary_list <- lapply(raw_activity_list,function(li){return(li[["episode_summary"]])})
-  run_summary_list <- lapply(raw_activity_list,function(li){return(li[["run_summary"]])})
-  
-  episode_summary <- data.table::rbindlist(episode_summary_list)
-  run_summary <- data.table::rbindlist(run_summary_list)
   output<-list("episode_summary"=episode_summary,"run_summary"=run_summary)
   save(output,file=cache_version_filepath)
   return(output)

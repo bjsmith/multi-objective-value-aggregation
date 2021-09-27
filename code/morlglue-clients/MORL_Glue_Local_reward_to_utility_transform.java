@@ -15,7 +15,7 @@ import experiments.LocalExperiment.ExperimentSettings;
 import experiments.LocalExperiment.ExperimentBuilder;
 
 
-public class MORL_Glue_Local_pilot_eeba_rolf
+public class MORL_Glue_Local_reward_to_utility_transform
 {
 	public static interface AgentGenerator
 	{
@@ -89,7 +89,6 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 //			put("ROLF_EXP_LOG1", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}); } });
 
 			
-			//run the two below
 			// Peter's agents
 			put("Peter_Linear", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectLinearWeightedAgent();}});
 //			put("SingleObjective", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new SideEffectSingleObjectiveAgent();}});
@@ -101,14 +100,14 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 			
 			
 			//Using reward to utility transformation function (in other words, "utility function") near agent entry point
-//			put("LELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA", "SUM"});}});
-//			put("SFMLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA", "SUM"});}});
-//			put("ELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA", "SUM"});}});
-//			put("SFLLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA", "SUM"});}});
-//			put("SEBA2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"SEBA", "SUM"}); } });
-//			put("EEBA2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"EEBA", "SUM"}); } });
-//			put("ROLF_EXP_LOG2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"ROLF_EXP", "SUM_LOG"}); } });
-//			
+			put("LELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA", "SUM"});}});
+			put("SFMLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA", "SUM"});}});
+			put("ELA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA", "SUM"});}});
+			put("SFLLA2", new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA", "SUM"});}});
+			put("SEBA2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"SEBA", "SUM"}); } });
+			put("EEBA2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"EEBA", "SUM"}); } });
+			put("ROLF_EXP_LOG2", new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"ROLF_EXP", "SUM_LOG"}); } });
+			
 		}};
 
 		// comment out agents that you don't want to run (at least one needed per list)
@@ -187,7 +186,7 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 		int num_repetitions = 100; //number of times to repeat each exeriment.
 		
 		String experiment_id = "NoScale";
-		String outpath = "data/multirun_n" +num_repetitions + "_eeba_rolf";
+		String outpath = "data/multirun_n" +num_repetitions + "_reward_to_util_transform";
 		String format = "csv";
 		
 		System.out.println("SAVING TO PATH: "+outpath);

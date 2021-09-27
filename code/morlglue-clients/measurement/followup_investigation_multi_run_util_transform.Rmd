@@ -30,8 +30,8 @@ Now--great--can we compare different sheets?
 
 #source_path <- "../data/multirun_n100_eeba_rolf/"
 #source_path <- "../data/multirun_n100_eeba_rolf_attempt2/"
-#source_path <- "/Volumes/SeagateTimeMachine/workspace/morl_project_data/morlglue-clients-data/multirun_n100_reward_to_util_transform/"
-comparison_folder <- "multirun_n100_eeba_rolf"
+#comparison_folder <- "multirun_n100_eeba_rolf"
+comparison_folder <- "multirun_n100_reward_to_util_transform"
 source_path <- paste0("/Volumes/SeagateTimeMachine/workspace/morl_project_data/morlglue-clients-data/",comparison_folder,"/")
 start_time <- Sys.time()
 
@@ -194,8 +194,8 @@ table_env_run_means <- table_env[,
 
 setnames(table_env_run_means,"V1","Run_Mean_R^*")
 
-ctrl_agent<-"TLO_A"
-#ctrl_agent<-"LIN_SUM"
+#ctrl_agent<-"TLO_A"
+ctrl_agent<-"LIN_SUM"
 
 control_run_means <- table_env_run_means[Agent==ctrl_agent]
 control_run_means$Agent=NULL
@@ -254,10 +254,10 @@ table_env_long %>%
   mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
   #mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
   #mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
-  mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
+  #mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
   #mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
-  mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
-  mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"))) %>%
+  #mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
+  #mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"))) %>%
   mutate(Environment=linebreak(Environment)) %>%
   kable(
       #%>% order_by(c(EnvironmentClass,EnvironmentDimChange,EnvironmentValueChange))
@@ -304,6 +304,7 @@ for (env_dim in c("Performance","Alignment")){
       scale_x_continuous(trans="log10",
                          limits = c(min(relevant_activity$EnvironmentValueChange)/5,max(relevant_activity$EnvironmentValueChange)*10),
                          breaks = c(0.01,0.1,1,10,100))+
+      coord_cartesian(ylim=c(-40,20))+
       #geom_line(linetype="dashed")+
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
@@ -327,7 +328,7 @@ for (env_dim in c("Performance","Alignment")){
 
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim) & (EnvironmentClass=="Sokoban") & EnvironmentValueChange==1
                                                       & Agent=="SFLLA"
                                                       )
@@ -381,9 +382,6 @@ for (ec in unique(activity_means$EnvironmentClass)){
 
 
 ```
-
-
-For the Performance Scaling, it actually looks like it's Performance where TLO_A is performing better. Agents differ a lot on R^A; for the base scenario they prefer about equivalently on alignment, but SFLLA performs better on all the non-base scenarios. Yet overall the SFLLA scores better than TLO_A even the base scenario. With that said, it _also_ performs consistently better on Alignment.
 
 
 ### Time graphs
@@ -487,7 +485,7 @@ episode_summary_long[,Score_BMS_50:=frollapply(Score,50,blackman50_function),.(M
 ```{r }
 table(episode_summary_long$ObjectiveDimChange)
 
-tloa_sflla_compare <- episode_summary_long[Agent %in% c("TLO_A","SFLLA","EEBA1","LIN_SUM")]
+tloa_sflla_compare <- episode_summary_long#[Agent %in% c("TLO_A","SFLLA","EEBA1","LIN_SUM")]
 tloa_sflla_compare$Condition <- paste0(tloa_sflla_compare$ObjectiveDimChange,tloa_sflla_compare$EnvironmentValueChange)
 
 #to speed up plotting, only plot every 10th episode or even every 100th
@@ -505,10 +503,11 @@ for (select_env in unique(tloa_sflla_compare$EnvironmentClass)){
     )+geom_line(alpha=0.5,size=1)+
     theme(legend.position="bottom")+facet_wrap(Measure~Condition,scales="free",ncol = 5)+
     coord_cartesian(xlim = c(0,max(tloa_sflla_compare$`Episode number`,na.rm = TRUE)*1.2))+
-    geom_dl(aes(label=Agent),method=list("last.qp",cex=0.6),alpha=1)+
+    geom_dl(aes(label=Agent),method=list("last.qp",cex=0.8),alpha=1)+
     labs(y="Score",title=select_env)
   
   print(to_plot)
+  
   ggsave(filename=paste0(output_dir, comparison_folder, "_progress_",select_env,".pdf"),plot=to_plot,device="pdf",width = 12,height=10)
 }
 
@@ -517,166 +516,3 @@ for (select_env in unique(tloa_sflla_compare$EnvironmentClass)){
 ```
 
 
-### Testing the activity file
-
-
-
-```{r}
-raw_activity_sample <- raw_activity[sample(nrow(raw_activity),10000,replace=FALSE),]
-
-```
-
-```{r}
-raw_activity_sample$RecalculatedRStar <- raw_activity_sample$`R^A`*50 + raw_activity_sample$`R^P`
-```
-
-
-
-
-Is this what we are expecting? Perhaps? When applying these scalings, I was aiming to not alter the R^* output, only the R^A and R^P individually. So if you scale these _back_ by the EnvironmentValueChange, perhaps they'll be back to normal????
-
-No, because even within rew/pen groups there is still unexplained variance...
-
-How do we explain the variance below?
-
-
-
-```{r}
-
-rasec <- raw_activity %>% filter((EnvironmentVariant=="Base") & (EpisodeType=="Online")) 
-rasec$RecalculatedRStar <- -rasec$`R^A`*50 + rasec$`R^P`
-print(ggplot(rasec,aes(x=RecalculatedRStar,y=`R^*`,color=EnvironmentClass))+geom_point(alpha=0.3)+
-        facet_wrap(~Agent,nrow = 2)
-        )
-```
-Examining the Excel files related to TLO_A and SFLLA, they end up with the same results: 36 for Performance, 0 for Alignment
-
-
-OK, so having looked at this, it does seem like there are elements going on that are simply not recorded in R^\*. But that's OK; we can still look at the Alignment and Performance objectives to see where the model came to perform well.
-
-It will be probably useful to focus on BreakableBottles since that is the environment wher we really got good performance.
-
-```{r}
-activity_bb2way <- activity_long %>% filter((EnvironmentClass=="BreakableBottles" | EnvironmentClass=="UnbreakableBottles") & (EpisodeType=="Online") 
-                                            & (Agent %in% c("SFLLA","TLO_A"))
-                                            ) 
-```
-
-
-
-```{r,fig.width=8}
- penalties_plot <-  ggplot(activity_bb2way %>% filter((ObjectiveDimChange==odc | ObjectiveDimChange=="") & Measure=="R^A" & EnvironmentValueChange==1),
-             aes(x=`Episode number`,y=ScoreBlackman200,color=interaction(Agent,EnvironmentClass)))+geom_line(size=1)+
-        #facet_grid(~,scales = "free")+
-  labs(y="R^A", title="Unbreakable Bottles receives heavier Alignment penalties than BreakableBottles")+
-  guides(color=guide_legend(nrow=2,byrow=TRUE))+
-        theme(legend.position = "bottom",legend.title = element_blank())
-
-print(penalties_plot)
-ggsave(filename=paste0(output_dir, "penalty_plot.pdf"),plot=penalties_plot,device="pdf")
-```
-
-
-```{r}
-activity_bb2way <- activity_long %>% filter((EnvironmentClass=="BreakableBottles") & (EpisodeType=="Online") & (Agent %in% c("SFLLA","TLO_A"))) 
-
-activity_bb2way_base <- activity_bb2way %>% filter((EnvironmentValueChange==1))
-
-```
-
-```{r}
-print(ggplot(activity_bb2way_base,
-             aes(x=`Episode number`,y=ScoreBlackman200,color=Agent))+geom_line(alpha=0.6)+
-        facet_wrap(~Measure,nrow = 2,scales = "free")
-        )
-```
-
-That finding is just for the base. What if we extend this to the other reward scalings?
-
-
-```{r,fig.width=10}
-for (odc in c("Alignment","Performance")){
-  print(ggplot(activity_bb2way %>% filter((ObjectiveDimChange==odc) | ObjectiveDimChange==""),
-             aes(x=`Episode number`,y=ScoreBlackman200,color=Agent))+geom_line(alpha=0.6)+
-        facet_grid(Measure~EnvironmentValueChange,scales = "free")+
-        theme(legend.position = "top")
-        )
-}
-
-```
-With Alignment value change, $TLO^A$ seems to settle on a suboptimal solution as measured by R^*, uniquely for the 0.1 scale level, although this is not apparent from $R^P$.
-
-With Performance value scale change, $TLO_A$ and SFLLA perform equivalently in teh end, but in many cases, SFLLA reaches a solution more quickly, which enables it to obtain a better Online $R*^$ score.
-
-Does this also mean that there is less $R^A$ alignment error for SFLLA?
-
-```{r}
-#let's get the SUM of alignment error across the period
-res <- (activity_bb2way %>% filter(Measure=="R^A") %>% 
-  group_by(Agent,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange) %>% 
-  summarize(alignment_error_sum = sum(Score)) %>%
-  tidyr::spread(Agent,alignment_error_sum))
-
-res$PerformanceDifferences <- res$SFLLA - res$TLO_A
-
-res
-```
-
-Yes--there's substantially less AlignmentError as BreakableBottles continues to learn. That's a good sign; while learning BreakableBottles, SFLLA tends to learn faster and thus break fewer bottles because it more swiftly gets into alignment.
-
-
-
-While we are here, what about performance error?
-
-
-```{r}
-#let's get the SUM of alignment error across the period
-res <- (activity_2way %>% filter(Measure=="R^P") %>% 
-  group_by(Agent,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange) %>% 
-  summarize(alignment_error_sum = sum(Score)) %>%
-  tidyr::spread(Agent,alignment_error_sum))
-
-res$PerformanceDifferences <- res$SFLLA - res$TLO_A
-
-res
-```
-With performance, the result is more mixed--sometimes, we see a performance improvement, and other times, there is a performance deficit. Still, in the base case without any Environment Value Change, we see a strong increase in performance.
-
-
-How about the other environments?
-
-
-
-```{r}
-activity_2way <- activity_long %>% filter((EpisodeType=="Online") & (Agent %in% c("SFLLA","TLO_A"))) 
-
-```
-
-
-
-```{r}
-res <- (activity_2way %>% filter(Measure=="R^A") %>% 
-  group_by(Agent,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange) %>% 
-  summarize(alignment_error_sum = sum(Score)) %>%
-  tidyr::spread(Agent,alignment_error_sum))
-
-res$PerformanceDifferences <- res$SFLLA - res$TLO_A
-
-res
-```
-
-
-
-For other environments, performance is more mixed. In particular, SFLLA tends to perform _less_ well in the UnbreakableBottles scenario. Why would it be a superior performer in BreakableBottles but perform less well in UnbreakableBottles?
-
-
-```{r}
-res <- (activity_2way %>% filter(Measure=="R^*") %>% 
-  group_by(Agent,EnvironmentClass,EnvironmentValueChange,ObjectiveDimChange) %>% 
-  summarize(alignment_error_sum = sum(Score)) %>%
-  tidyr::spread(Agent,alignment_error_sum))
-
-res$PerformanceDifferences <- res$SFLLA - res$TLO_A
-
-res
-```
