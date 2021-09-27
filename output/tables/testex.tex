@@ -1,78 +1,79 @@
 
-\begin{tabular}{>{\raggedright\arraybackslash}p{5em}>{\raggedleft\arraybackslash}p{4em}>{\raggedright\arraybackslash}p{4.5em}rrrrr}
+\begin{tabular}{>{\raggedright\arraybackslash}p{5em}>{\raggedleft\arraybackslash}p{4em}>{\raggedright\arraybackslash}p{4.5em}rrrrrlrl}
 \toprule
-Environment & Objective Modified & Objective Scale & EEBA1 & ROLF_EXP_LOG1 & SEBA & SFELLA & TLO$^A$\\
+Environment & Objective Modified & Objective Scale & EEBA1 & LIN_SUM & Linear & Peter_Linear & ROLF_EXP_LOG1 & SEBA & SFELLA & TLO$^A$\\
 \midrule
- &  & 1 & 1.40** & 4.08*** & \textcolor{black}{1.43**} & \textcolor{blue}{6.54***} & \textcolor{black}{1.81}\\
-\cmidrule{2-8}
- &  & 0.01 & 1.27 & 4.39*** & \textcolor{black}{1.33} & \textcolor{black}{1.38} & \textcolor{black}{1.46}\\
+ &  & 1 & 1.40** & 1.48* & 5.27*** & 5.46*** & 4.08*** & \textcolor{black}{1.43**} & \textcolor{blue}{6.54***} & \textcolor{black}{1.81}\\
+\cmidrule{2-11}
+ &  & 0.01 & 1.27 & 1.47 & 1.34 & 1.44 & 4.39*** & \textcolor{black}{1.33} & \textcolor{black}{1.38} & \textcolor{black}{1.46}\\
 
- &  & 0.1 & 1.38 & 4.21*** & \textcolor{black}{1.39} & \textcolor{black}{1.88**} & \textcolor{black}{1.41}\\
+ &  & 0.1 & 1.38 & 1.37 & 1.37 & 1.35 & 4.21*** & \textcolor{black}{1.39} & \textcolor{black}{1.88**} & \textcolor{black}{1.41}\\
 
- &  & 10 & 6.08*** & 3.45*** & \textcolor{blue}{6.32***} & \textcolor{black}{4.44***} & \textcolor{black}{-0.22}\\
+ &  & 10 & 6.08*** & 5.61*** & 6.11*** & 6.03*** & 3.45*** & \textcolor{blue}{6.32***} & \textcolor{black}{4.44***} & \textcolor{black}{-0.22}\\
 
- & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & -7.12*** & -4.08*** & \textcolor{blue}{2.22***} & \textcolor{black}{-3.49***} & \textcolor{black}{-0.48}\\
-\cmidrule{2-8}
- &  & 0.01 & 5.85*** & 5.45*** & \textcolor{blue}{6.34***} & \textcolor{black}{5.51***} & \textcolor{black}{1.96}\\
+ & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & -7.12*** & 6.05*** & 3.16*** & 3.33*** & -4.08*** & \textcolor{black}{2.22***} & \textcolor{black}{-3.49***} & \textcolor{black}{-0.48}\\
+\cmidrule{2-11}
+ &  & 0.01 & 5.85*** & 6.01*** & 3.10*** & 3.14*** & 5.45*** & \textcolor{blue}{6.34***} & \textcolor{black}{5.51***} & \textcolor{black}{1.96}\\
 
- &  & 0.1 & 5.89*** & 5.38*** & \textcolor{black}{2.46**} & \textcolor{blue}{6.43***} & \textcolor{black}{1.88}\\
+ &  & 0.1 & 5.89*** & 5.43*** & 6.08*** & 6.02*** & 5.38*** & \textcolor{black}{2.46**} & \textcolor{blue}{6.43***} & \textcolor{black}{1.88}\\
 
- &  & 10 & 1.50* & -14.73*** & \textcolor{black}{1.41**} & \textcolor{blue}{6.51***} & \textcolor{black}{1.77}\\
+ &  & 10 & 1.50* & 1.44* & 1.32*** & 1.38** & -14.73*** & \textcolor{black}{1.41**} & \textcolor{blue}{6.51***} & \textcolor{black}{1.77}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Breakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & 1.48* & -12.83*** & \textcolor{black}{1.46**} & \textcolor{blue}{6.40***} & \textcolor{black}{1.81}\\
-\cmidrule{1-8}
- &  & 1 & 1.47*** & -9.33*** & \textcolor{black}{-0.48***} & \textcolor{blue}{4.38***} & \textcolor{black}{3.87}\\
-\cmidrule{2-8}
- &  & 0.01 & -0.76** & -9.34*** & \textcolor{black}{-0.73*} & \textcolor{black}{-0.58} & \textcolor{black}{-0.49}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Breakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & 1.48* & 1.35*** & 1.50* & 1.35*** & -12.83*** & \textcolor{black}{1.46**} & \textcolor{blue}{6.40***} & \textcolor{black}{1.81}\\
+\cmidrule{1-11}
+ &  & 1 & 1.47*** & -0.47*** & 8.53*** & 8.32*** & -9.33*** & \textcolor{black}{-0.48***} & \textcolor{black}{4.38***} & \textcolor{black}{3.87}\\
+\cmidrule{2-11}
+ &  & 0.01 & -0.76** & -0.48 & 1.15*** & 1.16*** & -9.34*** & \textcolor{black}{-0.73*} & \textcolor{black}{-0.58} & \textcolor{black}{-0.49}\\
 
- &  & 0.1 & -0.54 & -9.32*** & \textcolor{black}{-0.64} & \textcolor{blue}{8.29***} & \textcolor{black}{-0.63}\\
+ &  & 0.1 & -0.54 & -0.52 & 1.10*** & 1.07*** & -9.32*** & \textcolor{black}{-0.64} & \textcolor{blue}{8.29***} & \textcolor{black}{-0.63}\\
 
- &  & 10 & 3.53 & -9.71*** & \textcolor{blue}{3.43} & \textcolor{blue}{3.74} & \textcolor{blue}{3.63}\\
+ &  & 10 & 3.53 & 5.75*** & 5.96*** & 5.94*** & -9.71*** & \textcolor{black}{3.43} & \textcolor{black}{3.74} & \textcolor{black}{3.63}\\
 
- & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 3.59*** & -9.88*** & \textcolor{black}{3.16**} & \textcolor{black}{2.73} & \textcolor{black}{2.82}\\
-\cmidrule{2-8}
- &  & 0.01 & 3.70** & 3.59*** & \textcolor{black}{3.43***} & \textcolor{black}{3.66***} & \textcolor{blue}{4.09}\\
+ & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 3.59*** & 3.95*** & 5.21*** & 5.30*** & -9.88*** & \textcolor{black}{3.16**} & \textcolor{black}{2.73} & \textcolor{black}{2.82}\\
+\cmidrule{2-11}
+ &  & 0.01 & 3.70** & 4.05 & 5.16*** & 5.35*** & 3.59*** & \textcolor{black}{3.43***} & \textcolor{black}{3.66***} & \textcolor{black}{4.09}\\
 
- &  & 0.1 & 4.36*** & 3.67* & \textcolor{blue}{5.39***} & \textcolor{black}{4.10} & \textcolor{black}{3.91}\\
+ &  & 0.1 & 4.36*** & 5.71*** & 6.14*** & 6.04*** & 3.67* & \textcolor{black}{5.39***} & \textcolor{black}{4.10} & \textcolor{black}{3.91}\\
 
- &  & 10 & -0.40*** & -14.18*** & \textcolor{black}{-0.70***} & \textcolor{blue}{4.41***} & \textcolor{blue}{3.97}\\
+ &  & 10 & -0.40*** & -0.67*** &  & 1.10*** & -14.18*** & \textcolor{black}{-0.70***} & \textcolor{blue}{4.41***} & \textcolor{blue}{3.97}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Doors} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & -0.71*** & -13.75*** & \textcolor{black}{-0.51***} & \textcolor{blue}{4.17**} & \textcolor{blue}{3.85}\\
-\cmidrule{1-8}
- &  & 1 & -15.03*** & 5.28*** & \textcolor{black}{-14.98***} & \textcolor{black}{-10.29***} & \textcolor{blue}{10.76}\\
-\cmidrule{2-8}
- &  & 0.01 & -14.99 & 2.81*** & \textcolor{black}{-15.02} & \textcolor{black}{-14.97} & \textcolor{black}{-14.97}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Doors} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & -0.71*** & -0.58*** & \multirow[t]{-2}{*}{\raggedleft\arraybackslash 1.16***} & 1.09*** & -13.75*** & \textcolor{black}{-0.51***} & \textcolor{blue}{4.17**} & \textcolor{blue}{3.85}\\
+\cmidrule{1-11}
+ &  & 1 & -15.03*** & -14.97*** & -14.19*** &  & 5.28*** & \textcolor{black}{-14.98***} & \textcolor{black}{-10.29***} & \textcolor{blue}{10.76}\\
+\cmidrule{2-6}
+\cmidrule{8-11}
+ &  & 0.01 & -14.99 & -14.98 &  & \multirow[t]{-2}{*}{\raggedleft\arraybackslash -14.26***} & 2.81*** & \textcolor{black}{-15.02} & \textcolor{black}{-14.97} & \textcolor{black}{-14.97}\\
 
- &  & 0.1 & -15.00 & 4.80*** & \textcolor{black}{-14.96} & \textcolor{black}{-14.98} & \textcolor{black}{-14.95}\\
+ &  & 0.1 & -15.00 & -14.99 & \multirow[t]{-2}{*}{\raggedleft\arraybackslash -14.27***} & -14.24*** & 4.80*** & \textcolor{black}{-14.96} & \textcolor{black}{-14.98} & \textcolor{black}{-14.95}\\
 
- &  & 10 & 10.89*** & 3.43*** & \textcolor{blue}{10.88***} & \textcolor{blue}{10.92***} & \textcolor{blue}{10.72}\\
+ &  & 10 & 10.89*** & -14.95*** & 11.04*** & 11.10*** & 3.43*** & \textcolor{blue}{10.88***} & \textcolor{blue}{10.92***} & \textcolor{blue}{10.72}\\
 
- & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 3.55*** & -0.10*** & \textcolor{blue}{10.82***} & \textcolor{black}{3.76***} & \textcolor{blue}{10.49}\\
-\cmidrule{2-8}
- &  & 0.01 & 10.83 & 10.86* & \textcolor{blue}{10.91***} & \textcolor{blue}{10.86*} & \textcolor{blue}{10.77}\\
+ & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 3.55*** & 10.86*** & 10.94*** & 10.94*** & -0.10*** & \textcolor{blue}{10.82***} & \textcolor{black}{3.76***} & \textcolor{blue}{10.49}\\
+\cmidrule{2-11}
+ &  & 0.01 & 10.83 & 10.82 & 10.96*** & 10.98*** & 10.86* & \textcolor{blue}{10.91***} & \textcolor{blue}{10.86*} & \textcolor{blue}{10.77}\\
 
- &  & 0.1 & -14.99*** & 10.82 & \textcolor{black}{-14.96***} & \textcolor{black}{5.97***} & \textcolor{blue}{10.82}\\
+ &  & 0.1 & -14.99*** & -14.95*** & 11.10*** & 11.06*** & 10.82 & \textcolor{black}{-14.96***} & \textcolor{black}{5.97***} & \textcolor{blue}{10.82}\\
 
- &  & 10 & -15.00*** & -5.30*** & \textcolor{black}{-15.01***} & \textcolor{black}{-11.05***} & \textcolor{blue}{10.88}\\
+ &  & 10 & -15.00*** & -14.98*** & -14.26*** & -14.20*** & -5.30*** & \textcolor{black}{-15.01***} & \textcolor{black}{-11.05***} & \textcolor{blue}{10.88}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Sokoban} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & -14.96*** & -6.69*** & \textcolor{black}{-14.96***} & \textcolor{black}{-10.97***} & \textcolor{blue}{10.82}\\
-\cmidrule{1-8}
- &  & 1 & 28.70*** & 16.35*** & \textcolor{blue}{28.71***} & \textcolor{blue}{27.99***} & \textcolor{blue}{27.09}\\
-\cmidrule{2-8}
- &  & 0.01 & 28.76 & 16.82*** & \textcolor{blue}{28.70} & \textcolor{blue}{28.73} & \textcolor{blue}{28.79}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Sokoban} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & -14.96*** & -14.97*** & -14.30*** & -14.24*** & -6.69*** & \textcolor{black}{-14.96***} & \textcolor{black}{-10.97***} & \textcolor{blue}{10.82}\\
+\cmidrule{1-11}
+ &  & 1 & 28.70*** & 28.76*** & 28.72*** & 28.71*** & 16.35*** & \textcolor{blue}{28.71***} & \textcolor{blue}{27.99***} & \textcolor{blue}{27.09}\\
+\cmidrule{2-11}
+ &  & 0.01 & 28.76 & 28.74 & 28.63** & 28.75 & 16.82*** & \textcolor{blue}{28.70} & \textcolor{blue}{28.73} & \textcolor{blue}{28.79}\\
 
- &  & 0.1 & 28.75 & 16.51*** & \textcolor{blue}{28.72} & \textcolor{blue}{28.74} & \textcolor{blue}{28.72}\\
+ &  & 0.1 & 28.75 & 28.77 & 28.73 & 28.73 & 16.51*** & \textcolor{blue}{28.72} & \textcolor{blue}{28.74} & \textcolor{blue}{28.72}\\
 
- &  & 10 & 27.15*** & 15.81*** & \textcolor{blue}{27.62***} & \textcolor{blue}{25.90***} & \textcolor{black}{23.37}\\
+ &  & 10 & 27.15*** & 28.72*** & 27.54*** & 27.47*** & 15.81*** & \textcolor{blue}{27.62***} & \textcolor{blue}{25.90***} & \textcolor{black}{23.37}\\
 
- & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 25.27*** & 14.91 & \textcolor{blue}{25.66***} & \textcolor{black}{18.67***} & \textcolor{black}{14.60}\\
-\cmidrule{2-8}
- &  & 0.01 & 27.04 & 26.75** & \textcolor{blue}{27.73***} & \textcolor{blue}{26.79*} & \textcolor{blue}{26.98}\\
+ & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Alignment} & 100 & 25.27*** & 27.42*** & 24.26*** & 24.13*** & 14.91 & \textcolor{blue}{25.66***} & \textcolor{black}{18.67***} & \textcolor{black}{14.60}\\
+\cmidrule{2-11}
+ &  & 0.01 & 27.04 & 27.31*** & 24.29*** & 24.09*** & 26.75** & \textcolor{blue}{27.73***} & \textcolor{blue}{26.79*} & \textcolor{blue}{26.98}\\
 
- &  & 0.1 & 28.61*** & 26.48*** & \textcolor{blue}{28.66***} & \textcolor{blue}{27.82***} & \textcolor{blue}{27.15}\\
+ &  & 0.1 & 28.61*** & 28.64*** & 27.46*** & 27.51*** & 26.48*** & \textcolor{blue}{28.66***} & \textcolor{blue}{27.82***} & \textcolor{blue}{27.15}\\
 
- &  & 10 & 28.70*** & 7.50*** & \textcolor{blue}{28.78***} & \textcolor{blue}{27.91***} & \textcolor{blue}{27.10}\\
+ &  & 10 & 28.70*** & 28.69*** & 28.71*** & 28.71*** & 7.50*** & \textcolor{blue}{28.78***} & \textcolor{blue}{27.91***} & \textcolor{blue}{27.10}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Unbreakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & 28.69*** & 16.01*** & \textcolor{blue}{28.75***} & \textcolor{blue}{27.85***} & \textcolor{blue}{27.08}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Unbreakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & 28.69*** & 28.71*** & 28.76*** & 28.74*** & 16.01*** & \textcolor{blue}{28.75***} & \textcolor{blue}{27.85***} & \textcolor{blue}{27.08}\\
 \bottomrule
 \end{tabular}
