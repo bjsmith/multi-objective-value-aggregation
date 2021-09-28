@@ -74,20 +74,20 @@ public class MORL_Glue_Local_gen_vary_step_granularity extends MORL_Glue_Local_B
 				//put("MIN1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "MIN"}, granularity_set[0], granularity_set[1]);}});
 	
 				put("ELA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "ELA"}, granularity_set[0], granularity_set[1]);}});
-				put("SFMLA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "SFMLA"}, granularity_set[0], granularity_set[1]);}});
+//				put("SFMLA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "SFMLA"}, granularity_set[0], granularity_set[1]);}});
 				put("SFLLA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "SFLLA"}, granularity_set[0], granularity_set[1]);}});
-				put("LELA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"}, granularity_set[0], granularity_set[1]);}});
+//				put("LELA1" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"IDENT", "LELA"}, granularity_set[0], granularity_set[1]);}});
 				put("SEBA1" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "SEBA"}, granularity_set[0], granularity_set[1]); } });
-				put("EEBA1" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}, granularity_set[0], granularity_set[1]); } });
+//				put("EEBA1" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "EEBA"}, granularity_set[0], granularity_set[1]); } });
 				put("ROLF_EXP_LOG1" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"IDENT", "ROLF_EXP_LOG"}, granularity_set[0], granularity_set[1]); } });
 				
 				//reward to utility transformation function near agent entry point
 				put("ELA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"ELA", "SUM"}, granularity_set[0], granularity_set[1]);}});
-				put("SFMLA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA", "SUM"}, granularity_set[0], granularity_set[1]);}});
+//				put("SFMLA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFMLA", "SUM"}, granularity_set[0], granularity_set[1]);}});
 				put("SFLLA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"SFLLA", "SUM"}, granularity_set[0], granularity_set[1]);}});
-				put("LELA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA", "SUM"}, granularity_set[0], granularity_set[1]);}});
+//				put("LELA2" + agent_name_sufix, new AgentGenerator(){public AgentInterface getAgent(String[] args) {return new Agg_Agent(new String[] {"LELA", "SUM"}, granularity_set[0], granularity_set[1]);}});
 				put("SEBA2" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"SEBA", "SUM"}, granularity_set[0], granularity_set[1]); } });
-				put("EEBA2" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"EEBA", "SUM"}, granularity_set[0], granularity_set[1]); } });
+//				put("EEBA2" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"EEBA", "SUM"}, granularity_set[0], granularity_set[1]); } });
 				put("ROLF_EXP_LOG2" + agent_name_sufix, new AgentGenerator() { public AgentInterface getAgent(String[] args) { return new Agg_Agent(new String[] {"ROLF_EXP", "SUM_LOG"}, granularity_set[0], granularity_set[1]); } });
 				
 				// Peter's agents
@@ -162,7 +162,7 @@ public class MORL_Glue_Local_gen_vary_step_granularity extends MORL_Glue_Local_B
 		
 			// define experiment settings
 			String experiment_id = "NoScale";
-			String outpath = "data";
+			String outpath = "data/vary_granularity";
 			int num_online = 5000;
 			int num_offline = 500;
 			int max_episode_length = 1000; //number of TRIALS in EPISODE

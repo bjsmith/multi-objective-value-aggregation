@@ -636,25 +636,25 @@ for (select_env in unique(tloa_sflla_compare$EnvironmentClass)){
 
 ```{r fig.width=8}
 
-select_env <- "BreakableBottles"
-to_plot <- ggplot(
-  tloa_sflla_compare[EpisodeType=="Online" & EnvironmentClass==select_env & Condition=="1"] %>% 
-     mutate(Agent = 
-           factor(
-  .$Agent,
-  levels = c("SEBA","SFLLA","TLO_A","LIN_SUM")) #set order
-           ),
-  aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
-  )+geom_line(alpha=0.5,size=1)+
-  theme(legend.position="bottom")+facet_wrap(~Measure,scales="free")+
-  coord_cartesian(xlim = c(0,max(tloa_sflla_compare$`Episode number`,na.rm = TRUE)*1.2))+
-  geom_dl(aes(label=Agent),method=list("last.qp",cex=0.6),alpha=1)+
-  labs(y="Score",title=select_env)
+for (select_env in unique(tloa_sflla_compare$EnvironmentClass)){
+  to_plot <- ggplot(
+    tloa_sflla_compare[EpisodeType=="Online" & EnvironmentClass==select_env & Condition=="1"] %>% 
+       mutate(Agent = 
+             factor(
+    .$Agent,
+    levels = c("SEBA","SFLLA","TLO_A","LIN_SUM")) #set order
+             ),
+    aes(x=`Episode number`,y=Score_BMS_50,color=Agent,group=Agent)
+    )+geom_line(alpha=0.5,size=1)+
+    theme(legend.position="bottom")+facet_wrap(~Measure,scales="free")+
+    coord_cartesian(xlim = c(0,max(tloa_sflla_compare$`Episode number`,na.rm = TRUE)*1.2))+
+    geom_dl(aes(label=Agent),method=list("last.qp",cex=0.6),alpha=1)+
+    labs(y="Score",title=select_env)
+  
+  print(to_plot)
+  ggsave(filename=paste0(output_dir, comparison_folder, "_default_scale_progress_",select_env,".pdf"),plot=to_plot,device="pdf",width = 9,height=4)
 
-print(to_plot)
-ggsave(filename=paste0(output_dir, comparison_folder, "_default_scale_progress_",select_env,".pdf"),plot=to_plot,device="pdf",width = 9,height=4)
-
-
+}
 
 ```
 
