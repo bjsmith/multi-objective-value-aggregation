@@ -499,6 +499,59 @@ for (ec in unique(activity_means$EnvironmentClass)){
 For the Performance Scaling, it actually looks like it's Performance where TLO_A is performing better. Agents differ a lot on R^A; for the base scenario they prefer about equivalently on alignment, but SFLLA performs better on all the non-base scenarios. Yet overall the SFLLA scores better than TLO_A even the base scenario. With that said, it _also_ performs consistently better on Alignment.
 
 
+### UnbreakableBottles
+
+```{r eval=FALSE, fig.width=8, include=FALSE}
+
+activity_means <- run_summary[
+  EpisodeType=="Online" & 
+    (Agent %in% c("TLO_A","SFLLA","SEBA")) & 
+    (EnvironmentClass=="UnbreakableBottles") & 
+    (EnvironmentVariant=="Base")] %>%
+  mutate(Agent = 
+           factor(
+  .$Agent,
+  levels = c("SEBA","SFLLA","TLO_A")) #set order
+           ) %>%
+  select(`R^*`,`R^P`,`R^A`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+  melt(measure.vars = c("R^*","R^P","R^A"))
+  
+
+#now do 
+for (ec in unique(activity_means$EnvironmentClass)){
+#  for (env_dim in c("Performance","Alignment")){
+    relevant_activity <- activity_means #%>% dplyr::filter((ObjectiveDimChange %in% c("",env_dim)) & EnvironmentClass==ec)
+      baseplot <- ggplot(relevant_activity,aes(x=Agent,y=value,fill=Agent,color=Agent))+
+        #geom_point(size=6,alpha=0.4,shape=21,color="black")+
+        geom_violin(position="dodge",alpha=0.2,size=0.1)+
+        # scale_x_continuous(trans="log10",
+        #                    limits = c(min(relevant_activity$EnvironmentValueChange),max(relevant_activity$EnvironmentValueChange)*10),
+        #                    breaks = c(0.01,0.1,1,10,100))+
+        #geom_line(linetype="dashed")+
+        #geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
+        facet_wrap(~variable,scales = "free")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
+          labs(
+            x=paste0("Agent"),
+            
+            title=paste0("Distribution for Online score for ",ec),
+            subtitle="Across 5000 trials"
+            )
+        
+      paper_plot <- baseplot 
+      ggsave(filename=paste0(output_dir, ec, "_online_base_UnbreakableBottles.pdf"),plot=paper_plot,device="pdf",width = 9,height=4)
+      presentation_plot <- baseplot
+      #ggsave(filename=paste0(output_dir, "online",env_dim,".png"),plot=presentation_plot,device="png",width = 6,height=6)
+      print(presentation_plot)
+      
+
+#  }
+  
+}
+
+
+```
+
+
 
 
 ### Time graphs
