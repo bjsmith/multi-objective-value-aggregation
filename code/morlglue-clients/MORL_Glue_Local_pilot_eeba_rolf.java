@@ -185,7 +185,7 @@ public class MORL_Glue_Local_pilot_eeba_rolf
 		int num_online = 5000;
 		int num_offline = 500;
 		int max_episode_length = 1000; //number of TRIALS in EPISODE
-		int num_repetitions = 100; //number of times to repeat each exeriment.
+		int num_repetitions = 100; //number of times to repeat each experiment.
 		
 		String experiment_id = "NoScale";
 		String outpath = "data/multirun_n" +num_repetitions + "_eeba_rolf";

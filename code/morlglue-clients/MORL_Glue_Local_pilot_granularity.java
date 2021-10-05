@@ -97,6 +97,8 @@ public class MORL_Glue_Local_pilot_granularity
 				{10, 10},
 				{100, 100},
 		};
+
+		long startTime = System.nanoTime();
 		
 		for (double[] granularity_set: granularities) {
 		
@@ -225,17 +227,15 @@ public class MORL_Glue_Local_pilot_granularity
 			int num_online = 5000;
 			int num_offline = 500;
 			int max_episode_length = 1000; //number of TRIALS in EPISODE
-			int num_repetitions = 100; //number of times to repeat each exeriment.
+			int num_repetitions = 100; //number of times to repeat each experiment.
 		
 			String experiment_id = "NoScale";
-			String outpath = "data/multirun_n" +num_repetitions + "_eeba_rolf_attempt2";
+			String outpath = "data/multirun_n" +num_repetitions + "_pilot_granularity";
 			String format = "csv";
 		
 			System.out.println("SAVING TO PATH: "+outpath);
 			System.out.println("NUMBER OF AGENTS: "+agents.size());
 			System.out.println("NUMBER OF ENVIRONMENTS: "+envs.size());
-
-			long startTime = System.nanoTime();
 				
 	    	for(String envstring : envs.keySet()) {
 	    		experiment_id = "Test " + envstring;
