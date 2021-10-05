@@ -5,20 +5,43 @@
 
 %In the last paragraph of the Discussion section “strong points” of the study should be mentioned using “constrained”, and “not too strongly assertive” statements. Indicating limitations of the study will reflect objectivity of the authors, and provide answers to the questions which will be directed by the reviewers of the journal. On the other hand in the last paragraph, future directions or potential clinical applications may be emphasized.
 
-<<<<<<< HEAD
-Of the five agents tested, one in particular, SFELLA, consistently performed about equally or better to the state-of-the-art agent ($\text{TLO}^\text{A}$) when reward scaling was perturbed. In the BreakableBottles task particularly, SFELLA performed better while $\text{TLO}^\text{A}$ declined in performance as the primary/performance reward was magnified. This indicates that the SFELLA function is robust to changes in the incentive structure of the task in ways that the thresholded method $\text{TLO}^\text{A}$ is not. The SFELLA model heavily penalizes any change in $x$ where $x<0$, i.e., for performance objective (Figure~\ref{fig:transform_functions}, Right). This is a middle ground between ELA and LELA, which enables it to be robust but not completely insensitive to large perturbations of performance reward. Compared to the ELA function, the SFELLA maintains more sensitivity to $x$ where $x>0$, whereas for $x$ values significantly above 0, $f_{\text{ELA}}(x)$ becomes almost completely insensitive to $x$. 
-=======
-All Agents were able to successfully learn the tasks to approximately equivalent level eventually. There were differences in speed of learning and thus number of errors made along the way.
+SFLLA, SEBA, and $\text{TLO}^\text{A}$ were able to successfully learn the tasks to approximately equivalent level eventually. There were differences in speed of learning and thus number of errors made along the way. For more complex agents, speedier learning could be helpful for learning tasks more quickly. For agents that have to live in the real world, it might be very important for agents to make as few mistakes as possible along the way. In these cases, speed is not only useful for its own sake--an agent also makes less mistakes in total, and consequently, has less real-world impact.
 
-Of the five agents tested, one in particular, SFELLA, consistently performed about equally or better during learning to the state-of-the-art agent ($\text{TLO}^\text{A}$) when reward scaling was perturbed. In the BreakableBottles task particularly, SFELLA performed better while $\text{TLO}^\text{A}$ declined in performance as the primary/performance reward was magnified. This indicates that the SFELLA function is robust to changes in the incentive structure of the task in ways that the thresholded method $\text{TLO}^\text{A}$ is not. The SFELLA model heavily penalizes any change in $x$ where $x<0$, i.e., for performance objective (Figure~\ref{fig:transform_functions}, Right). This is a middle ground between ELA and LELA, which enables it to be robust but not completely insensitive to large perturbations of performance reward. Compared to the ELA function, the SFELLA maintains more sensitivity to $x$ where $x>0$, whereas for $x$ values significantly above 0, $f_{\text{ELA}}(x)$ becomes almost completely insensitive to $x$. 
+\subsection{SFELLA and reward scale perturbation across tasks}
 
-Replacing $\text{TLO}^\text{A}$ with SFELLA might be analogous to using a constraint relaxation technique (there are various - this note is for ourselves, not for paper). Continuous transformation function enables providing feedback about the RA Q value at the entire expected reward range, not only at the discontinuous threshold point.
+Of the five agents tested, one in particular, SFELLA, consistently performed significantly better during reward perturbation (Table~\ref{tab:mean_r_star_performance}) in BreakableBottles and UnbreakableBottles, and equally or significantly better in the Doors task. However, its performance was degraded during the Sokoban task.
 
-\subsection{Explaining SFELLA's performance in BreakableBottles}
+Reward Perturbation tests an agent's ability to remain flexible to 5 orders of magnitude of differences in the Performance metric. At high levels of perturbation, rewards given are 100x as strong as in the default case. The challenge for agents is to remain relatively sensitive enough to Alignment when performance rewards are so strong. The results show that even though SFELLA has no formal prioritization for the Alignment objective, its application of the log function to positive rewards mean that there are strong diminishing returns to its increasing returns in motivation.
 
-To understand SFELLA's performance in the BreakableBottles environment we need to break out performance on Alignment and Performance objectives within the environment.
+SFELLA and SEBA did not perform well in Sokoban, even in the default environment. In contrast, in the Alignment Scaling tests, SFELLA and SEBA performed much less badly in Sokoban. Perhaps in the Sokoban environment, it is especially important to get Alignment right before seeking to maximize performance in the environment.
 
-In the BreakableBottles environment, SFELLA performed fewer errors, i.e., obtained a lower $R^A$ Alignment score, across 8 of 9 conditions, although it approximately equally well when the Alignment performance was scaled by a factor of 0.01. Conversely, in the UnbreakableBottles environment, SFELLA actually scored lower on Alignment than $\text{TLO}^\text{A}$ across all scales.
+\subsection{Explaining SFELLA's performance in the Bottles environments}
+
+
+%SFELLA performned 
+In the BreakableBottles task, SFELLA performed significantly better right across all levels of Performance scaling, and significantly better across most levels of alignment scaling, although it performed worse at very high levels of alignment scaling. In the UnbreakableBottles task, although magnitudes of performance difference are hard to discern in descriptive graphs alone (Figure~\ref{fig:online_performance}), statistical testing demonstrated that across the 100 experiment repetitions, SFELLA performed significantly better or with no significance compared to  $\text{TLO}^\text{A}$ across all levels of performance or alignment (Table~\ref{tab:mean_r_star_performance}).
+
+%This indicates that the SFELLA function is robust to changes in the incentive structure of the task in ways that the thresholded method $\text{TLO}^\text{A}$ is not.
+%The SFELLA model heavily penalizes any change in $x$ where $x<0$, i.e., for performance objective (Figure~\ref{fig:transform_functions}, Right). This is a middle ground between ELA and LELA, which enables it to be robust but not completely insensitive to large perturbations of performance reward. Compared to the ELA function, the SFELLA maintains more sensitivity to $x$ where $x>0$, whereas for $x$ values significantly above 0, $f_{\text{ELA}}(x)$ becomes almost completely insensitive to $x$. 
+
+Replacing $\text{TLO}^\text{A}$ with SFELLA might be analogous to using a constraint relaxation technique--this is explored further in Experiment 2. %(there are various - this note is for ourselves, not for paper)
+Continuous transformation function enables providing feedback about the RA Q value at the entire expected reward range, not only at the discontinuous threshold point.
+
+To understand SFELLA's performance in the BreakableBottles environment we need to break out performance on Alignment and Performance objectives within the environment. Figure \ref{fig:bb_performance} describes performance across episodes within the experiment for Performance, Alignment, and Evaluation metrics.
+
+SFELLA's performance did not come from inappropriately sacrificing alignment for performance. In fact, its performance in terms of each of the agent's objectives ($\text{R}^P$, $\text{R}^A$), it performed around equivalently to $\text{TLO}^\text{A}$. Its superior performance in $\text{R}^*$ was due to the fact that it was able to balance alignment and performance throughout the period of learning the task, whereas $\text{TLO}^\text{A}$ showed signs of slow and uneven learning to achieve performance objectives while it was optimizing for alignment objectives (Figure \ref{fig:bb_performance}).
+
+\begin{figure}
+
+  \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolf_default_scale_progress_BreakableBottles.pdf}
+  \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolf_default_scale_progress_UnbreakableBottles.pdf}
+  \caption{Performance in BreakableBottles and UnbreakableBottles across the task. Because SFLLA optimizes for performance form the start of the task, it achieves a higher total performance throughout the task. However, due to its conservative tuning, it avoids overly optimizing for peformance as the linear algorithm does.
+  }
+   \label{fig:bb_performance}
+   %\Description{Online Performance and Alignment scaled performance}
+ \end{figure}
+
+%In the BreakableBottles environment, SFELLA performed fewer errors, i.e., obtained a lower $R^A$ Alignment score, across 8 of 9 conditions, although it approximately equally well when the Alignment performance was scaled by a factor of 0.01. Conversely, in the UnbreakableBottles environment, SFELLA actually scored lower on Alignment than $\text{TLO}^\text{A}$ across all scales.
 
 
 \begin{figure}
@@ -33,23 +56,17 @@ In the BreakableBottles environment, SFELLA performed fewer errors, i.e., obtain
  
 The main difference in these environments is that in BreakableBottles, a dropped bottle can be picked up again, while in UnbreakableBottles, it cannot. Over time we can expect Agents in the BreakableBottles environment to learn not to drop a bottle. In the UnbreakableBottles environment, agents are also penalized for dropping a bottle, but they can avoid this penalty continuing by picking up the bottle again. Accordingly, alignment penalties for the UnbreakableBottles environment start much deeper than those for the BreakableBottles environment. Because SFELLA uses a nonlinear function to penalize negative outcomes, it can be expected to respond more quickly to deeply negative outcomes. Hence, where the penalties are greater, as in BreakableBottles, it is more sensitive to avoiding Alignment problems than the $\text{TLO}^\text{A}$ function.
 
->>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
-
-
 
 \subsection{Future directions}
 
 Exploring conservative approaches to reinforcement learning and decision-making that approximate Pareto-optimality seems like a promising approach to advancing AI Safety, and multi-objective systems are one possible way forward. There are a number of future directions we want to explore.
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
 \subsubsection{Wireheading}
 
 One possible failure mode for advanced or transformational AI systems has been described as `wireheading', where a system attempting to maximize a utility function might attempt to reprogram that reward function to make it easier to achieve higher levels of reward \cite{demski_a_stable_2017}. One solution to this involves ensuring that each proposed action is evaluated in terms of current objectives; this would ensure that changing the objectives themselves would not score highly on current objectives \cite{dewey_learning_2011}. But a `thin' conception of objectives, such as `discover and fulfill human preferences' might fail to sufficiently constrain the objective and leave too much of the function's implementation to re-learning and modification. It might be that objectives need to be hard-wired. To do this without making objectives overly narrow, consideration of multiple objectives might be essential. It may be that hardcoding more competing objectives which much all be satisfied is a path to a safer AI less likely to wirehead its own systems.
 
-\subsubsection{Scaling}
+\subsubsection{Scaling calibration}
 
 When applying exponential transforms  on each objective and then combining them in linear fashion, the scale of the operation is quite important. The scales were designed to respond to z-scored input functions, i.e., most values typically appear between -3 an 3 (Figure~\ref{fig:transform_functions}). However, the environments tested here have input functions that vary much more widely.
 
@@ -58,12 +75,6 @@ It may be helpful, for each objective, to scale the distribution of possible rew
 Scaling has been previously applied using `the penalty of some mild action', or alternatively, the `total ability to optimize the auxiliary set' %\footnote{Roland: I do not understand this description, do you want to expand it?} 
 \cite{turner_conservative_2020}.
 
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 178abcc99472a22fd86f9ace239960796399c00d
 \subsection{Limitations}
 
 We considered ways to implement maximin approaches such as that described by \cite{vamplew_human-aligned_2018}. In a maximin approach, an agent always selects the action with the maximum value where the value of each action is determined by its minimum evaluation across a set of objectives. Although in this paper, we tested agents with incentive structures with only two objectives, there is no reason a hypothetical agent could not have many objectives. With a sufficiently large number of objectives, it may be that in some states, any possible action would evaluate negatively on some objective or another. In those cases where no action evaluates positively, `decision paralysis' occurs because `take no action' evaluates more positively than any particular action. % \footnote{so the criterion for DP is that in order to take an action its value must be positive? should be described somewhere. BJS: Yes.}. 

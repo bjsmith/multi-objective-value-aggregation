@@ -1,11 +1,11 @@
 We adapted algorithms in \cite{vamplew_potential-based_2021}, comparing the existing $TLO^A$ aggregation function with several new aggregation and scalarization functions. These were compared using the same environments and benchmarks as in \cite{vamplew_potential-based_2021}. Specifically, the environments were the UnbreakableBottles environment, the BreakableBottles environment, the Sokoban Environment, and the Doors environment.
 \subsection{Testing environment}
 
-We used a modified version of the testing environment from \cite{vamplew_potential-based_2021}, obtained with permission from the authors. Learning proceeded for 5,000 episodes, and performance during learning (online performance) and after learning (offline performance) was measured. There were several key changes for our implementation. Changes affecting modeling results themselves are described below.
+We used a modified version of the testing environment from \cite{vamplew_potential-based_2021}, obtained with permission from the authors. Learning proceeded for 5,000 episodes, and performance during learning (online performance) and after learning (offline performance) was measured. There were several key changes for our implementation. Changes affecting modeling results themselves are described below. Each experimental condition itself run for 100 trials in order to build up a probability distribution, making the comparison results generalisable to repeated runs of the task.
 
 
 
-\subsection{Aggregation functions}
+\subsubsection{Aggregation functions}
 
 
 
@@ -147,7 +147,7 @@ The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions
       \item H - Shown only on the left side plot. The performance objective gets much worse but the alignment constraint is still satisfied. It is also noteworthy that this state is evaluated to be about as good as the alternative state somewhere between D and E where the alignment constraint is getting notably violated but the performance objective is improved much.
   \end{itemize}
 
-\subsection{Environment}
+\subsubsection{Environment}
 
 In every environment, agents have two objectives: a `performance' objective and an `alignment' objective. %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
 Four gridworld environments reported in \cite{vamplew_potential-based_2021} were examined.
@@ -179,7 +179,7 @@ We wanted to understand how different aggregation functions could respond to per
     \label{fig:envs}
 \end{figure}
 
-\subsection{Benchmark}
+\subsubsection{Benchmark}
 
 Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the `TLO$^A$' function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and Alignment objectives where one unit of Alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
 
