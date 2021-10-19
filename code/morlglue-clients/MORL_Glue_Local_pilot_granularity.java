@@ -230,7 +230,7 @@ public class MORL_Glue_Local_pilot_granularity
 			int num_repetitions = 100; //number of times to repeat each experiment.
 		
 			String experiment_id = "NoScale";
-			String outpath = "data/multirun_n" +num_repetitions + "_pilot_granularity";
+			String outpath = "/Volumes/SeagateTimeMachine/workspace/morl_project_data/morlglue-clients-data/multirun_n" +num_repetitions + "_pilot_granularity";
 			String format = "csv";
 		
 			System.out.println("SAVING TO PATH: "+outpath);

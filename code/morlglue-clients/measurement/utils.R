@@ -38,11 +38,15 @@ append_blackman_averaging <- function(activity_long){
   return(activity_long_out)
 }
 
+#this string does not handle the granularity features
+#filename_regex_parse_string <- "^([\\w\\d\\.]*)\\(([\\w,]*)\\)-(\\w*)\\(([\\w,]*)\\)"
+#this string can handle granularity features
+filename_regex_parse_string <- "^([\\w\\d\\.]*)\\(([\\w,]*)\\)-(\\w*)(rew_gran([\\w\\d\\.\\_]*)pen_gran([\\w\\d\\.\\_]*))?\\(([\\w,]*)\\)"
 get_file_list <- function(source_path){
   #list files
   files <- list.files(source_path,pattern = "*.xls")
   #regex read the main properties of each sheet
-  file_list <- stringr::str_match(files,'^([\\w\\d\\.]*)\\(([\\w,]*)\\)-(\\w*)\\(([\\w,]*)\\)') %>% data.frame %>% cbind(files,.)
+  file_list <- stringr::str_match(files,filename_regex_parse_string) %>% data.frame %>% cbind(files,.)
   colnames(file_list) <- c("filename","full_code","Environment","EnvironmentClass","Agent","AgentClass")
   return(file_list)
 }
@@ -51,8 +55,16 @@ get_csv_file_list <- function(source_path){
   #list files
   files <- list.files(source_path,pattern = "*\\.csv$")
   #regex read the main properties of each sheet
-  file_list <- stringr::str_match(files,'^([\\w\\d\\.]*)\\(([\\w,]*)\\)-(\\w*)\\(([\\w,]*)\\)') %>% data.frame %>% cbind(files,.)
-  colnames(file_list) <- c("filename","full_code","Environment","EnvironmentClass","Agent","AgentClass")
+  regex_matches <- stringr::str_match(files,filename_regex_parse_string)
+  file_list <- regex_matches %>% data.frame %>% cbind(files,.)
+  if(ncol(regex_matches)==8){
+    colnames(file_list) <- c("filename","full_code","Environment","EnvironmentClass","Agent","GranularityCode","RewGranularity","PenGranularity", "AgentClass")
+  }else if (ncol(regex_matches)==6){
+    colnames(file_list) <- c("filename","full_code","Environment","EnvironmentClass","Agent", "AgentClass")
+  }else{ 
+    stop(paste0("Unrecognized file name metadata format for set of files in ", source_path))
+  }
+  
   return(file_list)
 }
 
@@ -199,6 +211,7 @@ get_raw_csv_activity <-function(file_list,source_path){
 
 
 get_presummarized_csv_activity_dt <-function(source_path){
+  start_time <- Sys.time()
   file_list <- get_csv_file_list(source_path)
   cache_version_filepath <- paste0(source_path,"get_presummarized_csv_activity_dt_20210902_cache.RData")
   print(cache_version_filepath)
@@ -209,11 +222,20 @@ get_presummarized_csv_activity_dt <-function(source_path){
   episode_summary_list<-list()
   run_summary_list <- list()
   print(file_list)
-  for (row_i in 1:nrow(file_list)){
+  file_list_length <-nrow(file_list)
+  next_update_time <- start_time+10 #update for output
+  for (row_i in 1:file_list_length){
     
     row <- file_list[row_i,]
-    print(row[["filename"]])
-    cat(".")
+    
+    current_time <- Sys.time()
+    if(current_time > next_update_time){
+      next_update_time <- current_time+10
+      progress_pct <- round((row_i-1)/file_list_length * 100,0)
+      cat(paste0("Progress: ", as.character(progress_pct), "%\r"))
+      flush.console()      
+    }
+
     #load the spreadsheet
     csv_data_dt <- readr::read_csv(
       paste0(source_path,row[["filename"]]),show_col_types = FALSE) %>% data.table
@@ -239,6 +261,7 @@ get_presummarized_csv_activity_dt <-function(source_path){
     
     csv_data_dt[,RunId:=rep(1:trial_count,each=episodes_per_trial_iteration)]
     
+    condition_cols <-c("EpisodeType","Agent","Environment","EnvironmentClass")
     
     csv_data_dt_episode_summary <- csv_data_dt[
       
@@ -247,7 +270,7 @@ get_presummarized_csv_activity_dt <-function(source_path){
         `R^A`=mean(`R^A`),
         `R^*`=mean(`R^*`)
       )
-      ,.(EpisodeType,`Episode number`,Agent,Environment,EnvironmentClass)
+      ,c("Episode number",condition_cols)
     ]
     
     csv_data_dt_run_summary <- csv_data_dt[
@@ -257,15 +280,25 @@ get_presummarized_csv_activity_dt <-function(source_path){
         `R^A`=mean(`R^A`),
         `R^*`=mean(`R^*`)
       )
-      ,.(EpisodeType,RunId,Agent,Environment,EnvironmentClass,RunId)
+      ,c("RunId",condition_cols)
     ]
     rm(csv_data_dt)
+    
+    if(("RewGranularity" %in% names(row)) & ("PenGranularity"%in% names(row))){
+      #it's inconsistent to add these down here and the other summary vars above, but adding them above is just legacy code I haven't changed.
+      #BJS 2021-10-18
+      csv_data_dt_episode_summary[,RewGranularity:=as.numeric(row[["RewGranularity"]])]
+      csv_data_dt_episode_summary[,PenGranularity:=as.numeric(row[["PenGranularity"]])]
+      csv_data_dt_run_summary[,RewGranularity:=as.numeric(row[["RewGranularity"]])]
+      csv_data_dt_run_summary[,PenGranularity:=as.numeric(row[["PenGranularity"]])]
+    }
+    
     
     episode_summary_list <- append(episode_summary_list,list(csv_data_dt_episode_summary))
     run_summary_list <- append(run_summary_list,list(csv_data_dt_run_summary))
     
-    print(length(episode_summary_list))
-    print(length(run_summary_list))
+    #print(length(episode_summary_list))
+    #print(length(run_summary_list))
     gc()
     
   }
