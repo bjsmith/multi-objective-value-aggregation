@@ -1,4 +1,8 @@
 
-We considered that perhaps scaling rewards rather than scaling Q-values might represent a different challenge for the models we presented. So we repeated the experiment, scaling rewards rather than scaling Q-values.
+We considered that perhaps scaling rewards rather than scaling Q-values might represent a different challenge for the models we presented.
 
 \subsection{Method}
+
+we repeated the experiment, scaling->transforming rewards rather than scaling->transforming Q-values. All of the same parameters applied as in Experiment 1, but when scaling->transforming RP and RA, rather than scaling->transforming the Q-learned values, the rewards given were scaled->transformed instead.
+
+One side effect of this design is that not only the feedback given to the agent via RP and RA, but also the R* metric, is modified. Thus, scaling rewards rather than Q-values also changes the benchmark.
