@@ -317,7 +317,7 @@ readr::write_csv(table_env_long,"../../../output/tables/significance_granularity
 Now let's repeat that, but make a table that's abridged by only containing key rows and columns.
 ```{r}
 significance_abridged <- table_env_long %>%
-  filter((RewGranularity %in% c(10^-2,10^0,10^2) | PenGranularity %in% c(10^-2,10^0,10^2)) & RewGranularity!=0 & PenGranularity!=0) %>%
+  filter((RewGranularity %in% c(10^-2,10^0,10^2) | PenGranularity %in% c(10^-2,10^0,10^2)) & (RewGranularity==0 | PenGranularity==0)) %>%
   select(Environment,RewGranularity,PenGranularity,LIN_SUM,SFLLA1,EEBA1,`TLO$^A$`)
 
 
