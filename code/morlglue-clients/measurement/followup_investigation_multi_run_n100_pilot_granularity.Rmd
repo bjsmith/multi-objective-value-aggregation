@@ -8,6 +8,10 @@ output:
 
 This notebook demos opening different Excel files and printing their output.
 ```{r}
+library(pander)
+```
+
+```{r}
 library(readxl)
 library(data.table)
 library(ggplot2)
@@ -280,7 +284,7 @@ table_env_long <-
 #highlight results within 10% of the best value in each row.
 row_max <- apply(table_numeric_vals[,4:ncol(table_numeric_vals)],1,max)*0.9<table_numeric_vals[,4:ncol(table_numeric_vals)]
 
-table_env_long %>%
+output_table <- table_env_long %>%
   #mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
   #mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
   #mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
@@ -300,99 +304,24 @@ table_env_long %>%
   column_spec(1,width="5em") %>%
   column_spec(2,width="4em") %>%
   column_spec(3,width="4.5em") %>%
-   collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
+   collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2)# %>%
   #pander(split.cell=10,split.table=Inf)
-  writeLines("../../../output/tables/testex_granularity.tex")
+  #writeLines("../../../output/tables/significance_granularity.tex")
 
-readr::write_csv(table_env_long,"../../../output/tables/granularity_summary.csv")
+readr::write_csv(table_env_long,"../../../output/tables/significance_granularity.csv")
 ```
 
 ### significant differences to 0 granularity.
 
+
+Now let's repeat that, but make a table that's abridged by only containing key rows and columns.
 ```{r}
-
-table_env_run_means <- table_env[,
-          c(mean(`R^*`))
-          
-          ,by=.(Agent,Environment,RunId,EnvironmentDimChange,RewGranularity,PenGranularity)]
-
-setnames(table_env_run_means,"V1","Run_Mean_R^*")
+significance_abridged <- table_env_long %>%
+  filter(RewGranularity %in% c(10^-2,10^0,10^2) | PenGranularity %in% c(10^-2,10^0,10^2)) %>%
+  select(Environment,RewGranularity,PenGranularity,LIN_SUM,SFLLA1,EEBA1,`TLO$^A$`)
 
 
-#ctrl_agent<-"LIN_SUM" 
-
-control_run_means <- table_env_run_means[RewGranularity==0 & PenGranularity==0]
-control_run_means$RewGranularity<-NULL
-control_run_means$PenGranularity<-NULL
-#control_run_means$Agent=NULL
-exp_run_means <- table_env_run_means[RewGranularity!=0 | PenGranularity!=0]
-
-control_run_means$EnvironmentDimChange=NULL
-exp_run_means$EnvironmentDimChange=NULL
-
-run_means_agent_comparison <- merge(
-  control_run_means,exp_run_means,by =c("Agent","Environment","RunId"),
-  suffixes = c("_control","_experimental"))
-exp_summary_stats <- run_means_agent_comparison[
-  ,.(`Trial_Mean_R^*`=mean(`Run_Mean_R^*_experimental`),
-    `Trial_SD_R^*`=sd(`Run_Mean_R^*_experimental`),
-    `Trial_Mean_R^*_diff_pvalue`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$p.value,
-    `Trial_Mean_R^*_diff_ci95_lower`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[1]],
-    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]]
-    )
-  ,by=.(Agent,Environment,RewGranularity,PenGranularity)]
-                                               
-
-get_formatted_desc <- function(x,pval){
-  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
-}
-# exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
-exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`)]
-
-exp_summary_stats$GranularityLevel <- factor(paste0(
-  "R", as.character(exp_summary_stats$RewGranularity),
-  "_",
-  "P", as.character(exp_summary_stats$PenGranularity)
-))
-
-control_summary_stats <- control_run_means[
-  ,
-  .(GranularityZero=get_formatted_desc(mean(`Run_Mean_R^*`),1)),
-  by=.(Environment,Agent)]
-
-
-summary_stats_wide <- exp_summary_stats %>% dcast.data.table(
-  Agent+Environment~GranularityLevel,value.var="exp_desc") %>%
-  merge(control_summary_stats)
-```
-
-
-```{r, knit}
-table_env_long <- summary_stats_wide
-#change this column name.
-#colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
-#setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
-#setnames(table_env_long,"EnvironmentValueChange","Objective Scale",skip_absent=TRUE)
-#setnames(table_env_long,"ObjectiveDimChange","Objective Modified",skip_absent=TRUE)
-#setnames(table_env_long,"SFLLA","SFELLA",skip_absent=TRUE)
-
-#colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"Envir","$TLO^A$")
-table_env_long <- 
-  table_env_long %>% 
-  mutate(Environment=str_replace(Environment,"BreakableBottles","Breakable Bottles")) %>%
-  mutate(Environment=str_replace(Environment,"UnbreakableBottles","Unbreakable Bottles"))
-  
-#highlight results within 10% of the best value in each row.
-row_max <- apply(table_numeric_vals[,4:ncol(table_numeric_vals)],1,max)*0.9<table_numeric_vals[,4:ncol(table_numeric_vals)]
-
-table_env_long %>%
-  #mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
-  #mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
-  #mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
-  #mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
-  #mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
-  #mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
-  #mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"))) %>%
+significance_abridged_output <- significance_abridged %>%
   mutate(Environment=linebreak(Environment)) %>%
   kable(
       #%>% order_by(c(EnvironmentClass,EnvironmentDimChange,EnvironmentValueChange))
@@ -405,12 +334,13 @@ table_env_long %>%
   column_spec(1,width="5em") %>%
   column_spec(2,width="4em") %>%
   column_spec(3,width="4.5em") %>%
-   collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
-  #pander(split.cell=10,split.table=Inf)
-  writeLines("../../../output/tables/granularity_diff_summary.tex")
+   collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2)
 
-readr::write_csv(table_env_long,"../../../output/tables/granularity_diff_summary.csv")
+readr::write_csv(significance_abridged,"../../../output/tables/significance_granularity_abriged.csv")
+significance_abridged_output %>%  writeLines("../../../output/tables/significance_granularity.tex")
 ```
+
+
 
 
 ## Average online performance as line graphs
