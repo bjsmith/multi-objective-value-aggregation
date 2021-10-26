@@ -337,7 +337,7 @@ significance_abridged_output <- significance_abridged %>%
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2)
 
 readr::write_csv(significance_abridged,"../../../output/tables/significance_granularity_abriged.csv")
-significance_abridged_output %>%  writeLines("../../../output/tables/significance_granularity.tex")
+significance_abridged_output %>%  writeLines("../../../output/tables/significance_granularity_abridged.tex")
 ```
 
 
