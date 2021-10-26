@@ -272,7 +272,7 @@ table_env_long %>%
   column_spec(3,width="4.5em") %>%
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
   #pander(split.cell=10,split.table=Inf)
-  writeLines("../../../output/tables/table_1_main_significance.tex")
+  writeLines("../../../output/tables/table_2_main_significance.tex")
 ```
 
 
@@ -285,18 +285,32 @@ print(paste0("number of experiment runs in this dataset: ",max(run_summary$RunId
 
 
 
-```{r fig.width=8}
+```{r fig.width=8, fig.height=7}
 
 
 
 # activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
 #   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
 #   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
-activity_means <- run_summary[EpisodeType=="Online" & Agent!="Linear"]
+activity_means <- run_summary[
+  EpisodeType=="Online" & # Agent!="Linear"
+  Agent %in% c("SEBA2", "SFLLA2","TLO_A","LIN_SUM")
+  ]
+
+#activity_means %>% group_by(Agent,EnvironmentValueChange, ObjectiveDimChange, EnvironmentClass) %>% summarise(rowCount = length(`R^*`))
+#activity_means %>% group_by(Agent,EnvironmentValueChange, ObjectiveDimChange, EnvironmentClass) %>% summarise(rowCount = length(`R^*`)) %>% .$rowCount %>% table
+activity_means <- activity_means %>% group_by(Agent,EnvironmentValueChange, ObjectiveDimChange) %>% 
+  mutate(
+    Bottom5Pc = quantile(`R^*`,0.05),
+    Top5Pc = quantile(`R^*`,0.95)
+    )
+
+activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5Pc)
+
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
-  relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+  relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
       #geom_point(size=6,alpha=0.4,shape=21,color="black")+
       #geom_violin(position="identity",alpha=0.2,size=0.1)+
@@ -304,18 +318,18 @@ for (env_dim in c("Performance","Alignment")){
       scale_x_continuous(trans="log10",
                          limits = c(min(relevant_activity$EnvironmentValueChange)/5,max(relevant_activity$EnvironmentValueChange)*10),
                          breaks = c(0.01,0.1,1,10,100))+
-      coord_cartesian(ylim=c(-40,20))+
+      #coord_cartesian(ylim=c(-40,20))+
       #geom_line(linetype="dashed")+
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
           x=paste0(env_dim, " Scale"),
           
-          title=paste0(env_dim, " Scaling: Average Online Performance"),subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
+          title=paste0(env_dim, " Scaling: Average Online Performance"),subtitle=paste("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
     paper_plot <- baseplot 
 
-    ggsave(filename=paste0(output_dir, comparison_folder, "online",env_dim,".pdf"),plot=paper_plot,device="pdf",width = 6,height=7)
+    ggsave(filename=paste0(output_dir, comparison_folder, "online_util_transform_",env_dim,".pdf"),plot=paper_plot,device="pdf",width = 6,height=7)
     
     presentation_plot <- baseplot
             
