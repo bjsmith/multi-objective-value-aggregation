@@ -421,31 +421,62 @@ print(paste0("number of experiment runs in this dataset: ",max(run_summary$RunId
 
 
 
-```{r fig.width=8}
+```{r fig.width=8,fig.height=7}
 
-agents_to_show <-c("EEBA1","EEBA2","SFLLA1","SFLLA2","TLO_A")
+agents_to_show <-c("EEBA1", #"EEBA2",
+                   "SFLLA1", "TLO_A")
 
 # activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
 #   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
 #   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
-activity_means <- run_summary[EpisodeType=="Online" & Agent!="Linear"]
+activity_means_all <- run_summary[EpisodeType=="Online" & Agent!="Linear"]
 
-included_granularity_levels <- (
-  (activity_means$RewGranularity ==0) | (activity_means$PenGranularity ==0) | (activity_means$Agent==ctrl_agent)
-)
+#need to filter out the extra TLO_A rows, there should only be 100 per environment
+#activity_means_ss <- activity_means  %>% group_by(GranularityLevel,Agent,EnvironmentClass) %>% summarise(sample_size = length(`R^*`))
+activity_means <- activity_means_all  %>% group_by(GranularityLevel,Agent,EnvironmentClass) %>% slice_head(n=100) %>% ungroup()
 
-activity_means$GranularityLevel <- factor(paste0(
+activity_means$GranularityLevel <- paste0(
   "R", as.character(activity_means$RewGranularity),
   "_",
   "P", as.character(activity_means$PenGranularity)
-))
+)
+
+activity_means$GranularityLevel[activity_means$GranularityLevel=="RNA_PNA"] <- "(TLO_A)"
+
+activity_means$GranularityLevel <- factor(activity_means$GranularityLevel)
+
+#can we trim the top and bottom 5%?
+#need to first get the bottom top and 5% per category.
+activity_means <- activity_means %>% group_by(GranularityLevel,Agent,EnvironmentClass) %>% 
+  mutate(
+    Bottom5Pc = quantile(`R^*`,0.05),
+    Top5Pc = quantile(`R^*`,0.95)
+    )
+
+activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5Pc)
+
+# included_granularity_levels <- (
+#   (activity_means_trimmed$RewGranularity ==0) | (activity_means_trimmed$PenGranularity ==0) | (activity_means_trimmed$Agent==ctrl_agent)
+# )
 
 #now do 
 for (granularity_dim in c("RewGranularity","PenGranularity")){
-  relevant_activity <- activity_means %>% 
-    dplyr::filter(#ObjectiveDimChange %in% c("",granularity_dim) & 
-      (activity_means[,granularity_dim,with=FALSE]==0 | is.na(activity_means[,granularity_dim,with=FALSE])) &
-      (Agent %in% agents_to_show) & included_granularity_levels)
+  if(granularity_dim=="RewGranularity"){
+    constant_gran_dim = "PenGranularity"
+  }else if (granularity_dim=="PenGranularity"){
+    constant_gran_dim = "RewGranularity"
+  }
+  
+      
+  relevant_activity <- activity_means_trimmed %>%
+    dplyr::filter(
+       (
+         .data[[constant_gran_dim]]==0 |
+         is.na(.data[[constant_gran_dim]])
+         ) & 
+        (Agent %in% agents_to_show) & 
+        (RewGranularity==0 | PenGranularity==0 | Agent==ctrl_agent)
+    )
   
   baseplot <- ggplot(relevant_activity,aes(x=GranularityLevel,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,GranularityLevel)))+
     #geom_point(size=6,alpha=0.4,shape=21,color="black")+
@@ -459,8 +490,7 @@ for (granularity_dim in c("RewGranularity","PenGranularity")){
     facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
       labs(
         x=paste0(granularity_dim, " Scale"),
-        
-        title=paste0(granularity_dim, " Scaling: Average Online Performance"),subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
+        title=paste0(granularity_dim, " Scaling: Average Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
     paper_plot <- baseplot 
 
