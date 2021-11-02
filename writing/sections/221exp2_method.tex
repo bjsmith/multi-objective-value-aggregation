@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 We considered that perhaps scaling rewards rather than scaling Q-values might represent a different challenge for the models we presented.
 
 \subsection{Method}
@@ -6,3 +7,31 @@ We considered that perhaps scaling rewards rather than scaling Q-values might re
 we repeated the experiment, scaling->transforming rewards rather than scaling->transforming Q-values. All of the same parameters applied as in Experiment 1, but when scaling->transforming RP and RA, rather than scaling->transforming the Q-learned values, the rewards given were scaled->transformed instead.
 
 One side effect of this design is that not only the feedback given to the agent via RP and RA, but also the R* metric, is modified. Thus, scaling rewards rather than Q-values also changes the benchmark.
+=======
+% https://docs.google.com/spreadsheets/d/1_rBy-QTfUZ4lC5LQYM0DXjOeK72jXy-QwHGc37M06DE/edit#gid=481866946 
+We considered that perhaps transforming rewards $r_t$ rather than transforming Q-values $Q(s, a)$ might represent a different challenge for the models we presented. Given repeated occurrences of the same $s, a$ learning pair, there's no long-run difference between the two because they both approach the same `learning asymptote'. However, during the learning process, each transformation process produces different rates of learning for positive and negative domains. In this context, comparatively faster isn't necessarily desirable. At least three observations should be made:
+
+First, magnitude of rewards: In the positive domain, as rewards increase, the suppressive effect of scaling increases more, and so the temporary speed advantage of Q-value transformation is more acute. Conversely, in the negative domain, the exaggerating effect of scaling increases more, and so the temporary speed advantage of reward is more acute.
+
+Second, speed of learning affected differently on + and - side. In the positive domain, the transformation on Q-value lowers the asymptote of learning but leaves the learning speed intact. transformation on reward also lowers the speed of learning, so transformation on reward leads to slower learning in the positive domain. Conversely, in the negative domain, the transformation on Q-value exaggerates the (negative) asymptote of learning while leaving learning speed intact. Transformation on reward also exaggerates the speed of learning, so transformation on reward leads to faster learning in the negative domain. Note that they will all approach the same asymptote in the end.
+
+Third, this has significant implications for differences in the granularity of rewards. Consider two reward schedules. In the first schedule, every 1 timestep an agent is given a small penalty--such as the time penalty given in the BreakableBottles task for every timestep the challenge hasn't been completed. In the second schedule, an agent occasionally receives a large penalty for an action a at $s, a$, such as pushing a box into a corner. Because learning is sparser, the slower learning inherent in reward transformation (in the positive domain) and Q-value transformation (in the negative domain) could actually substantially influence behavior for a substantial part of the 5000 episodes over online learning.
+
+Very generally, speeding up learning in the negative domain is relatively more cautious, while speeding up learning in the positive domain is relatively less cautious. For small magnitudes, transformation makes little difference. Of the two transformation processes, for large magnitudes, reward tranformation produces a more cautious outcome than Q-value, and responses much more strongly to occasional strongly negative feedback than to regular slightly negative feedback.
+
+
+
+%Consider an objective that is fulfilled in small amounts at each timestep. An example might be a time penalty for having not arrived at a puzzle's overall solution delivered at each timestep. Transformation functions like SFLLA generally apply greater transform magnitudes (at both the negative and positive valences) at extremes than near zero. As a result, transformation of $Q(s, a)$ would mean that as the agent learns more, its learning gets slower. 
+
+%transformation of reward $r_t$ would tend to not scale an objective fulfilled in small amounts at each timestep; and the agent would tend to learn fairly quickly. 
+
+%Compare this to an objective that only has a reward occasionally, but the reward is very large. Because our transformation functions ‘penalize’ large rewards, the magnitude of that reward would be not nearly as important.
+
+
+
+\subsection{Method}
+
+We repeated the experiment, transforming rewards rather than transforming Q-values. All of the same parameters applied as in Experiment 1, but when transforming RP and RA, rather than transforming the Q-learned values, the rewards given were transformed instead.
+
+One side effect of this design is that not only the feedback given to the agent via RP and RA, but also the R* metric, is modified. Thus, transforming rewards rather than Q-values also changes the benchmark.
+>>>>>>> 9c4bc1eee462b5681fe314a3887f9b4dc9b8200e

@@ -307,13 +307,19 @@ activity_means <- activity_means %>% group_by(Agent,EnvironmentValueChange, Obje
     )
 
 activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5Pc)
-
+<<<<<<< HEAD
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
   relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim)) %>% use_display_names
   
+=======
 
+
+#now do 
+for (env_dim in c("Performance","Alignment")){
+  relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+>>>>>>> 9c4bc1eee462b5681fe314a3887f9b4dc9b8200e
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
       #geom_point(size=6,alpha=0.4,shape=21,color="black")+
       #geom_violin(position="identity",alpha=0.2,size=0.1)+

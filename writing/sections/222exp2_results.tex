@@ -1,12 +1,12 @@
 \subsection{Results}
 
-See Figure~\ref{fig:online_performance_exp2} (need to update this figure to have the four main agents, consistent with the figure from exp1).
+Scaling rewards rather than Q-values yielded less positive results than scaling $TLO_A$ (Figure~\ref{fig:online_performance_exp2}). SFLLA continued to improve on $TLO_A$ under some circumstanes in the UnbreakableBottles environment, but SFLLA did not outperform $TLO_A$ in BreakableBottles as it did in Experiment 1. 
 
 \begin{figure}
   %\centering
   %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
-  \includegraphics[width=\columnwidth]{output/multirun_n100_reward_to_util_transformonline_4agents_Performance.pdf}
-  \includegraphics[width=\columnwidth]{output/multirun_n100_reward_to_util_transformonline_4agents_Alignment.pdf}
+  \includegraphics[width=\columnwidth]{output/multirun_n100_reward_to_util_transformonline_util_transform_Performance.pdf}
+  \includegraphics[width=\columnwidth]{output/multirun_n100_reward_to_util_transformonline_util_transform_Alignment.pdf}
   \caption{Online performance across different scales. 
   }
    \label{fig:online_performance_exp2}
