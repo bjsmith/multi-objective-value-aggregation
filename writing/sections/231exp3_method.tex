@@ -6,7 +6,10 @@ We had a hypothesis that the continuous transformation functions might lead to b
 In other words the input to the nonlinear transformation is "pixelated" and therefore the output is also pixelated. The function will somewhat resemble the thresholded function, which is likewise non-continuous. According to the hypothesis, the more coarse the pixels the more the agent's learning curve should resemble the learning curve while using thresholded function. The pixelation is applied before the nonlinear transformation.
 
 The formula for granularity transform is the following. The granularity transform is applied before one of the main nonlinear transforms treated in this paper is applied.
-x_ig = round(x_i / g_i) * g_i
+\begin{align}
+x_{ig} = \text{round}(x_i / g_i) \times g_i
+\end{align}
+
 TODO: https://tex.stackexchange.com/questions/433101/rounding-to-nearest-integer-symbol-in-latex/450722
 
 TODO: Add example 2D or 3D plot of granularised ELA function.

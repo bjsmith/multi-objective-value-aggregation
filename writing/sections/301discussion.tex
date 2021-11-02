@@ -30,7 +30,7 @@ To understand SFELLA's performance in the BreakableBottles environment we need t
 
 Differences between $\text{TLO}^\text{A}$ and SFELLA in the UnbreakableBottles environments were much finer, though they were significant (Table~\ref{tab:mean_r_star_performance}). At the base scaling level, the difference is most apparent in performance, with $\text{TLO}^\text{A}$ marginally lagging the other items (Figure~\ref{fig:bb_performance}). 
 
-As we perturb Performance and Alignment objectives across the 5 orders of magnitude (Figure~\ref{fig:online_performance}) in UnbreakableBottles, SFELLA performs best across varying levels of performance and draws equivalent with TLO\_A at low levels of alignment. Both agents' performance declines as alignment scaling is increased to 10 and 100 times--interestingly, the Linear Sum agent does not suffer nearly as much. SFELLA declines less. In UnbreakableBottles, agents are penalized for dropping bottles, but they can pick up bottles again to limit the damage. In environments where they are very strongly penalized for dropping bottles, despite the limited impact on the final result, the penalty awarded (in RP) might be excessive in orer to maximize R* performance.
+As we perturb Performance and Alignment objectives across the 5 orders of magnitude (Figure~\ref{fig:online_performance}) in UnbreakableBottles, SFELLA performs best across varying levels of performance and draws equivalent with TLO\_A at low levels of alignment. Both agents' performance declines as alignment scaling is increased to 10 and 100 times--interestingly, the Linear Sum agent does not suffer nearly as much. SFELLA declines less. In UnbreakableBottles, agents are penalized for dropping bottles, but they can pick up bottles again to limit the damage. In environments where they are very strongly penalized for dropping bottles, despite the limited impact on the final result, the penalty awarded (in RP) might be excessive in order to maximize R* performance.
 
 \begin{figure}
 
@@ -60,6 +60,30 @@ As we perturb Performance and Alignment objectives across the 5 orders of magnit
 
 
 %In the last paragraph of the Discussion section “strong points” of the study should be mentioned using “constrained”, and “not too strongly assertive” statements. Indicating limitations of the study will reflect objectivity of the authors, and provide answers to the questions which will be directed by the reviewers of the journal. On the other hand in the last paragraph, future directions or potential clinical applications may be emphasized.
+
+\subsection{Transforming reward values}
+
+In Experiment 2, we attempted to transform Reward values rather than Q-values. Performance for SFLLA was less of an improvement than in Experiment 1 where Q-values were scaled.
+
+As discussed in the introduction for Experiment 2, transforming reward values tends to respond faster to large-magnitude negative feedback events like breaking bottles. 
+
+For BreakableBottles, generally SFLLA seems to have performed worse than $TLO_A$ in alignment but not performance, though there were exceptions. Alignment failed for SFLLA in the base scenario and where performance was scaled up. Conversely, in where performance was downscaled, SFLLA it performed worse. This seems somewhat counter-intuitive, because we expected SFLLA with reward transformation to prioritize Alignment even more than SFLLA with Q-learning transformation. It may be that the agent was simply prevented from exploring altogether.
+
+
+%At P1A0.01, they perfrom equally well. At higher levels of alignment scaling, they fail on performance, not alignment. In Performance scaling, it's not clear. At the default level, alignment wasn't achieved! Considering alignment has mainly negative feedback should have been taken more seriously it's unclear why this is. For some other levels, it's Performance that seems to be impacted. 
+
+%Overall I am having real trouble explaining the performance record--no consistent pattern seems to emerge.
+
+%So I think we have to say no consistent pattern emerged and we're not sure why.
+
+% we need to see breakdowns by R type. is this effect due to 
+
+%For SFLLA, transforming Q-values means that an agent learns the value of very high impact positive events, it updates to an asymptotic value which is much lower than in a linear model.
+
+%Conversely, for very high impact negative events, the asymptotic learning point can be exponentially lower than in a linear model. Where rewards but not Q-values are scaled...
+
+%This document is important: \url{https://docs.google.com/document/d/1rOUWblq0kXRmualdLjWTJEZdk_m8c_ZydqmFOlhYJEU/edit}
+
 
 \subsection{Granularity and $TLO_A$}
 
