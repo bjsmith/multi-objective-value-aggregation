@@ -345,7 +345,7 @@ for (env_dim in c("Performance","Alignment")){
 
 
 ```
-
+localchange
 ```{r eval=FALSE, include=FALSE}
 relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim) & (EnvironmentClass=="Sokoban") & EnvironmentValueChange==1
                                                       & Agent=="SFLLA"
