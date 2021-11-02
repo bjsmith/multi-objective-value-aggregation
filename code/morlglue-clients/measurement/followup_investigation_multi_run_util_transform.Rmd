@@ -19,6 +19,7 @@ library(directlabels)
 
 library(knitr)
 library(kableExtra)
+library(latex2exp)
 
 source("utils.R")
 output_dir <- "../../../output/"
@@ -307,10 +308,10 @@ activity_means <- activity_means %>% group_by(Agent,EnvironmentValueChange, Obje
 
 activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5Pc)
 
-
 #now do 
 for (env_dim in c("Performance","Alignment")){
-  relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+  relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim)) %>% use_display_names
+  
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
       #geom_point(size=6,alpha=0.4,shape=21,color="black")+
       #geom_violin(position="identity",alpha=0.2,size=0.1)+
@@ -321,6 +322,7 @@ for (env_dim in c("Performance","Alignment")){
       #coord_cartesian(ylim=c(-40,20))+
       #geom_line(linetype="dashed")+
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
+      
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
           x=paste0(env_dim, " Scale"),

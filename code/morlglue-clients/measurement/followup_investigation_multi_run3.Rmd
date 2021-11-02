@@ -354,13 +354,13 @@ agents_to_show <- c("SEBA","LIN_SUM","TLO_A","SFLLA")
 #   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
 #   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
 activity_means <- run_summary[EpisodeType=="Online" & Agent %in% agents_to_show]
-activity_means$Agent <- factor(
-  activity_means$Agent,
-  levels = c("SEBA","SFLLA","TLO_A","LIN_SUM"))
+# activity_means$Agent <- factor(
+#   activity_means$Agent,
+#   levels = c("SEBA","SFLLA","TLO_A","LIN_SUM"))
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
-  relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim))
+  relevant_activity <- activity_means %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim)) %>% use_display_names
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
       #geom_point(size=6,alpha=0.4,shape=21,color="black")+
       #geom_violin(position="identity",alpha=0.2,size=0.1)+

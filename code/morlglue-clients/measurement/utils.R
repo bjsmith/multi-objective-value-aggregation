@@ -1,5 +1,18 @@
 
 
+use_display_names <- function(table){
+  if("Agent" %in% colnames(table)){
+    #https://stackoverflow.com/questions/44310088/how-to-add-latex-code-in-ggplot2-legend-labels
+    levels(table$Agent)[levels(table$Agent)=="SFLLA"] <- "SFELLA"
+    levels(table$Agent)[levels(table$Agent)=="SFLLA2"] <- "SFELLA_rt"
+    levels(table$Agent)[levels(table$Agent)=="SEBA2"] <- "SEBA_rt"
+    levels(table$Agent)[levels(table$Agent)=="TLO_A"] <- "TLO^A"
+    levels(table$Agent)[levels(table$Agent)=="LIN_SUM"] <- "LinearSum"
+  }
+  return(table)
+}
+
+
 get_blackman_smoothing_function <- function(smoothing_level){
   blackman_x_window <- signal::blackman(smoothing_level)/sum(signal::blackman(smoothing_level))
   smoothing_function <- function(steps){
