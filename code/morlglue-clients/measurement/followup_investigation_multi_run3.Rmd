@@ -222,9 +222,9 @@ get_formatted_desc <- function(x,pval,control=NA){
   effect_direction_indicator<-""
   if (!is.na(control)){
     if(x>control){
-        effect_direction_indicator <- "\\uparrow"
+        effect_direction_indicator <- "$\\uparrow$"
        }else{
-        effect_direction_indicator <- "\\downarrow"
+        effect_direction_indicator <- "$\\downarrow$"
       }
   }
    
