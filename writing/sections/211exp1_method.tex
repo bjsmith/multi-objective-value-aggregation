@@ -12,13 +12,13 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 All of the multi-objective utility functions we compared work as follows. 
 \begin{enumerate}
 
-    \item Apply an objective specific scaling factor $c_i$ which is multiplied with the value of the reward. Different objectives likely have different scaling factors.  
+    \item Apply an objective specific scaling factor $c_i$ which is multiplied with the value of the utility. Different objectives likely have different scaling factors.  
     \item Transform the scaled output using a non-linear transform (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
     
     \item Combine the transformed output using a simple average/sum.
 \end{enumerate}
 
-These steps describe a value function which can be applied either to the individual rewards of each time-step or to the values of the Q-values. In our current setup we applied the functions to the Q values.
+These steps describe a value function which can be applied either to the individual utilities of each time-step or to the values of the Q-values. In our current setup we applied the functions to the Q values.
 
 Each non-linear function is applied component-wise before aggregation occurs by averaging/summing of the transformed values
 
@@ -58,7 +58,7 @@ Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ decline
  
   \includegraphics[width=\columnwidth]{output/transform_graph-2d_with_rolf2.png}%\footnote{Roland: Can you please add the -x*x from SEBA to the left part of the plots too? Maybe using some short-dashed line for example. It would illustrate that the square function is less steep than the exponential functions, thus being in between linear and exponential}
   \includegraphics[width=\columnwidth]{output/transform_graph_2d_integral_with_rolf2.png}%\footnote{Roland: I would add comment that the the y scale is log scale, otherwise this plot is confusing, until one looks at the numbers at the left side}
-  \caption{Transform functions. Left: Each transform function is applied to the reward received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
+  \caption{Transform functions. Left: Each transform function is applied to the utility received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
   %\footnote{why repeat the same thing when you can leave out the other option?}. 
   The output of each of these transform functions are averaged together % in a Maximize Expected Utility Model \footnote{if anything this should be called MOMEU, right?}
   (Equation~\ref{eq:meu}). Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on a log scale%\footnote{could be omitted}
@@ -169,7 +169,7 @@ There are two possible paths: either the agent can move around the right corrido
 However, there is a penalty of -10 associated with leaving a door open.
 Therefore the desired solution is moving down while closing the doors behind the agent taking 8 moves.
 
-We wanted to understand how different aggregation functions could respond to perturbations in goal magnitudes / scaling factors. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Performance reward feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment reward feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
+We wanted to understand how different aggregation functions could respond to re-scaling of Primary or Alignment utility. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Primary objective feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment objective feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
 
 
 \begin{figure}
