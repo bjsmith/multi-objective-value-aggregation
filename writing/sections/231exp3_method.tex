@@ -1,8 +1,4 @@
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 9c4bc1eee462b5681fe314a3887f9b4dc9b8200e
 % The objective of granularity transformation is to explore the continuous transformation hypothesis.
 
 We had a hypothesis that the continuous transformation functions might lead to better learning rates because these functions are smooth. The hypothesis says that agent learns better when the utility transformation function or Q value transformation function is continuous instead of thresholded. The bigger the granularity the worse the learning should get. In order to test that hypothesis we implemented non-smooth versions of the nonlinear transformation functions. When looked from far, the shape of the function remains same, but at the detail level the transformation functions become stepped/jagged.
@@ -10,23 +6,13 @@ We had a hypothesis that the continuous transformation functions might lead to b
 In other words the input to the nonlinear transformation is "pixelated" and therefore the output is also pixelated. The function will somewhat resemble the thresholded function, which is likewise non-continuous. According to the hypothesis, the more coarse the pixels the more the agent's learning curve should resemble the learning curve while using thresholded function. The pixelation is applied before the nonlinear transformation.
 
 The formula for granularity transform is the following. The granularity transform is applied before one of the main nonlinear transforms treated in this paper is applied.
-<<<<<<< HEAD
-x_ig = round(x_i / g_i) * g_i
-=======
 \begin{align}
 x_{ig} = \text{round}(x_i / g_i) \times g_i
 \end{align}
 
->>>>>>> 9c4bc1eee462b5681fe314a3887f9b4dc9b8200e
 TODO: https://tex.stackexchange.com/questions/433101/rounding-to-nearest-integer-symbol-in-latex/450722
 
 TODO: Add example 2D or 3D plot of granularised ELA function.
 
 
 
-<<<<<<< HEAD
-=======
-Test test
->>>>>>> 71feeef70f4cf0dc41b148eca4a347bf5188ebe1
-=======
->>>>>>> 9c4bc1eee462b5681fe314a3887f9b4dc9b8200e
