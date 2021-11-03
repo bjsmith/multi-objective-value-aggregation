@@ -36,7 +36,7 @@ As we perturb Performance and Alignment objectives across the 5 orders of magnit
 
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolf_default_scale_progress_BreakableBottles.pdf}
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolf_default_scale_progress_UnbreakableBottles.pdf}
-  \caption{Performance in BreakableBottles and UnbreakableBottles across the task. Because SFLLA optimizes for performance form the start of the task, it achieves a higher total performance throughout the task. However, due to its conservative tuning, it avoids overly optimizing for peformance as the linear algorithm does.
+  \caption{Performance in BreakableBottles and UnbreakableBottles across the task. Because SFELLA optimizes for performance form the start of the task, it achieves a higher total performance throughout the task. However, due to its conservative tuning, it avoids overly optimizing for peformance as the linear algorithm does.
   }
    \label{fig:bb_performance}
    %\Description{Online Performance and Alignment scaled performance}
@@ -63,11 +63,11 @@ As we perturb Performance and Alignment objectives across the 5 orders of magnit
 
 \subsection{Transforming reward values}
 
-In Experiment 2, we attempted to transform Reward values rather than Q-values. Performance for SFLLA was less of an improvement than in Experiment 1 where Q-values were scaled.
+In Experiment 2, we attempted to transform Reward values rather than Q-values. Performance for SFELLA was less of an improvement than in Experiment 1 where Q-values were scaled.
 
 As discussed in the introduction for Experiment 2, transforming reward values tends to respond faster to large-magnitude negative feedback events like breaking bottles. 
 
-For BreakableBottles, generally SFLLA seems to have performed worse than $TLO_A$ in alignment but not performance, though there were exceptions. Alignment failed for SFLLA in the base scenario and where performance was scaled up. Conversely, in where performance was downscaled, SFLLA it performed worse. This seems somewhat counter-intuitive, because we expected SFLLA with reward transformation to prioritize Alignment even more than SFLLA with Q-learning transformation. It may be that the agent was simply prevented from exploring altogether.
+For BreakableBottles, generally SFELLA seems to have performed worse than $TLO_A$ in alignment but not performance, though there were exceptions. Alignment failed for SFELLA in the base scenario and where performance was scaled up. Conversely, in where performance was downscaled, SFELLA it performed worse. This seems somewhat counter-intuitive, because we expected SFELLA with reward transformation to prioritize Alignment even more than SFELLA with Q-learning transformation. It may be that the agent was simply prevented from exploring altogether.
 
 
 %At P1A0.01, they perfrom equally well. At higher levels of alignment scaling, they fail on performance, not alignment. In Performance scaling, it's not clear. At the default level, alignment wasn't achieved! Considering alignment has mainly negative feedback should have been taken more seriously it's unclear why this is. For some other levels, it's Performance that seems to be impacted. 
@@ -78,7 +78,7 @@ For BreakableBottles, generally SFLLA seems to have performed worse than $TLO_A$
 
 % we need to see breakdowns by R type. is this effect due to 
 
-%For SFLLA, transforming Q-values means that an agent learns the value of very high impact positive events, it updates to an asymptotic value which is much lower than in a linear model.
+%For SFELLA, transforming Q-values means that an agent learns the value of very high impact positive events, it updates to an asymptotic value which is much lower than in a linear model.
 
 %Conversely, for very high impact negative events, the asymptotic learning point can be exponentially lower than in a linear model. Where rewards but not Q-values are scaled...
 
@@ -87,7 +87,7 @@ For BreakableBottles, generally SFLLA seems to have performed worse than $TLO_A$
 
 \subsection{Granularity and $TLO_A$}
 
-In Experiment 3, applying increasingly large granularity steps impaired performance of our non-linear functions where those functions initially performed well. Performance actually declined to less than $TLO_A$ on even when, without granularity applied, functions performed better than $TLO_A$. Although $TLO_A$ can be conisdered a `granular' tranform function, it has been tuned to a particular set of thresholds conducive to performance in the task. Conversely, we avoided explicit tuning of objectives in SFLLA. The result could indicate methods like SFLLA are more flexible and ready to be deployed to a wider variety of complex environments where the payoffs are not known in advance.
+In Experiment 3, applying increasingly large granularity steps impaired performance of our non-linear functions where those functions initially performed well. Performance actually declined to less than $TLO_A$ on even when, without granularity applied, functions performed better than $TLO_A$. Although $TLO_A$ can be conisdered a `granular' tranform function, it has been tuned to a particular set of thresholds conducive to performance in the task. Conversely, we avoided explicit tuning of objectives in SFELLA. The result could indicate methods like SFELLA are more flexible and ready to be deployed to a wider variety of complex environments where the payoffs are not known in advance.
 
 \subsection{Future directions}
 
