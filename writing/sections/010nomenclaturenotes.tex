@@ -11,10 +11,12 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
             \item Use `LinearSum' not LIN\_SUM or other form.
         \end{itemize}
     \item names of each of the environments: CamelCase and abbreviations. do not use a space for BreakableBottles or UnbreakableBottles. Can abbreviate as BB and UB. 
-    \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective.
+    \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective. `Evaluation objective' is deprecated; use `performance metric'
+    \item you don't have `performance' on \RA{} and \RP{}; you have `scores' if necessary, but `performance' is reserved for \RStar{}
     \item `Primary re-scaling', not `primary scale perturbation' or `reward scale perturbation'. `perturbation' is deprecated in favor of `re-scaling'
     \item `scaling' refers to changing the size of the rewards given by the environment as we have done in Experiment 1. it's linear. It should be thought of as a change in the environment itself.
-    \item `transformation' generally refers to the non-linear transforms we apply to each objective. often [in case of q-value] they are combined following transform, though you could imagine method where they are not. We have `Q-value transform' and `reward transform' but should it be `utility transform'?
+    \item `transformation' generally refers to the non-linear transforms we apply to each objective. often [in case of q-value] they are combined following transform, though you could imagine method where they are not.
+    \item We have `Q-value transform' and `utility transform' NOT `reward transform'. Unsure about this but I have made the change for now. Unsure; we still have `transforming rewards'
     \item Applying granularity is not `scaling' at all, although it could in principle be presented over differnet levels of scaling, I don't think that is what we've done in our paper
     \item `Online' performance is performance during learning; `Offline' performance is performance after learning.
 \end{itemize}
