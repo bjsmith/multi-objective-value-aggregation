@@ -11,7 +11,7 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
             \item Use `LinearSum' not LIN\_SUM or other form.
         \end{itemize}
     \item names of each of the environments: CamelCase and abbreviations. do not use a space for BreakableBottles or UnbreakableBottles. Can abbreviate as BB and UB. 
-    \item Objectives: We have `primary' and `alignment' objectives or rewards, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated.
+    \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective.
     \item `scaling' refers to changing the size of the rewards given by the environment as we have done in Experiment 1. it's linear. It should be thought of as a change in the environment itself.
     \item `transformation' generally refers to the non-linear transforms we apply to each objective. often [in case of q-value] they are combined following transform, though you could imagine method where they are not. We have `Q-value transform' and `reward transform' but should it be `utility transform'?
     \item `Online' performance is performance during learning; `Offline' performance is performance after learning.
@@ -21,6 +21,7 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
  
 \section*{additional editing tasks}
 \begin{itemize}
+    \item Table 1: which items do we want on here?
     \item algorithms need to be improved
     \item Label tables and graphs nicely
     \item refine the exact comparisons shown in tables and graphs. might leave this until we have substantially finished writing. What things are we actually trying to say?
