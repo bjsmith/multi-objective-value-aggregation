@@ -1,14 +1,24 @@
 
-
+#aligns table to use the canonical display names as defined in our paper's nomenclature
 use_display_names <- function(table){
   if("Agent" %in% colnames(table)){
     #https://stackoverflow.com/questions/44310088/how-to-add-latex-code-in-ggplot2-legend-labels
-    levels(table$Agent)[levels(table$Agent)=="SFLLA"] <- "SFELLA"
+    levels(table$Agent)[levels(table$Agent) %in% c("SFLLA","SFLLA1")] <- "SFELLA"
     levels(table$Agent)[levels(table$Agent)=="SFLLA2"] <- "SFELLA_rt"
+    levels(table$Agent)[levels(table$Agent)=="SEBA1"] <- "SEBA"
+    levels(table$Agent)[levels(table$Agent)=="EEBA1"] <- "EEBA"
     levels(table$Agent)[levels(table$Agent)=="SEBA2"] <- "SEBA_rt"
     levels(table$Agent)[levels(table$Agent)=="TLO_A"] <- "TLO^A"
     levels(table$Agent)[levels(table$Agent)=="LIN_SUM"] <- "LinearSum"
+    
   }
+  # if("GranularityLevel" %in% colnames(table)){
+  #   #https://stackoverflow.com/questions/44310088/how-to-add-latex-code-in-ggplot2-legend-labels
+  #   levels(table$GranularityLevel)[levels(table$GranularityLevel)=="RewGranularity"] <- "Primary Objective Granularity"
+  #   levels(table$GranularityLevel)[levels(table$GranularityLevel)=="PenGranularity"] <- "Alignment Objective Granularity"
+  #   
+  # }
+  
   return(table)
 }
 
