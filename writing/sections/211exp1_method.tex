@@ -1,4 +1,4 @@
-We adapted algorithms in \cite{vamplew_potential-based_2021}, comparing the existing \tloA{} aggregation function with several new aggregation and scalarization functions. These were compared using the same environments and benchmarks as in \cite{vamplew_potential-based_2021}. Specifically, the environments were the UnbreakableBottles environment, the BreakableBottles environment, the Sokoban Environment, and the Doors environment.
+We adapted algorithms in \cite{vamplew_potential-based_2021}, comparing the existing \tloA{} aggregation function with several new aggregation and scalarization functions. These were compared using the same environments and benchmarks as in \cite{vamplew_potential-based_2021}. Specifically, the environments were the UnbreakableBottles (UB) environment, the BreakableBottles (BB) environment, the Sokoban environment, and the Doors environment.
 \subsection{Testing environment}
 
 We used a modified version of the testing environment from \cite{vamplew_potential-based_2021}, obtained with permission from the authors. Learning proceeded for 5,000 episodes, and performance during learning (online performance) and after learning (offline performance) was measured. There were several key changes for our implementation. Changes affecting modeling results themselves are described below. Each experimental condition itself run for 100 trials in order to build up a probability distribution, making the comparison results generalisable to repeated runs of the task.
@@ -9,16 +9,16 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 
 
 
-All of the multi-objective utility functions we compared work as follows. 
+All of the multi-objective utility functions we compared use the following steps: 
 \begin{enumerate}
-
-    \item Apply an objective specific scaling factor $c_i$ which is multiplied with the value of the utility. Different objectives likely have different scaling factors.  
-    \item Transform the scaled output using a non-linear transform (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
+    \item %When reinforcement occurs from the environment,
+    A scaling factor $c_i$ is applied to each objective, specific to that reinforcement, by multiplying it with the value of reinforcement at each time point. This step has not been implemented in this paper but we emphasize its possible use in the future. \footnote{Clarify:  I think if the step is included here it needs to describe something we're actually doing in this experiment, or at least, we need to spell out that it's not actually used here--unless it is?}
+    \item Transform the scaled output of  using a non-linear transform, as described below (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
     
     \item Combine the transformed output using a simple average/sum.
 \end{enumerate}
 
-These steps describe a value function which can be applied either to the individual utilities of each time-step or to the values of the Q-values. In our current setup we applied the functions to the Q values.
+These steps describe a value function which can be applied either to the individual reinforcement delivered at each in response to an action, or to Q-values during action selection. In Experiment 1, we apply these steps to Q-values during action selection.
 
 Each non-linear function is applied component-wise before aggregation occurs by averaging/summing of the transformed values
 
@@ -41,7 +41,7 @@ For the purposes of this experiment, we left these at $c=1$ (instead, we directl
     \item Squared error based alignment (SEBA)
 \end{itemize}
 
-\noindent The SEBA transform function envisages differing functions for two categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
+\noindent The SEBA transform function envisages differing functions for `Primary' and `Alignment' categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
 
 Each non-linear transform is a transform of the value obtained along a specific objective %$O$
 at a specific state %$s$ 
@@ -149,21 +149,21 @@ The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions
 
 \subsubsection{Environment}
 
-In every environment, agents have two objectives: a `performance' objective and an `alignment' objective. %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
+In every environment, agents have two objectives: a `performance' objective (denoted \RP{}) and an `alignment' objective (denoted \RA{}). %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
 Four gridworld environments reported in \cite{vamplew_potential-based_2021} were examined.
-They are shown in \ref{fig:envs} and we call them the 'breakable and unbreakable bottles', 'Sokoban' and 'Doors'.
+They are shown in \ref{fig:envs} and we call them the 'Breakable and Unbreakable Bottles' (BB and UB), 'Sokoban' and 'Doors'.
 
-The bottles environments share the same 1D grid layout where one end is the destination 'D' where the agent has to deliver bottles and the other end is the source 'S' where bottles are provided.
+The Bottles environments share the same 1D grid layout where one end is the destination 'D' where the agent has to deliver bottles and the other end is the source 'S' where bottles are provided.
 Initially, the agent does not carry a bottle and it can hold up to two bottles and an episode ends when two bottles have been delivered.
 While in between source and destination an agent holding two bottles can drop a bottle on a tile with a probability of 10\%.
 Leaving a bottle on the way yields a penalty of -50 in R$^*$.
-While in unbreakable bottles the bottles can be picked up again where they were left, in breakable bottles they break upon dropping hence irreversibly changing the environment and receiving the penalty.
+While in UnbreakableBottles the bottles can be picked up again where they were left, in BreakableBottles they break upon dropping hence irreversibly changing the environment and receiving the penalty.
 
 In the Sokoban environment the agent starts on tile 'S' and is tasked with pushing away the box 'B' in order to reach the goal tile 'G'.
 There are two ways of pushing: downwards into a corner (irreversible) and to the left (reversible, but involving more steps).
 A penalty of -25 is evoked for each wall touching the box in the final position.
 
-In the doors environment the agent must simply travel from the start 'S' to the goal 'G'.
+In the Doors environment the agent must simply travel from the start 'S' to the goal 'G'.
 It can choose to open or close the doors (grey) which takes each one action. 
 There are two possible paths: either the agent can move around the right corridor taking 10 moves to reach 'G' or the agent can move straight down by opening the doors (6 moves if the doors stay open).
 However, there is a penalty of -10 associated with leaving a door open.
@@ -179,8 +179,9 @@ We wanted to understand how different aggregation functions could respond to re-
     \label{fig:envs}
 \end{figure}
 
-\subsubsection{Benchmark}
+\subsubsection{Measurement}
 
 Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and Alignment objectives where one unit of Alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
 
+Learning was switched off after 5000 episodes. Following that time, offline performance was observed as the average across all 100 runs.
 

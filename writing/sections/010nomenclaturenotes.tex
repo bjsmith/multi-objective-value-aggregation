@@ -10,15 +10,16 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
             \item TLO$^\text{A}$ not $TLO_A$. using a superscript character is an acceptable substitute in graphs.
             \item Use `LinearSum' not LIN\_SUM or other form.
         \end{itemize}
-    \item names of each of the environments: CamelCase and abbreviations. do not use a space for BreakableBottles or UnbreakableBottles. Can abbreviate as BB and UB. 
-    \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective. `Evaluation objective' is deprecated; use `performance metric'
-    \item you don't have `performance' on \RA{} and \RP{}; you have `scores' if necessary, but `performance' is reserved for \RStar{}
+    \item names of each of the environments follows Vamplew's use: CamelCase and abbreviations. do not use a space for BreakableBottles or UnbreakableBottles. Can abbreviate as BB and UB. Environment names are always capitalized. Can use ``Bottles environments'' to refer to BB and UB collectively.
+    \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective. `Evaluation objective' is deprecated; use `performance metric'. `Primary' and `alignment' are not specially capitalized.
+    \item you don't have `performance' on \RA{} and \RP{}; you have `scores' if necessary, but `performance' is reserved for \RStar{}. `R' stands for `reinforcer', not `reward'
     \item `Primary re-scaling', not `primary scale perturbation' or `reward scale perturbation'. `perturbation' is deprecated in favor of `re-scaling'
     \item `scaling' refers to changing the size of the rewards given by the environment as we have done in Experiment 1. it's linear. It should be thought of as a change in the environment itself.
     \item `transformation' generally refers to the non-linear transforms we apply to each objective. often [in case of q-value] they are combined following transform, though you could imagine method where they are not.
-    \item We have `Q-value transform' and `utility transform' NOT `reward transform'. Unsure about this but I have made the change for now. Unsure; we still have `transforming rewards'
-    \item Applying granularity is not `scaling' at all, although it could in principle be presented over differnet levels of scaling, I don't think that is what we've done in our paper
-    \item `Online' performance is performance during learning; `Offline' performance is performance after learning.
+    \item We have `Q-value transform' and `utility transform' NOT `reward transform'. Unsure about this but I have made the change for now. Unsure; we still have `transforming rewards'. Maybe `reinforcement transform' might be preferable? Currently use `reinforcement' and `utility' somewhat interchangeably.
+    \item Applying granularity is not `scaling' at all, although it could in principle be presented over different levels of scaling, I don't think that is what we've done in our paper
+    \item Do we need to standardize terms discussing granularity?
+    \item `Online' performance is performance during learning; `offline' performance is performance after learning. Don't capitalize the terms online and offline.
 \end{itemize}
 
  
@@ -32,5 +33,10 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
     \item Make sure the reason for every function being here is clear, including ELA, LELA, SEBA, LinearSum, etc We can remove some if it is more appropriate.
     \item Outline why we've scaled sokoban for the locations where it has been scaled.
     \item remove inappropriate descriptions of `Scaling' in Exp 3
+    \item after we've settled on reward vs. utility nomenclature, need to decide whether we're still using R nomenclature; if so, the granularity graph needs changing.
+    \time Table 2: what do we want here. do we still want to change it to compare vs. base granularity?
+    \item Introduction, last paragraph, and 1.3 Pluralistic value systems, last pararaph, are about Goodharting/wireheading, but are pretty poorly written, and maybe should be removed. can keep as-is if other authors; I don't want to spend time on improving so might be easiest to just delete.
+    \item section `Aggregation functions'. What is the scaling factor? The scaling factor is applied to reinforcement but the transform to Q-values, so it's not really correct to present this as a set of steps.
+    \item Experiment 3: describe the granularity transform precisely in terms of how it relates to our earlier functions.
 \end{itemize}
  
