@@ -245,7 +245,7 @@ summary_stats_wide <- exp_summary_stats %>% dcast.data.table(
 ```
 
 
-```{r, knit}
+```{r eval=FALSE, include=FALSE}
 table_env_long <- summary_stats_wide
 #change this column name.
 colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
@@ -296,9 +296,16 @@ table_env_long %>%
 print(paste0("number of experiment runs in this dataset: ",max(run_summary$RunId)))
 ```
 
+```{r}
+
+# activity_means <- data.table(raw_activity)[EpisodeType=="Online"] %>% 
+#   select(`R^*`,Agent,Environment,EnvironmentClass,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>%
+#   group_by(EnvironmentClass, Environment, Agent,EnvironmentVariant,ObjectiveDimChange,EnvironmentValueChange) %>% summarise_all(mean) %>% data.table
+activity_means <- run_summary[EpisodeType=="Online" & Agent!="Linear"]
+```
 
 
-```{r fig.width=8}
+```{r eval=FALSE, fig.width=8, include=FALSE}
 
 
 
@@ -406,7 +413,7 @@ for (env_dim in c("Performance","Alignment")){
 
 ### big table
 
-```{r, knit}
+```{r eval=FALSE, include=FALSE}
 
 table_env_long <- exp_summary_stats[Agent %in% agents_to_show] %>%
   mutate(Agent = 
@@ -490,10 +497,11 @@ table_env_long %>%
   mutate(`Objective Scale`=format(`Objective Scale`,scientific = FALSE,drop0trailing = TRUE)) %>%
   #mutate_if(is.numeric,~formatC(.x,digits=2,format="f"),"latex") %>%
   #mutate(LELA=cell_spec(LELA,"latex",color=ifelse(row_max[,'LELA'],"blue","black"))) %>%
-  mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"))) %>%
+  mutate(SFELLA=cell_spec(SFELLA,"latex",color=ifelse(row_max[,'SFLLA'],"blue","black"),escape=FALSE)) %>%
   #mutate(ELA=cell_spec(ELA,"latex",color=ifelse(row_max[,'ELA'],"blue","black"))) %>%
-  mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"))) %>%
-  mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"))) %>%
+  mutate(SEBA=cell_spec(SEBA,"latex",color=ifelse(row_max[,'SEBA'],"blue","black"),escape=FALSE)) %>%
+  mutate(LinearSum=cell_spec(LinearSum,"latex",color=ifelse(row_max[,'LIN_SUM'],"blue","black"),escape=FALSE)) %>%
+  mutate(`TLO$^A$`=cell_spec(`TLO$^A$`,"latex",color=ifelse(row_max[,'TLO_A'],"blue","black"),escape=FALSE)) %>%
   mutate(Environment=linebreak(Environment)) %>%
   kable(
       #%>% order_by(c(EnvironmentClass,EnvironmentDimChange,EnvironmentValueChange))
