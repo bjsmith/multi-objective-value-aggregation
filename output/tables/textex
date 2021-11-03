@@ -1,7 +1,7 @@
 
 \begin{tabular}{>{\raggedright\arraybackslash}p{5em}>{\raggedleft\arraybackslash}p{4em}>{\raggedright\arraybackslash}p{4.5em}rrrr}
 \toprule
-Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LinearSum & TLO$^A$\\
+Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LIN_SUM & TLO$^A$\\
 \midrule
  &  & 1 & \textcolor{black}{1.43\textbackslash{}downarrow**} & \textcolor{blue}{6.54\textbackslash{}downarrow***} & 1.48\downarrow* & \textcolor{black}{1.81}\\
 \cmidrule{2-7}
@@ -19,7 +19,7 @@ Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LinearSum &
 
  &  & 10 & \textcolor{black}{1.41\textbackslash{}downarrow**} & \textcolor{blue}{6.51\textbackslash{}downarrow***} & 1.44\downarrow* & \textcolor{black}{1.77}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash BB} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Primary} & 100 & \textcolor{black}{1.46\textbackslash{}downarrow**} & \textcolor{blue}{6.40\textbackslash{}downarrow***} & 1.35\downarrow*** & \textcolor{black}{1.81}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Breakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & \textcolor{black}{1.46\textbackslash{}downarrow**} & \textcolor{blue}{6.40\textbackslash{}downarrow***} & 1.35\downarrow*** & \textcolor{black}{1.81}\\
 \cmidrule{1-7}
  &  & 1 & \textcolor{black}{-0.48\textbackslash{}downarrow***} & \textcolor{black}{4.38\textbackslash{}downarrow***} & -0.47\downarrow*** & \textcolor{black}{3.87}\\
 \cmidrule{2-7}
@@ -37,7 +37,7 @@ Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LinearSum &
 
  &  & 10 & \textcolor{black}{-0.70\textbackslash{}downarrow***} & \textcolor{blue}{4.41\textbackslash{}downarrow***} & -0.67\downarrow*** & \textcolor{blue}{3.97}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Doors} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Primary} & 100 & \textcolor{black}{-0.51\textbackslash{}downarrow***} & \textcolor{blue}{4.17\textbackslash{}downarrow**} & -0.58\downarrow*** & \textcolor{blue}{3.85}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Doors} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & \textcolor{black}{-0.51\textbackslash{}downarrow***} & \textcolor{blue}{4.17\textbackslash{}downarrow**} & -0.58\downarrow*** & \textcolor{blue}{3.85}\\
 \cmidrule{1-7}
  &  & 1 & \textcolor{black}{-14.98\textbackslash{}downarrow***} & \textcolor{black}{-10.29\textbackslash{}downarrow***} & -14.97\downarrow*** & \textcolor{blue}{10.76}\\
 \cmidrule{2-7}
@@ -55,7 +55,7 @@ Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LinearSum &
 
  &  & 10 & \textcolor{black}{-15.01\textbackslash{}downarrow***} & \textcolor{black}{-11.05\textbackslash{}downarrow***} & -14.98\downarrow*** & \textcolor{blue}{10.88}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash Sokoban} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Primary} & 100 & \textcolor{black}{-14.96\textbackslash{}downarrow***} & \textcolor{black}{-10.97\textbackslash{}downarrow***} & -14.97\downarrow*** & \textcolor{blue}{10.82}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Sokoban} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & \textcolor{black}{-14.96\textbackslash{}downarrow***} & \textcolor{black}{-10.97\textbackslash{}downarrow***} & -14.97\downarrow*** & \textcolor{blue}{10.82}\\
 \cmidrule{1-7}
  &  & 1 & \textcolor{blue}{28.71\textbackslash{}downarrow***} & \textcolor{blue}{27.99\textbackslash{}downarrow***} & 28.76\downarrow*** & \textcolor{blue}{27.09}\\
 \cmidrule{2-7}
@@ -73,6 +73,6 @@ Environment & Objective Modified & Objective Scale & SEBA & SFELLA & LinearSum &
 
  &  & 10 & \textcolor{blue}{28.78\textbackslash{}downarrow***} & \textcolor{blue}{27.91\textbackslash{}downarrow***} & 28.69\downarrow*** & \textcolor{blue}{27.10}\\
 
-\multirow[t]{-9}{5em}{\raggedright\arraybackslash UB} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Primary} & 100 & \textcolor{blue}{28.75\textbackslash{}downarrow***} & \textcolor{blue}{27.85\textbackslash{}downarrow***} & 28.71\downarrow*** & \textcolor{blue}{27.08}\\
+\multirow[t]{-9}{5em}{\raggedright\arraybackslash Unbreakable Bottles} & \multirow[t]{-4}{4em}{\raggedleft\arraybackslash Performance} & 100 & \textcolor{blue}{28.75\textbackslash{}downarrow***} & \textcolor{blue}{27.85\textbackslash{}downarrow***} & 28.71\downarrow*** & \textcolor{blue}{27.08}\\
 \bottomrule
 \end{tabular}

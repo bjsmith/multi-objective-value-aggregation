@@ -11,14 +11,24 @@ use_display_names <- function(table,abbreviate_envs = FALSE){
     levels(table$Agent)[levels(table$Agent)=="TLO_A"] <- "TLO^A"
     levels(table$Agent)[levels(table$Agent)=="LIN_SUM"] <- "LinearSum"
     
+    
   }
+  colnames(table)[colnames(table)=="LIN_SUM"]<-"LinearSum"
+
   if("Environment" %in% colnames(table)){
+
+    
     levels(table$Environment)[levels(table$Environment)=="Breakable Bottles"] <- "BreakableBottles"
     levels(table$Environment)[levels(table$Environment)=="Unbreakable Bottles"] <- "UnbreakableBottles"
     if(abbreviate_envs){
+      
       levels(table$Environment)[levels(table$Environment)=="BreakableBottles"] <- "BB"
       levels(table$Environment)[levels(table$Environment)=="UnbreakableBottles"] <- "UB"
     }
+    
+  }
+  if("ObjectiveDimChange" %in% colnames(table)){
+    levels(table$ObjectiveDimChange)[levels(table$ObjectiveDimChange)=="Performance"] <- "Primary"
     
   }
   # if("GranularityLevel" %in% colnames(table)){

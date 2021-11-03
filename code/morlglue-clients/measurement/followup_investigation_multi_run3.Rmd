@@ -212,16 +212,26 @@ exp_summary_stats <- run_means_agent_comparison[
     `Trial_SD_R^*`=sd(`Run_Mean_R^*_experimental`),
     `Trial_Mean_R^*_diff_pvalue`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$p.value,
     `Trial_Mean_R^*_diff_ci95_lower`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[1]],
-    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]]
+    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]],
+    `Control_Mean_R^*`=mean(`Run_Mean_R^*_control`)
     )
   ,by=.(Agent,Environment,EnvironmentClass,EnvironmentVariant,EnvironmentDimChange,EnvironmentValueChange,ObjectiveDimChange)]
                                                
 
-get_formatted_desc <- function(x,pval){
-  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+get_formatted_desc <- function(x,pval,control=NA){
+  effect_direction_indicator<-""
+  if (!is.na(control)){
+    if(x>control){
+        effect_direction_indicator <- "\\uparrow"
+       }else{
+        effect_direction_indicator <- "\\downarrow"
+      }
+  }
+   
+  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,paste0(effect_direction_indicator,"*"),""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
 }
 # exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
-exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`)]
+exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`,`Control_Mean_R^*`)]
 
 control_summary_stats <- control_run_means[
   ,
@@ -459,18 +469,19 @@ table_env_long <- exp_summary_stats[Agent %in% agents_to_show] %>%
            ) %>% dcast.data.table(
   EnvironmentClass+ObjectiveDimChange+EnvironmentValueChange~Agent,value.var="exp_desc") %>%
   merge(control_summary_stats)
+
+
+
 #change this column name.
 colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"TLO_A","TLO$^A$")
 setnames(table_env_long,"EnvironmentClass","Environment",skip_absent=TRUE)
+table_env_long <- table_env_long %>% use_display_names(abbreviate_envs=TRUE)
 setnames(table_env_long,"EnvironmentValueChange","Objective Scale",skip_absent=TRUE)
 setnames(table_env_long,"ObjectiveDimChange","Objective Modified",skip_absent=TRUE)
 setnames(table_env_long,"SFLLA","SFELLA",skip_absent=TRUE)
 
 #colnames(table_env_long) <- stringr::str_replace(colnames(table_env_long),"Envir","$TLO^A$")
-table_env_long <- 
-  table_env_long %>% 
-  mutate(Environment=str_replace(Environment,"BreakableBottles","Breakable Bottles")) %>%
-  mutate(Environment=str_replace(Environment,"UnbreakableBottles","Unbreakable Bottles"))
+
   
 #highlight results within 10% of the best value in each row.
 row_max <- apply(table_numeric_vals[,4:ncol(table_numeric_vals)],1,max)*0.9<table_numeric_vals[,4:ncol(table_numeric_vals)]
