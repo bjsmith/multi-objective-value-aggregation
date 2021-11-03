@@ -320,6 +320,14 @@ significance_abridged <- table_env_long %>%
   filter((RewGranularity %in% c(10^-2,10^0,10^2) | PenGranularity %in% c(10^-2,10^0,10^2)) & (RewGranularity==0 | PenGranularity==0)) %>%
   select(Environment,RewGranularity,PenGranularity,LIN_SUM,SFLLA1,EEBA1,`TLO$^A$`)
 
+significance_abridged <- significance_abridged  %>%
+  mutate(Environment = as.factor(Environment)) %>% rename(
+  LinearSum = LIN_SUM,
+  `Primary Objective Granularity` = RewGranularity,
+  `Alignment Objective Granularity` = PenGranularity,
+  SFELLA = SFLLA1,
+  EEBA = EEBA1,
+  ) %>% use_display_names(abbreviate_envs = TRUE)
 
 significance_abridged_output <- significance_abridged %>%
   mutate(Environment=linebreak(Environment)) %>%
@@ -424,7 +432,7 @@ for (granularity_dim in c("RewGranularity","PenGranularity")){
     facet_wrap(~Environment,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
       labs(
         x=paste0(granularity_display_name, " Scale"),
-        title=paste0(granularity_display_name, " Scaling: Average Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
+        title=paste0(granularity_display_name, " Scaling: Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
     paper_plot <- baseplot 
 

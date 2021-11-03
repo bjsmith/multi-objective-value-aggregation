@@ -1,6 +1,6 @@
 
 #aligns table to use the canonical display names as defined in our paper's nomenclature
-use_display_names <- function(table){
+use_display_names <- function(table,abbreviate_envs = FALSE){
   if("Agent" %in% colnames(table)){
     #https://stackoverflow.com/questions/44310088/how-to-add-latex-code-in-ggplot2-legend-labels
     levels(table$Agent)[levels(table$Agent) %in% c("SFLLA","SFLLA1")] <- "SFELLA"
@@ -10,6 +10,15 @@ use_display_names <- function(table){
     levels(table$Agent)[levels(table$Agent)=="SEBA2"] <- "SEBA_rt"
     levels(table$Agent)[levels(table$Agent)=="TLO_A"] <- "TLO^A"
     levels(table$Agent)[levels(table$Agent)=="LIN_SUM"] <- "LinearSum"
+    
+  }
+  if("Environment" %in% colnames(table)){
+    levels(table$Environment)[levels(table$Environment)=="Breakable Bottles"] <- "BreakableBottles"
+    levels(table$Environment)[levels(table$Environment)=="Unbreakable Bottles"] <- "UnbreakableBottles"
+    if(abbreviate_envs){
+      levels(table$Environment)[levels(table$Environment)=="BreakableBottles"] <- "BB"
+      levels(table$Environment)[levels(table$Environment)=="UnbreakableBottles"] <- "UB"
+    }
     
   }
   # if("GranularityLevel" %in% colnames(table)){
