@@ -442,7 +442,7 @@ table_env_long %>%
   column_spec(2,width="4em") %>%
   column_spec(3,width="4.5em") %>%
    collapse_rows(valign="top",latex_hline="custom",custom_latex_hline=1:2) %>%
-  writeLines("../../../output/tables/testex.tex")
+  writeLines("../../../output/tables/table_one.tex")
 ```
 
 
