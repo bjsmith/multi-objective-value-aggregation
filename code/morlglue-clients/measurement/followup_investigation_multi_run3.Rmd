@@ -219,16 +219,30 @@ exp_summary_stats <- run_means_agent_comparison[
                                                
 
 get_formatted_desc <- function(x,pval,control=NA){
-  effect_direction_indicator<-""
-  if (!is.na(control)){
-    if(x>control){
-        effect_direction_indicator <- "$\\uparrow$"
-       }else{
-        effect_direction_indicator <- "$\\downarrow$"
-      }
+  if(is.na(control)){
+    return(paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*","")))
+    
+  }else{
+    return(
+      paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,paste0(
+      ifelse(x>control,"$\\uparrow$","$\\downarrow$"),"*"),""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+    )
   }
+  # effect_direction_indicator<-""
+  # if (!is.na(control)){
+  #   print(paste(control,x))
+  #   print(class(x))
+  #   print(class(control))
+  #   if(x>control){
+  #       effect_direction_indicator <- 
+  #       print("gt")
+  #     }else{
+  #        print("lt")
+  #       effect_direction_indicator <- 
+  #   }
+  # }
    
-  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,paste0(effect_direction_indicator,"*"),""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+  
 }
 # exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
 exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`,`Control_Mean_R^*`)]
