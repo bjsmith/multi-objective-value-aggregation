@@ -248,9 +248,18 @@ exp_summary_stats <- run_means_agent_comparison[
   ,by=.(Agent,Environment,RewGranularity,PenGranularity)]
                                                
 
-get_formatted_desc <- function(x,pval){
-  paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+get_formatted_desc <- function(x,pval,control=NA){
+  if(is.na(control)){
+    return(paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,"*",""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*","")))
+    
+  }else{
+    return(
+      paste0(formatC(x,digits=2,format="f"),ifelse(pval<0.05,paste0(
+      ifelse(x>control,"$\\uparrow$","$\\downarrow$"),"*"),""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
+    )
+  }
 }
+
 # exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
 exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`)]
 

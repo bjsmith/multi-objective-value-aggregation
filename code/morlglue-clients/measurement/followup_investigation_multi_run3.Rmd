@@ -228,23 +228,8 @@ get_formatted_desc <- function(x,pval,control=NA){
       ifelse(x>control,"$\\uparrow$","$\\downarrow$"),"*"),""),ifelse(pval<0.01,"*",""),ifelse(pval<0.001,"*",""))
     )
   }
-  # effect_direction_indicator<-""
-  # if (!is.na(control)){
-  #   print(paste(control,x))
-  #   print(class(x))
-  #   print(class(control))
-  #   if(x>control){
-  #       effect_direction_indicator <- 
-  #       print("gt")
-  #     }else{
-  #        print("lt")
-  #       effect_direction_indicator <- 
-  #   }
-  # }
-   
-  
 }
-# exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
+
 exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`,`Control_Mean_R^*`)]
 
 control_summary_stats <- control_run_means[
