@@ -243,7 +243,8 @@ exp_summary_stats <- run_means_agent_comparison[
     `Trial_SD_R^*`=sd(`Run_Mean_R^*_experimental`),
     `Trial_Mean_R^*_diff_pvalue`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$p.value,
     `Trial_Mean_R^*_diff_ci95_lower`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[1]],
-    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]]
+    `Trial_Mean_R^*_diff_ci95_upper`=t.test(`Run_Mean_R^*_control`,`Run_Mean_R^*_experimental`)$conf.int[[2]],
+    `Control_Mean_R^*`=mean(`Run_Mean_R^*_control`)
     )
   ,by=.(Agent,Environment,RewGranularity,PenGranularity)]
                                                
@@ -261,7 +262,7 @@ get_formatted_desc <- function(x,pval,control=NA){
 }
 
 # exp_summary_stats[,exp_desc:=paste0(formatC(`Trial_Mean_R^*`,digits=2,format="f"),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.05,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.01,"*",""),ifelse(`Trial_Mean_R^*_diff_pvalue`<0.001,"*",""))]
-exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`)]
+exp_summary_stats[,exp_desc:=get_formatted_desc(`Trial_Mean_R^*`,`Trial_Mean_R^*_diff_pvalue`,`Control_Mean_R^*`)]
 
 control_summary_stats <- control_run_means[
   ,
