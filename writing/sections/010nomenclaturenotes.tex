@@ -12,31 +12,63 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
         \end{itemize}
     \item names of each of the environments follows Vamplew's use: CamelCase and abbreviations. do not use a space for BreakableBottles or UnbreakableBottles. Can abbreviate as BB and UB. Environment names are always capitalized. Can use ``Bottles environments'' to refer to BB and UB collectively.
     \item Objectives: We have `primary' ($R^P$) and `alignment' ($R^A$) objectives, as well as the $R^*$ `performance metric', not `performance objective', to keep it clearly delineated. `Performance objective' should NOT be used to refer to the primary objective. `Evaluation objective' is deprecated; use `performance metric'. `Primary' and `alignment' are not specially capitalized.
-    \item you don't have `performance' on \RA{} and \RP{}; you have `scores' if necessary, but `performance' is reserved for \RStar{}. `R' stands for `reinforcer', not `reward'
+    \item you don't have `performance' on \RA{} and \RP{}; you have `scores' if necessary, but `performance' is reserved for \RStar{}.
     \item `Primary re-scaling', not `primary scale perturbation' or `reward scale perturbation'. `perturbation' is deprecated in favor of `re-scaling'
     \item `scaling' refers to changing the size of the rewards given by the environment as we have done in Experiment 1. it's linear. It should be thought of as a change in the environment itself.
     \item `transformation' generally refers to the non-linear transforms we apply to each objective. often [in case of q-value] they are combined following transform, though you could imagine method where they are not.
-    \item We have `Q-value transform' and `utility transform' NOT `reward transform'. Unsure about this but I have made the change for now. Unsure; we still have `transforming rewards'. Maybe `reinforcement transform' might be preferable? Currently use `reinforcement' and `utility' somewhat interchangeably.
+    \item experiment 1 is `Q-value transform', try to avoid `utility transform' although it's an OK synonym. Experiment 2 is `reward transform'. don't mix these up.
+    \begin{itemize}
+        \item Reward - the measure code applies at each time step
+        \item Q value - the predicted reward (in state * action)
+        \item Utility - the inspiration for our transformations from economics
+    \end{itemize}
+    \item Roland: search reward, reinforcement, utility, make sure words are used appropriately.
     \item Applying granularity is not `scaling' at all, although it could in principle be presented over different levels of scaling, I don't think that is what we've done in our paper
     \item Do we need to standardize terms discussing granularity?
-    \item `Online' performance is performance during learning; `offline' performance is performance after learning. Don't capitalize the terms online and offline.
+    \item In our paper, `Online' performance is performance during learning; `offline' performance is performance after learning (this may not be generally true). Don't capitalize the terms online and offline.
+    
 \end{itemize}
 
- 
+\section{Future directions}
+
+\begin{itemize}
+    \item Maybe in the future do a statistical comparison between reward transformation and Q value transformation (varying the location of the transformation between same function and scale or granularity)
+\end{itemize}
  
 \section*{additional editing tasks}
 \begin{itemize}
-    \item Table 1: which items do we want on here?
-    \item algorithms need to be improved
-    \item Label tables and graphs nicely
+    \item @Roland: please revisit Results sections and hopefully discussion sections and confirm you're happy with them
+    \item @Roland: For Exp3, which sokoban should we show? Plots just choose one, tables can have multiple
+    \item Table 1: which items do we want on here? - probably keep SEBA, even though EEBA is a bit better. This is probably fine as is.
+    \item algorithms need to be improved - probably no changes. say what the rounding levels are - add reference to plot near the granularity formula?
+    \item Label tables and graphs nicely - Ben to do
     \item refine the exact comparisons shown in tables and graphs. might leave this until we have substantially finished writing. What things are we actually trying to say?
+    \begin{itemize}
+        \item we need to discuss the graphs together after we've got the main text substantially finished.
+        \item Label agents correctly
+        \item Granularity plots: leave out scale 100 because changes dwarf other items and make it hard to see. Add something in the caption to say why we did that
+        \item should we do middle 80\% instead of middle 90\%?
+    \end{itemize}
     \item Make sure the reason for every function being here is clear, including ELA, LELA, SEBA, LinearSum, etc We can remove some if it is more appropriate.
-    \item Outline why we've scaled sokoban for the locations where it has been scaled.
-    \item remove inappropriate descriptions of `Scaling' in Exp 3
-    \item after we've settled on reward vs. utility nomenclature, need to decide whether we're still using R nomenclature; if so, the granularity graph needs changing.
-    \time Table 2: what do we want here. do we still want to change it to compare vs. base granularity?
-    \item Introduction, last paragraph, and 1.3 Pluralistic value systems, last pararaph, are about Goodharting/wireheading, but are pretty poorly written, and maybe should be removed. can keep as-is if other authors; I don't want to spend time on improving so might be easiest to just delete.
-    \item section `Aggregation functions'. What is the scaling factor? The scaling factor is applied to reinforcement but the transform to Q-values, so it's not really correct to present this as a set of steps.
-    \item Experiment 3: describe the granularity transform precisely in terms of how it relates to our earlier functions.
+    \begin{itemize}
+        \item SEBA: I'm satisfied enough that we have adequately justified SFELLA and SEBA.
+        \item take out LELA and ELA maybe. Maybe leave only formulas and refer to how a similar one is used in economy.
+        \item Why do we include LinearSum as a second baseline? need to specify
+        \item Linear sum - because it is most intuitive naive choice implemented by people using RL with multiple objectives
+        \item \tloA{} - because Vamplew used it and because it is an useful construction though complicated to use
+    \end{itemize}
+    \item @Roland: Outline why we've scaled sokoban for the locations where it has been scaled.
+    \item Table 2: what do we want here. do we still want to change it to compare vs. base granularity? - NO, decided to keep it the same.
+    \item @roland: Explain why granularity results fall below \tloA{} and how introducing non-arbitrary offset might confirm our granularity hypothesis more fully.
+    \item Introduction, last paragraph, and , are about Goodharting - @roland to edit
+    \item 1.3 Pluralistic value systems, last pararaph has been deleted.
+        
+    \item section `Aggregation functions'. What is the scaling factor? The scaling factor is applied to reinforcement but the transform is applied to Q-values, so it's not really correct to present this as a set of steps. - still don't love this but we have an awkward set of ideas to communicate and this is as best as we can do.-BJS
+    \item Experiment 3: describe the granularity transform precisely in terms of how it relates to our earlier functions. - which equation - do you mean it applies before Equation 2?
+    \item Roland to propose a definition for the `soft' in `soft maximin'
+    \item Robert to visualise the soft maximin idea
+    \item Ben to change the descriptions within figure 4 and 5, and 6 captions nad x-axes of "Scaling" to "transform" or similar approrpriate, and replace "peerformance" with "primary". Should probably say "Primary/Alignment transform: average online performance"; then x-axis caption should have "Primary/Alignment Transform magnitude"
+    \item Ben to change Experimetn 3 figure TO DO: sort to more easily show the change over time, smallest granularities at top and then bigger ones at the bottom.
 \end{itemize}
+    
  

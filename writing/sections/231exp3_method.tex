@@ -1,18 +1,21 @@
 
 % The objective of granularity transformation is to explore the continuous transformation hypothesis.
 
-We wanted to test the hypothesis that the continuous transformation functions might have led to the better online performance and learning rates observed in Experiment 1 because these functions are smooth. Under this view, the agent learns better when the utility transformation function or Q value transformation function is continuous instead of thresholded. The bigger the granularity, the worse the learning should get. In order to test that hypothesis we implemented non-smooth versions of the nonlinear transformation functions. The transformation functions become stepped/jagged.
+We wanted to test the hypothesis that the continuous transformation functions might have led to the better online performance and learning rates observed in Experiment 1 because these functions are smooth. Under this view, the agent learns better when Q value transformation function is continuous instead of thresholded. The bigger the granularity, the worse the learning should get. In order to test that hypothesis we implemented non-smooth versions of the nonlinear transformation functions. The transformation functions become stepped/jagged.
 
 \subsection{Method}
 
+Here, we configured our experiment similarly to Experiment 1, in which we transform Q-values with various non-linear functions. However, in Experiment 3, we also implemented a granularity transform as described below, applied to all of the Q-value transforms in Experiment 1.
 
 %In other words the input to the nonlinear transformation is "pixelated" and therefore the output is also pixelated. 
-The function will somewhat resemble the thresholded function, which is likewise non-continuous. According to the hypothesis, the more coarse the steps, the more the agent's learning curve should resemble the learning curve while using a thresholded function. The step function is applied before the nonlinear transformation.\footnote{in fact, much earlier; it's applied to the reinforcement given to the agent, correct?}\footnote{don't think the `pixelated' description is very formal or precise, so I've kept to language about `stepping'-BJS}
+The function will somewhat resemble the thresholded function, which is likewise non-continuous. According to the hypothesis, the more coarse the steps, the more the agent's learning curve should resemble the learning curve while using a thresholded function. The step function is applied immediately before the nonlinear transformation. \footnote{don't think the `pixelated' description is very formal or precise, so I've kept to language about `stepping'-BJS}
 
 The formula for granularity transform is the following. The granularity transform is applied before one of the main nonlinear transforms treated in this paper is applied.\footnote{we should be precise in how this is described in terms of the earlier functions in the paper -BJS}
 \begin{align}
 x_{ig} = \text{round}(x_i / g_i) \times g_i
-\end{align}
+\end{align} \footnote{@Roland need to say which values g takes on}
+
+
 
 \footnote{TODO: https://tex.stackexchange.com/questions/433101/rounding-to-nearest-integer-symbol-in-latex/450722
 
