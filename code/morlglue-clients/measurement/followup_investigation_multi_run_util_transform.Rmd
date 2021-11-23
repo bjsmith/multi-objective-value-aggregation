@@ -311,6 +311,10 @@ activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5
 
 #now do 
 for (env_dim in c("Performance","Alignment")){
+    env_dim_descriptive <- env_dim
+    if(env_dim=="Performance"){
+      env_dim_descriptive<-"Primary"
+    }
   relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim)) %>% use_display_names
   
 
@@ -370,6 +374,10 @@ activity_means <- run_summary[EpisodeType=="Online" & (Agent %in% c("TLO_A","SFL
 #now do 
 for (ec in unique(activity_means$EnvironmentClass)){
   for (env_dim in c("Performance","Alignment")){
+    env_dim_descriptive <- env_dim
+    if(env_dim=="Performance"){
+      env_dim_descriptive<-"Primary"
+    }
     relevant_activity <- activity_means %>% dplyr::filter((ObjectiveDimChange %in% c("",env_dim)) & EnvironmentClass==ec)
       baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=value,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
         #geom_point(size=6,alpha=0.4,shape=21,color="black")+

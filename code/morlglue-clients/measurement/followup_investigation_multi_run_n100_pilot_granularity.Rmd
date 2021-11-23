@@ -441,7 +441,7 @@ for (granularity_dim in c("RewGranularity","PenGranularity")){
     #geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
     facet_wrap(~Environment,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
       labs(
-        x=paste0(granularity_display_name, " Scale"),
+        x=paste0(granularity_display_name, " Scale Magnitude"),
         title=paste0(granularity_display_name, " Scaling: Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
     paper_plot <- baseplot 
