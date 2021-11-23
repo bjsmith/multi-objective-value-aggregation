@@ -413,10 +413,10 @@ activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5
 for (granularity_dim in c("RewGranularity","PenGranularity")){
   if(granularity_dim=="RewGranularity"){
     constant_gran_dim = "PenGranularity"
-    granularity_display_name <- "Primary Objective Granularity"
+    granularity_display_name <- "Primary"
   }else if (granularity_dim=="PenGranularity"){
     constant_gran_dim = "RewGranularity"
-    granularity_display_name <- "Alignment Objective Granularity"
+    granularity_display_name <- "Alignment"
   }
   
       
@@ -441,8 +441,8 @@ for (granularity_dim in c("RewGranularity","PenGranularity")){
     #geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
     facet_wrap(~Environment,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
       labs(
-        x=paste0(granularity_display_name, " Scale Magnitude"),
-        title=paste0(granularity_display_name, " Scaling: Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
+        x=paste0(granularity_display_name, " objective granularity magnitude"),
+        title=paste0(granularity_display_name, " Objective Granularity Scaling: Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
     paper_plot <- baseplot 
 

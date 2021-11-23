@@ -331,7 +331,7 @@ for (env_dim in c("Performance","Alignment")){
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
-          x=paste0(env_dim_descriptive, " objective transform magnitude"),
+          x=paste0(env_dim_descriptive, " objective Q-value transform magnitude"),
           title=paste0(env_dim_descriptive, " Objective Transformation: Average Online Performance"),
           subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
     
@@ -398,9 +398,9 @@ for (env_dim in c("Performance","Alignment")){
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
-          x=paste0(env_dim_descriptive, " objective transform magnitude"),
-          
-          title=paste0(env_dim_descriptive, " Transformation: Average Online Performance"),subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
+          x=paste0(env_dim_descriptive, " objective Q-value transform magnitude"),
+          title=paste0(env_dim_descriptive, " Objective Transformation: Average Online Performance"),
+          subtitle=paste("Mean across all episodes over ",max(relevant_activity$RunId)," experiment repetitions"))
       
     paper_plot <- baseplot 
 

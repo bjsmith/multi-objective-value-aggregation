@@ -389,9 +389,9 @@ for (ec in unique(activity_means$EnvironmentClass)){
         geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
         facet_wrap(~variable,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
           labs(
-            x=paste0(env_dim, " objective transform magnitude"),
+            x=paste0(env_dim, " objective reward transform magnitude"),
             
-            title=paste0(env_dim, paste0(" Objective Reward Scaling: Average Online Score for ",ec)),
+            title=paste0(env_dim, paste0(" Objective Transformation: Average Online Score for ",ec)),
             subtitle="Across 5000 trials"
             )
         
