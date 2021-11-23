@@ -33,11 +33,13 @@ In offline performance, there was very little difference between the best-perfor
   %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolfonline_4agents_Performance.pdf}
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolfonline_4agents_Alignment.pdf}
-  \caption{Online performance averaged across learning episodes and experiment repetitions for different utility re-scales. (A): R* when scaling Performance across 5000 learning trials. Note SFELLA consistently performs similar or better to \tloA{}. (B): R* when scaling Alignment across 5000 learning trials. No algorithm is a clear best performer.%\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}
-  \rk{show Alignment and Performance rewards directly instead of R*, update y-axis description to say average reward (over epidodes and exp repetitions)}
+  \caption{Experiment 1: Online performance averaged across learning episodes and experiment repetitions for different Q-value transforms. (A): R* when scaling Primary Q-values across 5000 learning trials. SFELLA consistently performs similar or better to \tloA{}. (B): R* when transforming Alignment Q-values across 5000 learning trials. No algorithm is a clear best performer.%\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}
+  %\rk{show Alignment and Performance rewards directly instead of R*, update y-axis description to say average reward (over epidodes and exp repetitions)}
+  
+  
   }
    \label{fig:online_performance}
-   \Description{Online Performance and Alignment scaled performance}
+   %\Description{Online Performance and Alignment scaled performance}
  \end{figure}
 
 While there was no clear best performer, SFELLA had the best online performance during training across a wider range of environments and environment variants than any other agent, including \tloA{}. Table~\ref{tab:mean_r_star_performance} describes relative $\text{R}^*$ scores for each function, compared to the $\text{TLO}^\text{A}$ function, at different scales.  Within the BreakableBottles environment, \tloA{} performed worse than all other agents at all scales, and SFELLA performed within 10\% of the best within five of nine scales. In the UnbreakableBottles Environment, performance between all agents except ELA was not significantly different. Agents in the Sokoban environment were generally very sensitive to scaling, though \tloA{} performed better in this environment overall. 

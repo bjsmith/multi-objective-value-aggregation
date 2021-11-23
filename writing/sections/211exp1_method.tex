@@ -15,7 +15,7 @@ All of the multi-objective utility functions we compared use the following steps
     A scaling factor $c_i$ is applied to each objective, specific to that reinforcement, by multiplying it with the value of reinforcement at each time point. This step has not been implemented in this paper but we emphasize its possible use in the future. \footnote{Clarify:  I think if the step is included here it needs to describe something we're actually doing in this experiment, or at least, we need to spell out that it's not actually used here--unless it is?}
     \item Transform the scaled output of  using a non-linear transform, as described below (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
     
-    \item Combine the transformed output using a simple average/sum.
+    \item Combine the transformed output using a simple average/sum as in Equation~\ref{eq:meu}.
 \end{enumerate}
 
 These steps describe a value function which can be applied either to the individual reinforcement delivered at each in response to an action, or to Q-values during action selection. In Experiment 1, we apply these steps to Q-values during action selection.
@@ -27,7 +27,7 @@ Each non-linear function is applied component-wise before aggregation occurs by 
 U=\sum_{i}^n{f_i(c_i x_i)}
 \end{align}
 
-\noindent where ${f_i}$ describes a specific transform function for the $i$th objective. Note that here, $U$ describes our modeling of Q-values. The scaling factors $c_i$ can be treated as parameters of the model. They could be, for example, specified directly by the human, automatically determined in the future by the agent using a value learning method, or calculated by some other algorithm. 
+\noindent where ${f_i}$ describes a specific transform function for the $i$th objective, explained in more detail below. Note that here, $U$ describes our modeling of Q-values. The scaling factors $c_i$ can be treated as parameters of the model. They could be, for example, specified directly by the human, automatically determined in the future by the agent using a value learning method, or calculated by some other algorithm. 
 For the purposes of this experiment, we left these at $c=1$ (instead, we directly modified $x$, the value returned by the environment), but emphasize that modifying these scale values could be useful in the future.
 
 
@@ -61,7 +61,8 @@ Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ decline
   \caption{Transform functions. Left: Each transform function is applied to the utility received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
   %\footnote{why repeat the same thing when you can leave out the other option?}. 
   The output of each of these transform functions are averaged together % in a Maximize Expected Utility Model \footnote{if anything this should be called MOMEU, right?}
-  (Equation~\ref{eq:meu}). Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on a log scale%\footnote{could be omitted}
+  (Equation~\ref{eq:meu}). %\rk{Should we include a min function here, to show the soft minimax characteristic?} 
+  Right: Change in $f(x)$ per unit $x$, with $y$ axis plotted on a log scale%\footnote{could be omitted}
   . Note that ELA and SFELLA produce greater-than-linear change in $f(x)$ when $x<0$ and less-than-linear change when $x>0$. In contrast, LELA's change never falls below 1.}
   \label{fig:transform_functions}
   \Description{Transform functions.}
@@ -175,7 +176,7 @@ We wanted to understand how different aggregation functions could respond to re-
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{output/env_figure.pdf}
-    \caption{(a) (Un)Breakable Bottles, (b) Sokoban, (c) Doors}. Based on Figure in \cite{vamplew_potential-based_2021}.
+    \caption{Maps of physical environments in (a) (Un)Breakable Bottles, (b) Sokoban, (c) Doors. Based on Figure in \cite{vamplew_potential-based_2021}.}
     \label{fig:envs}
 \end{figure}
 
