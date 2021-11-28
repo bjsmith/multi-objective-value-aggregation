@@ -35,7 +35,7 @@ Now--great--can we compare different sheets?
 #source_path <- "../data/multirun_n100_eeba_rolf/"
 #source_path <- "../data/multirun_n100_eeba_rolf_attempt2/"
 #comparison_folder <- "multirun_n100_eeba_rolf"
-comparison_folder <- "multirun_n100_pilot_granularity_tuned"
+comparison_folder <- "multirun_n100_pilot_granularity_tuned_selected"
 source_path <- paste0("/Volumes/SeagateTimeMachine/workspace/morl_project_data/morlglue-clients-data/",comparison_folder,"/")
 start_time <- Sys.time()
 
@@ -368,6 +368,11 @@ print(paste0("number of experiment runs in this dataset: ",max(run_summary$RunId
 ```
 
 
+```{r}
+
+```
+
+
 
 ```{r fig.width=8,fig.height=7}
 
@@ -409,6 +414,9 @@ activity_means_trimmed <- activity_means %>% filter(`R^*`>Bottom5Pc & `R^*`<Top5
 #   (activity_means_trimmed$RewGranularity ==0) | (activity_means_trimmed$PenGranularity ==0) | (activity_means_trimmed$Agent==ctrl_agent)
 # )
 
+# activity_means_trimmed$AgentClass <- activity_means_trimmed$Agent
+# activity_means_trimmed[activity_means_trimmed$Agent=="Sokobanrew0.01","AgentClass"]<-"Sokoban"
+
 #now do 
 for (granularity_dim in c("RewGranularity","PenGranularity")){
   if(granularity_dim=="RewGranularity"){
@@ -439,7 +447,7 @@ for (granularity_dim in c("RewGranularity","PenGranularity")){
     #coord_cartesian(ylim=c(-40,20))+
     #geom_line(linetype="dashed")+
     #geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
-    facet_wrap(~Environment,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
+    facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
       labs(
         x=paste0(granularity_display_name, " objective granularity magnitude"),
         title=paste0(granularity_display_name, " Objective Granularity Scaling: Online Performance"),subtitle=paste0("Mean across all 5000 episodes over middle 90% of experiment repetitions"))

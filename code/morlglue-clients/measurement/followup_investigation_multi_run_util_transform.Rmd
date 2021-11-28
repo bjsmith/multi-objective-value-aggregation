@@ -315,7 +315,9 @@ for (env_dim in c("Performance","Alignment")){
     if(env_dim=="Performance"){
       env_dim_descriptive<-"Primary"
     }
-  relevant_activity <- activity_means_trimmed %>% dplyr::filter(ObjectiveDimChange %in% c("",env_dim)) %>% use_display_names
+  relevant_activity <- activity_means_trimmed %>% 
+    dplyr::filter(ObjectiveDimChange %in% c("",env_dim),EnvironmentValueChange < 100) %>% 
+    use_display_names
   
 
     baseplot <- ggplot(relevant_activity,aes(x=EnvironmentValueChange,y=`R^*`,fill=Agent,color=Agent,group=interaction(Agent,EnvironmentValueChange)))+
@@ -324,7 +326,9 @@ for (env_dim in c("Performance","Alignment")){
       geom_violin(position="dodge",alpha=0.2,size=0.1)+
       scale_x_continuous(trans="log10",
                          limits = c(min(relevant_activity$EnvironmentValueChange)/5,max(relevant_activity$EnvironmentValueChange)*10),
-                         breaks = c(0.01,0.1,1,10,100))+
+                         labels = function(x) format(x, scientific = TRUE),
+                         breaks = c(0.01,0.1,1,10#,100
+                                    ))+
       #coord_cartesian(ylim=c(-40,20))+
       #geom_line(linetype="dashed")+
       geom_dl(aes(label=Agent),method=list("last.qp",cex=0.7),alpha=1,position=position_nudge(x=500))+
