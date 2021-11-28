@@ -15,17 +15,19 @@
 \begin{figure}
   %\centering
   %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
-  \includegraphics[width=\columnwidth]{output/multirun_n100_pilot_granularityonline_RewGranularity.pdf}
-  \includegraphics[width=\columnwidth]{output/multirun_n100_pilot_granularityonline_PenGranularity.pdf}
-  \caption{Experiment 3: By creating granularity for our non-linear transform agents, we can simulate similarity with \tloA{}. \tloA{} can be modeled as a non-linear transform with very large granularity. As Primary and Alignment granularity increases, we become more similar to \tloA{} only in fine-tuning the sensitivity to changes across the scale. This generally worsens SFELLA performance, particularly in Primary objective granularity scaling.
+  \includegraphics[width=\columnwidth]{output/multirun_n100_pilot_granularity_tunedonline_RewGranularity.pdf}
+  \includegraphics[width=\columnwidth]{output/multirun_n100_pilot_granularity_tunedonline_PenGranularity.pdf}
+  \caption{Experiment 3: By creating granularity for our non-linear transform agents, we can simulate similarity with \tloA{}. \tloA{} can be modeled as a non-linear transform with very large granularity, but with a well-tuned offset of the granules. As primary and alignment granularity increases, we become more similar to \tloA{} in that the our agent becomes less sensitive to the changes of rewards. This generally worsens SFELLA performance, particularly in primary objective granularity scaling.
   }
    \label{fig:exp3_main}
 
  \end{figure}
  
-For SFELLA, as expected, \RStar{} performance declined as granularity increased. This was particularly noteable the BreakableBottles environment where it previously had a clear advantage over \tloA{} (Figure~\ref{fig:exp3_main}). For UnbreakableBottles, performance declined as Primary reward granularity increased, but actually marginally improved as penalty granularity was increased.% In the Doors environment, performance declined, from significantly better (??? Table~\ref{tab:granularity_significance}) than \tloA{} to much, much worse. In the Sokoban environment, as in Experiment 1, \tloA{} was the better performer and remained so.
+For SFELLA, as expected, \RStar{} performance declined as granularity increased. This was particularly noteable in the BreakableBottles environment where it previously had a clear advantage over \tloA{} (Figure~\ref{fig:exp3_main}). For UnbreakableBottles, performance declined as primary reward granularity increased, but actually marginally improved as penalty granularity was increased.% In the Doors environment, performance declined, from significantly better (??? Table~\ref{tab:granularity_significance}) than \tloA{} to much, much worse. In the Sokoban environment, as in Experiment 1, \tloA{} was the better performer and remained so.
 
-The result confirms that where SFELLA performs well, it does so because it avoids `granularity' and is sensitive to changes in reward right across the scale. In contrast, \tloA{} is sometimes insensitive to changes that exceed its threshold. Where it is well tuned, it performs well, or even better, than other algorithms, but when not well-tuned, it performs less well.\footnote{should this be moved to the discussion?}
+The result confirms that where SFELLA performs well, it does likely so because it avoids `granularity' and is sensitive to changes in reward right across the scale. In contrast, \tloA{} is sometimes insensitive to changes that exceed its threshold. Where it is well tuned, it performs well, or even better, than other algorithms, but when not well-tuned, it performs less well.\footnote{should this be moved to the discussion?}
+
+It can be seen on the plots that performance of SFELLA falls below \tloA{} level on large granularities. Here it is important to note that granularity function has actually two conceptual parameters: the size of granules, and the offset of the granules. In our experiments we changed the size of the granules. At the same time the offset of granules remained implicit and at the zero value. In contrast, for \tloA{} the offset conceptually is same as the threshold value, while the granularity of \tloA{} can be conceptually considered as very large or infinite. For \tloA{} that offset i.e threshold was fine tuned. If we apply similar tuning for SFELLA and fine-tune the offset away from current implicit value of zero then our hypothesis is that the performance of SFELLA will fall to the level of \tloA{} but not lower as the granularity increases. A most reasonable starting point for tuned offset of SFELLA granules would then be equal to the offset i.e threshold that \tloA{} currently has.
 
 
 

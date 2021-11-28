@@ -15,6 +15,7 @@ The formula for granularity transform is the following. The granularity transfor
 x_{ig} = \text{round}(x_i / g_i) \times g_i
 \end{align} \footnote{@Roland need to say which values g takes on}
 
+For Sokoban environment we used scaling for Alignment and Primary rewards since according to previous experiments our functions did not perform well on this environment when using unscaled rewards. We chose a reward scaling set with best results available to us at the time (from among scales 0.01, 0.1, 1, 10, 100 for both alignment and primary objective). The rewards for \tloA{} were not scaled because it was originally tuned to work best on non-scaled rewards and our intention here was to compare the best results from the agents.
 
 
 \footnote{TODO: https://tex.stackexchange.com/questions/433101/rounding-to-nearest-integer-symbol-in-latex/450722

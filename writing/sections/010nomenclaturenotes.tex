@@ -38,7 +38,7 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
 \section*{additional editing tasks}
 \begin{itemize}
     \item @Roland: please revisit Results sections and hopefully discussion sections and confirm you're happy with them
-    \item @Roland: For Exp3, which sokoban should we show? Plots just choose one, tables can have multiple
+    \item @Roland: For Exp3, which sokoban should we show? Plots just choose one, tables can have multiple -- On the plots I propose to show Sokoban rew 0.01 because it has best scores and having better scores was the motivation for scaling.
     \item Table 1: which items do we want on here? - probably keep SEBA, even though EEBA is a bit better. This is probably fine as is.
     \item algorithms need to be improved - probably no changes. say what the rounding levels are - add reference to plot near the granularity formula?
     \item Label tables and graphs nicely - Ben to do
@@ -57,18 +57,19 @@ nomenclature we need to get straight. Robert and Roland, these can definitely be
         \item Linear sum - because it is most intuitive naive choice implemented by people using RL with multiple objectives
         \item \tloA{} - because Vamplew used it and because it is an useful construction though complicated to use
     \end{itemize}
-    \item @Roland: Outline why we've scaled sokoban for the locations where it has been scaled.
+    \item @Roland: Outline why we've scaled sokoban for the locations where it has been scaled. - Done
     \item Table 2: what do we want here. do we still want to change it to compare vs. base granularity? - NO, decided to keep it the same.
-    \item @roland: Explain why granularity results fall below \tloA{} and how introducing non-arbitrary offset might confirm our granularity hypothesis more fully.
-    \item Introduction, last paragraph, and , are about Goodharting - @roland to edit
+    \item @roland: Explain why granularity results fall below \tloA{} and how introducing non-arbitrary offset might confirm our granularity hypothesis more fully. - DONE
+    \item Introduction, last paragraph, and , are about Goodharting - @roland to edit - edited
     \item 1.3 Pluralistic value systems, last pararaph has been deleted.
         
     \item section `Aggregation functions'. What is the scaling factor? The scaling factor is applied to reinforcement but the transform is applied to Q-values, so it's not really correct to present this as a set of steps. - still don't love this but we have an awkward set of ideas to communicate and this is as best as we can do.-BJS
     \item Experiment 3: describe the granularity transform precisely in terms of how it relates to our earlier functions. - which equation - do you mean it applies before Equation 2?
-    \item Roland to propose a definition for the `soft' in `soft maximin'
+    \item Roland to propose a definition for the `soft' in `soft maximin'.
+    Here we propose a possible definition for the phrase "soft maximin" used in the title. The word "soft" represents consideration of different objectives or application of rules in a flexible manner without sharp boundaries. The word "maximin" originates from a concept by John Rawls. The "min" function is useful for aggregating multiple objectives in such a way that the objective with a lowest score at any particular moment has most influence on the final outcome, hence the "maxi" part. It can be conceptually related to the conjunction operator as well as the concept of vetoing. Now combining the "min" function with the "soft" property means that our proposed functions approximate the "min" function but are smooth, without sharp turns. That makes the derivative of our functions continuous and enables having different feedback to the agent at all possible rewards. This facilitates continuous feedback for even small changes in rewards, therefore improving the learning speed.
     \item Robert to visualise the soft maximin idea
-    \item Ben to change the descriptions within figure 4 and 5, and 6 captions nad x-axes of "Scaling" to "transform" or similar approrpriate, and replace "peerformance" with "primary". Should probably say "Primary/Alignment transform: average online performance"; then x-axis caption should have "Primary/Alignment Transform magnitude"
-    \item Ben to change Experimetn 3 figure TO DO: sort to more easily show the change over time, smallest granularities at top and then bigger ones at the bottom.
+%    \item Ben to change the descriptions within figure 4 and 5, and 6 captions nad x-axes of "Scaling" to "transform" or similar approrpriate, and replace "peerformance" with "primary". Should probably say "Primary/Alignment transform: average online performance"; then x-axis caption should have "Primary/Alignment Transform magnitude" - DONE
+    %\item Ben to change Experimetn 3 figure TO DO: sort to more easily show the change over time, smallest granularities at top and then bigger ones at the bottom. - DONE
 \end{itemize}
     
  

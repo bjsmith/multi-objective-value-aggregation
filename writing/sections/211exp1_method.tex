@@ -41,7 +41,7 @@ For the purposes of this experiment, we left these at $c=1$ (instead, we directl
     \item Squared error based alignment (SEBA)
 \end{itemize}
 
-\noindent The SEBA transform function envisages differing functions for `Primary' and `Alignment' categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
+\noindent The SEBA transform function envisages differing functions for `primary' and `alignment' categories of objectives. All other transform functions do not distinguish categories of objectives, and apply the same function over all objectives.
 
 Each non-linear transform is a transform of the value obtained along a specific objective %$O$
 at a specific state %$s$ 
@@ -115,7 +115,7 @@ f(x)= &  -\exp(-cx)+cx+1 \\ \nonumber
 This still yields loss aversion at points less than zero but always provides that an increase in $x$ increases at least linearly in $f(x)$%\footnote{sound repetitive}.
 
 
-Finally, SEBA takes a different approach in that rather than treating each objective identically, transformations are applied differently to Performance and Alignment objectives.%\footnote{earlier this was called a safety objective}.
+Finally, SEBA takes a different approach in that rather than treating each objective identically, transformations are applied differently to performance and alignment objectives.%\footnote{earlier this was called a safety objective}.
 
 For performance objectives the SEBA formula is linear:
 \begin{align}
@@ -170,7 +170,7 @@ There are two possible paths: either the agent can move around the right corrido
 However, there is a penalty of -10 associated with leaving a door open.
 Therefore the desired solution is moving down while closing the doors behind the agent taking 8 moves.
 
-We wanted to understand how different aggregation functions could respond to re-scaling of Primary or Alignment utility. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's Primary objective feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the Alignment objective feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
+We wanted to understand how different aggregation functions could respond to re-scaling of primary or alignment rewards. To do this, we repeated each experiment 9 times. The first time was with the original settings as in \cite{vamplew_potential-based_2021}. Then, we repeated this with each environment's primary objective feedback scaled by $10^{-2}$, $10^{-1}$, $10^1$, and $10^2$. The same range of scaling was then applied to the alignment objective feedback. This scaling could in some scenarios potentially be distinguished from $c$ in Equations~\ref{eq:meu}-\ref{eq:seba}. Even though it is mathematically equivalent in our implementation, it could represent changes to the environment rather than changes in agent evaluation.
 
 
 \begin{figure}
@@ -182,7 +182,7 @@ We wanted to understand how different aggregation functions could respond to re-
 
 \subsubsection{Measurement}
 
-Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and Alignment objectives where one unit of Alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
+Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and alignment objectives where one unit of alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
 
-Learning was switched off after 5000 episodes. Following that time, offline performance was observed as the average across all 100 runs.
+Learning was switched off after 5000 episodes. Following that time, offline performance was observed as the average across offline performance in all 100 runs.
 

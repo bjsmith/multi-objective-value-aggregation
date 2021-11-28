@@ -33,8 +33,8 @@ In offline performance, there was very little difference between the best-perfor
   %\includegraphics[width=\columnwidth]{output/onlinepen.pdf}
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolfonline_4agents_Performance.pdf}
   \includegraphics[width=\columnwidth]{output/multirun_n100_eeba_rolfonline_4agents_Alignment.pdf}
-  \caption{Experiment 1: Online performance averaged across learning episodes and experiment repetitions for different Q-value transforms. (A): R* when scaling Primary Q-values across 5000 learning trials. SFELLA consistently performs similar or better to \tloA{}. (B): R* when transforming Alignment Q-values across 5000 learning trials. No algorithm is a clear best performer.%\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}
-  %\rk{show Alignment and Performance rewards directly instead of R*, update y-axis description to say average reward (over epidodes and exp repetitions)}
+  \caption{Experiment 1: \RStar{} Online performance averaged across learning episodes and experiment repetitions for different Q-value transforms. (A): R* when scaling primary Q-values across 5000 learning trials. SFELLA consistently performs similar or better to \tloA{}. (B): R* when transforming alignment Q-values across 5000 learning trials. No algorithm is a clear best performer.%\footnote{what is the difference between top and bottom? both are online, but different objectives, right? include "top" "bottom" in caption}
+  %\rk{show Alignment and Primary rewards directly instead of R*, update y-axis description to say average reward (over epidodes and exp repetitions)}
   
   
   }
@@ -46,5 +46,5 @@ While there was no clear best performer, SFELLA had the best online performance 
 
 
 
-SFELLA tended to perform at best level when re-scaling the Primary objective (Figure~\ref{fig:online_performance}a), but less well when Alignment utility was re-scaled. (Figure~\ref{fig:online_performance}b).
+SFELLA tended to perform at best level when re-scaling the primary objective (Figure~\ref{fig:online_performance}a), but less well when alignment objective was re-scaled. (Figure~\ref{fig:online_performance}b).
 
