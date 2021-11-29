@@ -15,9 +15,9 @@ The formula for granularity transform is the following. The granularity transfor
 x_{ig} = \text{round}(x_i / g_i) \times g_i
 \end{align}
 
-In the above formula, g takes one of the following values: 0.01, 0.1, 1, 10, 100. The granularisation was applied to only one of the two objectives in each experiment. 
+In the above formula, $g_i$ takes one of the following values: 0.01, 0.1, 1, 10, 100. The granularisation was applied to only one of the two objectives in each experiment. 
 
-Experiments with g = 100 are not shown on the plots since the agent performance for alignment objective granularisation was strongly negative and showing it would make the plots hard to observe.
+% Experiments with $g_i$ = 100 are not shown on the plots since the agent performance for alignment objective granularisation was strongly negative and showing it would make the plots hard to observe.
 
 For Sokoban environment we used scaling for alignment and primary rewards since according to previous experiments our functions did not perform well on this environment when using unscaled rewards. We chose a reward scaling set with best results available to us at the time (from among scales 0.01, 0.1, 1, 10, 100 for both alignment and primary objective). The rewards for \tloA{} were not scaled because it was originally tuned to work best on non-scaled rewards and our intention here was to compare the best results from the agents.
 

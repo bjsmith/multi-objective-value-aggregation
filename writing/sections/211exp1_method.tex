@@ -182,7 +182,7 @@ We wanted to understand how different aggregation functions could respond to re-
 
 \subsubsection{Measurement}
 
-Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of performance and alignment objectives where one unit of alignment objective (always on a negative scale) is worth 10-50 units of the performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
+Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of primary and alignment objectives where one unit of alignment objective (always on a negative scale) is worth 10-50 units of the primary objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
 
 Learning was switched off after 5000 episodes. Following that time, offline performance was observed as the average across offline performance in all 100 runs.
 
