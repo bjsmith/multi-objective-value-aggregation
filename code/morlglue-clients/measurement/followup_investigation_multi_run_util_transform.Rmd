@@ -335,9 +335,9 @@ for (env_dim in c("Performance","Alignment")){
       
       facet_wrap(~EnvironmentClass,scales = "free_y")+theme(axis.text.x = element_text(angle=30),legend.position = "bottom")+
         labs(
-            x=paste0(env_dim, " objective reward transform magnitude"),
+            x=paste0(env_dim_descriptive, " objective reward transform magnitude"),
             
-            title=paste0(env_dim, paste0(" Objective Transformation: Average Online Performance"))
+            title=paste0(env_dim_descriptive, paste0(" Objective Transformation: Average Online Performance"))
 
             ,subtitle=paste("Mean across all 5000 episodes over middle 90% of experiment repetitions"))
       
