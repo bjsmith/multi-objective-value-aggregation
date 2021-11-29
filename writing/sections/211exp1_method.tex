@@ -12,13 +12,13 @@ We used a modified version of the testing environment from \cite{vamplew_potenti
 All of the multi-objective utility functions we compared use the following steps: 
 \begin{enumerate}
     \item %When reinforcement occurs from the environment,
-    A scaling factor $c_i$ is applied to each objective, specific to that reinforcement, by multiplying it with the value of reinforcement at each time point. This step has not been implemented in this paper but we emphasize its possible use in the future. \footnote{Clarify:  I think if the step is included here it needs to describe something we're actually doing in this experiment, or at least, we need to spell out that it's not actually used here--unless it is?}
-    \item Transform the scaled output of  using a non-linear transform, as described below (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
+    A scaling factor $c_i$ is applied to each objective, specific to that reinforcement, by multiplying it with the value of reinforcement at each time point. This step has not been implemented in this paper but we emphasize its possible use in the future. 
+    \item Transform the scaled output by using a non-linear transform, as described below (Figure~\ref{fig:transform_functions} and Figure ~\ref{fig:seba_transform_functions_3d}). %For SFMLA, SFELLA, ELA, LELA, and SEBA, the transform is applied independently for each objective. % this is for ALL of the studied functions, right?
     
     \item Combine the transformed output using a simple average/sum as in Equation~\ref{eq:meu}.
 \end{enumerate}
 
-These steps describe a value function which can be applied either to the individual reinforcement delivered at each in response to an action, or to Q-values during action selection. In Experiment 1, we apply these steps to Q-values during action selection.
+These steps describe a utility function which can be applied either to the individual reinforcement delivered at each in response to an action, or to Q-values during action selection. In Experiment 1, we apply these steps to Q-values during action selection.
 
 Each non-linear function is applied component-wise before aggregation occurs by averaging/summing of the transformed values
 
@@ -45,7 +45,7 @@ For the purposes of this experiment, we left these at $c=1$ (instead, we directl
 
 Each non-linear transform is a transform of the value obtained along a specific objective %$O$
 at a specific state %$s$ 
-with a specific action %$a$\footnote{need to decide how much of this notation we include. If we include it, need to rewrite formulae to reflect it. Might take some inspiration from Vamplew's earlier papers. Should almost certainly be giving a formula for $TLO^A$}. 
+with a specific action. %$a$\footnote{need to decide how much of this notation we include. If we include it, need to rewrite formulae to reflect it. Might take some inspiration from Vamplew's earlier papers. Should almost certainly be giving a formula for $TLO^A$}. 
 The SFELLA, ELA, and LELA functions are illustrated in Figure~\ref{fig:transform_functions}. The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions_3d}.
 
 For each transform, where $x=0$, $f(x)=0$. This is a minor modification from the non-linear transform previously proposed in \cite{rolf_need_2020}, typically achieved by adding 1 to the outcome value.
@@ -58,7 +58,7 @@ Each function also provides that $\frac{\mathrm{d} f(x) }{\mathrm{d} x}$ decline
  
   \includegraphics[width=\columnwidth]{output/transform_graph-2d_with_rolf2.png}%\footnote{Roland: Can you please add the -x*x from SEBA to the left part of the plots too? Maybe using some short-dashed line for example. It would illustrate that the square function is less steep than the exponential functions, thus being in between linear and exponential}
   \includegraphics[width=\columnwidth]{output/transform_graph_2d_integral_with_rolf2.png}%\footnote{Roland: I would add comment that the the y scale is log scale, otherwise this plot is confusing, until one looks at the numbers at the left side}
-  \caption{Transform functions. Left: Each transform function is applied to the utility received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
+  \caption{Transform functions. Left: Each transform function is applied to the reward received from the environment for each objective, or to the Q value of the RL agent for each objective. In our current setup it is applied to the Q values of the RL agent.
   %\footnote{why repeat the same thing when you can leave out the other option?}. 
   The output of each of these transform functions are averaged together % in a Maximize Expected Utility Model \footnote{if anything this should be called MOMEU, right?}
   (Equation~\ref{eq:meu}). %\rk{Should we include a min function here, to show the soft minimax characteristic?} 
@@ -152,7 +152,7 @@ The SEBA aggregation is illustrated on Figure ~\ref{fig:seba_transform_functions
 
 In every environment, agents have two objectives: a `performance' objective (denoted \RP{}) and an `alignment' objective (denoted \RA{}). %\footnote{need to standarize terms. are we using primary or performance or reward; impact or alignment or penalty; etc - Roland: I vote for performance objective and alignment objective. These terms are in use also in Vamplew's code. It seems to be also important to avoid using the phrase "primary" objective as it is quite misleading in our context, since in practice the alignment objective is stronger and therefore sort of more primary. The word "reward" can remain where it is appropriate, since it is a measure, a proxy for the objective.} 
 Four gridworld environments reported in \cite{vamplew_potential-based_2021} were examined.
-They are shown in \ref{fig:envs} and we call them the 'Breakable and Unbreakable Bottles' (BB and UB), 'Sokoban' and 'Doors'.
+They are shown in Figure \ref{fig:envs} and we call them the 'Breakable and Unbreakable Bottles' (BB and UB), 'Sokoban' and 'Doors'.
 
 The Bottles environments share the same 1D grid layout where one end is the destination 'D' where the agent has to deliver bottles and the other end is the source 'S' where bottles are provided.
 Initially, the agent does not carry a bottle and it can hold up to two bottles and an episode ends when two bottles have been delivered.
@@ -182,7 +182,7 @@ We wanted to understand how different aggregation functions could respond to re-
 
 \subsubsection{Measurement}
 
-Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of Performance and alignment objectives where one unit of alignment objective (always on a negative scale) is worth 10-50 units of the Performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
+Each of the proposed functions was compared against the best performing function in \cite{vamplew_potential-based_2021}, the \tloA{} function, on the `R$^*$' metric from the same paper. The `R$^*$' arbitrarily scores a weighted combination of performance and alignment objectives where one unit of alignment objective (always on a negative scale) is worth 10-50 units of the performance objective, depending on the environment.%\footnote{Roland: The ratio of units is somewhat different across environments. It is not always 50 units. Vamplew paper describes the details. I think the range was about 10 to 50.}
 
 Learning was switched off after 5000 episodes. Following that time, offline performance was observed as the average across offline performance in all 100 runs.
 
