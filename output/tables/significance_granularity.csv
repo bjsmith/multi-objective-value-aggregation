@@ -31,6 +31,22 @@ Doors,10,0,-7.90$\downarrow$***,-4.21$\downarrow$***,-11.22$\downarrow$***,-4.27
 Doors,10,10,-15.34$\downarrow$***,-9.52$\downarrow$***,-16.99$\downarrow$***,-11.28$\downarrow$***,-9.12$\downarrow$***,-0.43$\downarrow$***,-17.04$\downarrow$***,-19.92$\downarrow$***,-15.37$\downarrow$***,-11.24$\downarrow$***,-15.31$\downarrow$***,-10.19$\downarrow$***,-15.41$\downarrow$***,-10.45$\downarrow$***,3.96
 Doors,100,0,-41.87$\downarrow$***,-4.10$\downarrow$***,-39.14$\downarrow$***,-4.21$\downarrow$***,-4.51$\downarrow$***,-0.38$\downarrow$***,-40.56$\downarrow$***,-0.16$\downarrow$***,-41.19$\downarrow$***,1.55$\downarrow$***,-39.01$\downarrow$***,-4.14$\downarrow$***,-38.19$\downarrow$***,-4.50$\downarrow$***,3.96
 Doors,100,100,-63.15$\downarrow$***,-10.07$\downarrow$***,-63.41$\downarrow$***,-9.65$\downarrow$***,-10.03$\downarrow$***,-0.43$\downarrow$***,-63.68$\downarrow$***,-41.01$\downarrow$***,-63.70$\downarrow$***,-10.98$\downarrow$***,-63.28$\downarrow$***,-10.62$\downarrow$***,-63.89$\downarrow$***,-9.94$\downarrow$***,3.96
+Sokoban,0,0,-17.94$\downarrow$***,-18.27$\downarrow$***,NA,NA,NA,-17.96$\downarrow$***,NA,NA,NA,NA,-17.97$\downarrow$***,-18.19$\downarrow$***,NA,NA,10.80
+Sokoban,0,0.01,-17.99$\downarrow$***,-18.26$\downarrow$***,NA,NA,NA,-18.01$\downarrow$***,NA,NA,NA,NA,-18.01$\downarrow$***,-18.21$\downarrow$***,NA,NA,10.80
+Sokoban,0,0.1,-18.00$\downarrow$***,-18.23$\downarrow$***,NA,NA,NA,-17.99$\downarrow$***,NA,NA,NA,NA,-17.97$\downarrow$***,-18.23$\downarrow$***,NA,NA,10.80
+Sokoban,0,1,-18.59$\downarrow$***,-18.20$\downarrow$***,NA,NA,NA,-17.98$\downarrow$***,NA,NA,NA,NA,-18.60$\downarrow$***,-18.21$\downarrow$***,NA,NA,10.80
+Sokoban,0,10,-48.86$\downarrow$***,-48.87$\downarrow$***,NA,NA,NA,-17.96$\downarrow$***,NA,NA,NA,NA,-48.84$\downarrow$***,-48.87$\downarrow$***,NA,NA,10.80
+Sokoban,0,100,-48.84$\downarrow$***,-48.85$\downarrow$***,NA,NA,NA,-18.02$\downarrow$***,NA,NA,NA,NA,-48.86$\downarrow$***,-48.85$\downarrow$***,NA,NA,10.80
+Sokoban,0.01,0,-17.89$\downarrow$***,-18.24$\downarrow$***,NA,NA,NA,-17.97$\downarrow$***,NA,NA,NA,NA,-17.91$\downarrow$***,-18.22$\downarrow$***,NA,NA,10.80
+Sokoban,0.01,0.01,-17.91$\downarrow$***,-18.25$\downarrow$***,NA,NA,NA,-17.95$\downarrow$***,NA,NA,NA,NA,-17.91$\downarrow$***,-18.25$\downarrow$***,NA,NA,10.80
+Sokoban,0.1,0,-18.33$\downarrow$***,-31.02$\downarrow$***,NA,NA,NA,-18.01$\downarrow$***,NA,NA,NA,NA,-18.24$\downarrow$***,-30.50$\downarrow$***,NA,NA,10.80
+Sokoban,0.1,0.1,-18.77$\downarrow$***,-29.21$\downarrow$***,NA,NA,NA,-17.99$\downarrow$***,NA,NA,NA,NA,-18.78$\downarrow$***,-30.33$\downarrow$***,NA,NA,10.80
+Sokoban,1,0,-19.23$\downarrow$***,-30.90$\downarrow$***,NA,NA,NA,-18.01$\downarrow$***,NA,NA,NA,NA,-20.83$\downarrow$***,-31.13$\downarrow$***,NA,NA,10.80
+Sokoban,1,1,-20.36$\downarrow$***,-31.08$\downarrow$***,NA,NA,NA,-17.99$\downarrow$***,NA,NA,NA,NA,-21.55$\downarrow$***,-29.98$\downarrow$***,NA,NA,10.80
+Sokoban,10,0,-20.51$\downarrow$***,-31.11$\downarrow$***,NA,NA,NA,-17.97$\downarrow$***,NA,NA,NA,NA,-20.94$\downarrow$***,-31.50$\downarrow$***,NA,NA,10.80
+Sokoban,10,10,-47.04$\downarrow$***,-49.08$\downarrow$***,NA,NA,NA,-17.96$\downarrow$***,NA,NA,NA,NA,-47.02$\downarrow$***,-49.08$\downarrow$***,NA,NA,10.80
+Sokoban,100,0,-23.09$\downarrow$***,-30.51$\downarrow$***,NA,NA,NA,-18.01$\downarrow$***,NA,NA,NA,NA,-23.52$\downarrow$***,-29.74$\downarrow$***,NA,NA,10.80
+Sokoban,100,100,-47.02$\downarrow$***,-49.09$\downarrow$***,NA,NA,NA,-17.97$\downarrow$***,NA,NA,NA,NA,-47.03$\downarrow$***,-49.10$\downarrow$***,NA,NA,10.80
 Unbreakable Bottles,0,0,28.73$\uparrow$***,28.76$\uparrow$***,16.55$\downarrow$***,28.74$\uparrow$***,28.78$\uparrow$***,28.79$\uparrow$***,16.37$\downarrow$***,20.14$\downarrow$***,28.78$\uparrow$***,28.67$\uparrow$***,27.95$\uparrow$***,28.72$\uparrow$***,28.80$\uparrow$***,28.73$\uparrow$***,27.10
 Unbreakable Bottles,0,0.01,28.73$\uparrow$***,28.71$\uparrow$***,17.91$\downarrow$***,28.67$\uparrow$***,28.72$\uparrow$***,28.72$\uparrow$***,17.50$\downarrow$***,20.18$\downarrow$***,28.72$\uparrow$***,28.64$\uparrow$***,27.94$\uparrow$***,28.73$\uparrow$***,28.71$\uparrow$***,28.77$\uparrow$***,27.10
 Unbreakable Bottles,0,0.1,28.70$\uparrow$***,28.69$\uparrow$***,20.38$\downarrow$***,28.74$\uparrow$***,28.80$\uparrow$***,28.70$\uparrow$***,19.72$\downarrow$***,20.27$\downarrow$***,28.73$\uparrow$***,28.62$\uparrow$***,27.92$\uparrow$***,28.72$\uparrow$***,28.68$\uparrow$***,28.73$\uparrow$***,27.10

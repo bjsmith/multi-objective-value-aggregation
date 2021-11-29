@@ -199,13 +199,18 @@ table_env$`R^A`=NULL
 table_numeric_vals <- table_env %>% dcast.data.table(
   EnvironmentClass+RewGranularity+PenGranularity~Agent
   ,value.var="R^*",fun.aggregate = mean)
+
+
+table_env$EnvironmentDimChange <- NULL
+table_env[table_env$Environment=="Sokobanrew0.01","Environment"]<-"Sokoban"
 ```
 
 ```{r}
 table_env_run_means <- table_env[,
           c(mean(`R^*`))
           
-          ,by=.(Agent,Environment,RunId,EnvironmentDimChange,RewGranularity,PenGranularity)]
+          ,by=.(Agent,Environment,RunId,#EnvironmentDimChange,
+                RewGranularity,PenGranularity)]
 
 setnames(table_env_run_means,"V1","Run_Mean_R^*")
 
@@ -226,14 +231,21 @@ table_env_ctrl_agent <- do.call("rbind", list_output)
 table_env_control_run_means <- table_env_ctrl_agent[,
           c(mean(`R^*`))
           
-          ,by=.(Agent,Environment,RunId,EnvironmentDimChange)]
+          ,by=.(Agent,Environment,RunId
+                #,EnvironmentDimChange
+                )]
 
 
 control_run_means <- table_env_run_means[Agent==ctrl_agent]
 control_run_means$Agent=NULL
 control_run_means$PenGranularity=NULL
 control_run_means$RewGranularity=NULL
+
+
+
 exp_run_means <- table_env_run_means[Agent!=ctrl_agent]
+
+
 
 run_means_agent_comparison <- merge(
   control_run_means,exp_run_means,by =setdiff(colnames(control_run_means),c("Run_Mean_R^*","Agent")),

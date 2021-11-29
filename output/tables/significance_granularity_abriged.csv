@@ -11,6 +11,12 @@ Doors,0,100,-0.45$\downarrow$***,-1.02$\downarrow$***,-1.08$\downarrow$***,3.96
 Doors,0.01,0,-0.47$\downarrow$***,3.96,0.92$\downarrow$***,3.96
 Doors,1,0,-0.46$\downarrow$***,3.80,1.17$\downarrow$***,3.96
 Doors,100,0,-0.38$\downarrow$***,-39.01$\downarrow$***,-41.87$\downarrow$***,3.96
+Sokoban,0,0.01,-18.01$\downarrow$***,-18.01$\downarrow$***,-17.99$\downarrow$***,10.80
+Sokoban,0,1,-17.98$\downarrow$***,-18.60$\downarrow$***,-18.59$\downarrow$***,10.80
+Sokoban,0,100,-18.02$\downarrow$***,-48.86$\downarrow$***,-48.84$\downarrow$***,10.80
+Sokoban,0.01,0,-17.97$\downarrow$***,-17.91$\downarrow$***,-17.89$\downarrow$***,10.80
+Sokoban,1,0,-18.01$\downarrow$***,-20.83$\downarrow$***,-19.23$\downarrow$***,10.80
+Sokoban,100,0,-18.01$\downarrow$***,-23.52$\downarrow$***,-23.09$\downarrow$***,10.80
 UB,0,0.01,28.72$\uparrow$***,27.94$\uparrow$***,28.73$\uparrow$***,27.10
 UB,0,1,28.71$\uparrow$***,28.77$\uparrow$***,28.70$\uparrow$***,27.10
 UB,0,100,28.77$\uparrow$***,28.72$\uparrow$***,28.76$\uparrow$***,27.10
